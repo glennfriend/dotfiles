@@ -26,7 +26,7 @@ alias aptupdate='apt-get update ; apt-get dist-upgrade ; apt-get autoremove ; ap
 
 #
 MY_WEB=/var/www
-alias gow='cd $MY_WEBH; l; '
+alias gow='cd $MY_WEB; l; '
 
 
 #
