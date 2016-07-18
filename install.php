@@ -38,40 +38,50 @@ if ($erororMessages) {
 // step 3
 // 讓使用者確認要覆蓋的檔案
 // --------------------------------------------------------------------------------
-$filesMessage = '';
+$allowMessage = '';
+$denyMessage = '';
 foreach (getMapping() as $config) {
     $toFile = $installFolder . '/' . $config['to'];
     if (file_exists($toFile)) {
-        $filesMessage .= '檔案已存在: ' . $toFile. "\n";
+        $denyMessage .= '    ' . $toFile. "\n";
     }
     else {
-        $filesMessage .= '檔案不存在: ' . $toFile. "\n";
+        $allowMessage .= '    ' . $toFile. "\n";
     }
 }
-if (!$filesMessage) {
-    output('沒有執行任何指令 (2)');
+
+output('以下檔案 "不存在", 會建立 symlink');
+output($allowMessage);
+output();
+output('以下檔案 "已存在", 將不會被影響');
+output($denyMessage);
+output();
+
+if (!$allowMessage) {
+    output('因為沒有檔案會受到影響, 所以程式結束!');
     exit;
 }
-
-
-output('請檢查以下所有即將會被變更檔案');
-output($filesMessage);
-output();
 output('如果您確認沒問題, 請輸入 "yes", 即將會執行所有的指令:');
 
 // --------------------------------------------------------------------------------
 // step 4
-// 執行指令, 建立 symlink
+// 執行指令, 建立 symlink 並覆蓋原有的檔案 (具有破壞性)
 // --------------------------------------------------------------------------------
 if ('yes' !== input()) {
     output('沒有執行任何指令');
     exit;
 }
 
-//symlink
+foreach (getMapping() as $config) {
+    $originFile = getDir() . '/' . $config['origin'];
+    $toFile     = $installFolder . '/' . $config['to'];
+    if (file_exists($toFile)) {
+        continue;
+    }
+    symlink($originFile, $toFile);
+}
 
-
-output('go go go !');
+output('已執行!');
 exit;
 
 
@@ -82,10 +92,6 @@ exit;
 
 
 
-function getDir()
-{
-    return __DIR__;
-}
 
 /**
  *  取得要安裝的 config
@@ -104,6 +110,11 @@ function getMapping()
             'to'        => '.bashrc',
         ],
     ];
+}
+
+function getDir()
+{
+    return __DIR__;
 }
 
 /**
