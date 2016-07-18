@@ -1,0 +1,111 @@
+# 
+# .bashrc
+# 
+# 
+# .bash_profile
+#   執行 /usr/local/bin/php 如果找不到 so 檔案, 就執行指令 
+#   export LD_LIBRARY_PATH=/usr/local/mysql.old/lib/mysql
+#
+
+# 線上機器不能設定的功能!!!!
+alias closepc='echo "Shutdown Now ........"; halt'
+
+# history
+export HISTTIMEFORMAT="%F %T: "
+
+#
+alias     ll='echo; last -n20; date "+%Y-%m-%d %H:%M:%S"; pwd; echo "----------"; l | grep "^l"; ls -d */; l | grep "^-";'
+alias      l='ls -lha --color'
+alias     ld='ls */ -d'
+alias     ..='cd ..'
+alias    ..3='cd ../../..'
+alias    ..4='cd ../../../..'
+alias    ..5='cd ../../../../..'
+alias    ..6='cd ../../../../../..'
+alias aptupdate='apt-get update ; apt-get dist-upgrade ; apt-get autoremove ; apt-get autoclean ; apt-get clean'
+
+#
+MY_WEB=/var/www
+alias gow='cd $MY_WEBH; l; '
+
+
+#
+# alias clstmp='rm -rf ./tmp/[0-9%]* ./tmp/cache_[0-9a-f] ./tmp/*.log ; l tmp'
+alias clstmp='rm $MY_SBHOME/directory/protected/runtime/cache/[0-9a-z]*.bin; rm -rf $MY_SBHOME/directory/protected/runtime/cache/[0-9a-z][0-9a-z]; ';
+alias clsmagento='rm -rf var/full_page_cache/mage*; rm -rf var/cache/mage*; rm -rf var/ait_rewrite/*.php';
+
+alias ch755='chmod -R 755 '
+alias ch777='chmod -R 777 '
+alias chwww='chown -R www-data:www-data '
+alias chnobody='chown -R nobody:nogroup '
+
+# about ack-grep
+alias    ag='ack-grep --type=me --type-set me=php,js,css,template,tpl,htm,html,phtml,inc,ini,xml '
+alias agphp='ack-grep --type=me --type-set me=php,phtml,inc,ini,xml,module '
+alias  agjs='ack-grep --type=me --type-set me=js,sh '
+alias agtpl='ack-grep --type=me --type-set me=css,tpl,template,html,htm '
+alias agall='ack-grep --all-type '
+
+# system tool
+alias dstat2='dstat -cdlmnpsy'
+
+# crontab
+export EDITOR=vim
+
+#
+export PATH=/var/lib/gems/1.8/bin:$PATH 
+
+# git
+alias   gitlog='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit -10 '
+alias  gitlog2='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --graph -10 '
+alias  gitlog3='git log --abbrev-commit --abbrev=4 --pretty=format:"%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s" -10 '
+alias        g='clear; echo "---------- branch -av"; git branch -v; echo "---------- log"; gitlog -n 12; echo "---------- status"; git status'
+
+function git_branch {
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
+    echo "("${ref#refs/heads/}") ";
+}
+
+function git_since_last_commit {
+    now=`date +%s`;
+    last_commit=$(git log --pretty=format:%at -1 2> /dev/null) || return;
+    seconds_since_last_commit=$((now-last_commit));
+    minutes_since_last_commit=$((seconds_since_last_commit/60));
+    hours_since_last_commit=$((minutes_since_last_commit/60));
+    minutes_since_last_commit=$((minutes_since_last_commit%60));
+    
+    echo "${hours_since_last_commit}h${minutes_since_last_commit}m ";
+}
+
+# shell
+PS1="[\[\033[1;32m\]\w\[\033[0m\]] \[\033[0m\]\[\033[1;36m\]\$(git_branch)\[\033[0;33m\]\$(git_since_last_commit)\[\033[0m\]$ " 
+
+
+#
+# 以上為一般使用的 .bashrc
+#
+
+
+
+
+
+
+
+
+# 自動產生 tmp 檔案名稱
+# function autosetmyfilename {
+#     MY_FILENAME=`date +%Y-%m%d-%H%M%S`
+# }
+# or
+# alias autosetmyfilename="MY_FILENAME=`date +%Y-%m%d-%H%M%S`"
+
+
+
+# 
+# alias showgz='for name in *.gz;do echo tar -zxvf $name ./unzip/${name%}/; done'
+
+
+#phpbrew
+#export PHPBREW_SET_PROMPT=1
+source ~/.phpbrew/bashrc
+
