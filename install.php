@@ -50,6 +50,7 @@ foreach (getMapping() as $config) {
     }
 }
 
+output();
 output('以下檔案 "不存在", 會建立 symlink');
 output($allowMessage);
 output();
