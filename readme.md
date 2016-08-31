@@ -10,5 +10,5 @@ php install.php
 #### shell
 - [x] bashrc
 - [x] git config
-- [x] tmux
-- [x] tmuxinator
+- [x] tmux config
+- [x] tmuxinator yml configs
