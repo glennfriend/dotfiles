@@ -6,3 +6,11 @@
 ```sh
 php install.php
 ```
+
+### shell
+```sh
+[X] [bashrc]
+[X] [git config]
+[x] [tmux]
+[x] tmuxinator
+```
