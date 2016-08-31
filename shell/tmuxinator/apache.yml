@@ -1,0 +1,14 @@
+# ~/.tmuxinator/wms.yml
+
+name: apache
+root: /var/www
+
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - ls -la
+        - watch ls -la /var/log/apache2/*.log
+        - tail -f /var/log/apache2/access.log
+

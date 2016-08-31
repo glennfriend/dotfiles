@@ -115,6 +115,11 @@ function getMapping()
             'origin'    => 'shell/tmux/tmux.conf',
             'to'        => '.tmux.conf',
         ],
+        [
+            'desc'      => 'tmuxinator (mux) config',
+            'origin'    => 'shell/tmuxinator',
+            'to'        => '.tmuxinator',
+        ],
     ];
 }
 
