@@ -1,17 +1,27 @@
 <?php
 
+$configs = include 'config/config.inc.php';
+
 // --------------------------------------------------------------------------------
 // step 1
 // --------------------------------------------------------------------------------
-output('這個程式將安裝並且覆蓋 symlink 到你指定的使用者目錄, 例如 /home/zelda');
-output('請輸您的名稱, 例如 zelda');
+output('這個程式將安裝並且覆蓋 symlink 到你指定的使用者目錄');
+output('請輸您的 home 名稱, 例如 zelda => /home/zelda');
+output('或輸入完整路徑,     例如 /root');
+output('---- INPUT ----');
 $input = input();
+output('---------------');
 if (!$input) {
     output('沒有執行任何指令');
     exit;
 }
 
-$installFolder = '/home/' . $input;
+if ('/'===mb_substr($input, 0, 1)) {
+    $installFolder = $input;
+}
+else {
+    $installFolder = '/home/' . $input;
+}
 if (!is_dir($installFolder)) {
     output('這個目錄不存在');
     exit;
@@ -22,7 +32,7 @@ if (!is_dir($installFolder)) {
 // 確認專案裡面的檔案有沒有問題
 // --------------------------------------------------------------------------------
 $erororMessages = '';
-foreach (getMapping() as $config) {
+foreach ($configs as $config) {
     $originFile = getDir() . '/' . $config['origin'];
     if (!file_exists($originFile)) {
         $erororMessages .= '檔案不存在: ' . $originFile. "\n";
@@ -40,7 +50,7 @@ if ($erororMessages) {
 // --------------------------------------------------------------------------------
 $allowMessage = '';
 $denyMessage = '';
-foreach (getMapping() as $config) {
+foreach ($configs as $config) {
     $toFile = $installFolder . '/' . $config['to'];
     if (file_exists($toFile)) {
         $denyMessage .= '    ' . $toFile. "\n";
@@ -73,7 +83,7 @@ if ('yes' !== input()) {
     exit;
 }
 
-foreach (getMapping() as $config) {
+foreach ($configs as $config) {
     $originFile = getDir() . '/' . $config['origin'];
     $toFile     = $installFolder . '/' . $config['to'];
     if (file_exists($toFile)) {
@@ -94,34 +104,6 @@ exit;
 
 
 
-/**
- *  取得要安裝的 config
- */
-function getMapping()
-{
-    return [
-        [
-            'desc'      => 'gitconfig',
-            'origin'    => 'shell/git/gitconfig.txt',
-            'to'        => '.gitconfig',
-        ],
-        [
-            'desc'      => 'bashrc',
-            'origin'    => 'shell/sh/bashrc.txt',
-            'to'        => '.bashrc',
-        ],
-        [
-            'desc'      => 'tmux config',
-            'origin'    => 'shell/tmux/tmux.conf',
-            'to'        => '.tmux.conf',
-        ],
-        [
-            'desc'      => 'tmuxinator (mux) config',
-            'origin'    => 'shell/tmuxinator',
-            'to'        => '.tmuxinator',
-        ],
-    ];
-}
 
 function getDir()
 {
