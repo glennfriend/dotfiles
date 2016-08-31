@@ -7,10 +7,8 @@
 php install.php
 ```
 
-### shell
-```sh
+#### shell
 - [x] [bashrc]
 - [x] [git config]
 - [x] [tmux]
 - [x] tmuxinator
-```
