@@ -9,8 +9,8 @@ php install.php
 
 ### shell
 ```sh
-[X] [bashrc]
-[X] [git config]
-[x] [tmux]
-[x] tmuxinator
+- [x] [bashrc]
+- [x] [git config]
+- [x] [tmux]
+- [x] tmuxinator
 ```
