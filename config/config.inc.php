@@ -10,11 +10,6 @@ return [
         'to'        => '.gitconfig',
     ],
     [
-        'desc'      => 'bashrc',
-        'origin'    => 'shell/sh/bashrc.txt',
-        'to'        => '.bashrc',
-    ],
-    [
         'desc'      => 'tmux config',
         'origin'    => 'shell/tmux/tmux.conf',
         'to'        => '.tmux.conf',
