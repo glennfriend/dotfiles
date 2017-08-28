@@ -20,6 +20,7 @@ export HISTTIMEFORMAT="%F %T: "
 alias     ll='echo; last -n20; date "+%Y-%m-%d %H:%M:%S"; pwd; echo "----------"; l | grep "^l"; ls -d */; l | grep "^-";'
 alias      l='ls -lhA --color'
 alias     ld='ls */ -d'
+alias     df='df -h'
 alias        ..='cd ..'
 alias       ...='cd ../..'
 alias      ....='cd ../../..'
@@ -30,6 +31,19 @@ alias    ..3='cd ../../..'
 alias    ..4='cd ../../../..'
 alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
+
+#
+alias getip="curl icanhazip.com"
+alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+
+# Functions
+mymkdir()
+{
+    mkdir -p -- "$1" &&
+    cd -P -- "$1"
+}
+
+
 
 #
 alias gow='cd /var/www; ls -lah;';
