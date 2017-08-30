@@ -51,7 +51,8 @@ alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
 # load my bash shell
 jmybash() {
-    source <( curl --insecure https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
+    url="https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh"
+    source <( curl --insecure {$url} )
 }
 
 # create folder
