@@ -49,9 +49,9 @@ alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 #   Functions
 # --------------------------------------------------------------------------------
 
-# reload .bashrc
-jbash() {
-    source ~/.bashrc
+# load my bash shell
+jmybash() {
+    source <( curl --insecure https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 }
 
 # create folder
@@ -66,14 +66,24 @@ jdate() {
     watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
 }
 
-# 到數
+# 到數計時器
 jcounter() {
-    for i in {1..$1}
-    do
-        printf "\r%d" $i
+    if [ -z "$1" ]
+        then
+            echo "No arguments supplied"
+            return
+    fi
+
+    for ((i = $1; i >= 1; i--)); do
+        timeFormat=$(date -u -d@$(($i)) +"%H:%M:%S")
+        printf "\r%d <= %s" $i $timeFormat
         sleep 1
     done
+    echo "\r0"
+    echo ""
+
 }
+
 
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
