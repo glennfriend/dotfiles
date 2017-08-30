@@ -36,13 +36,26 @@ alias    ..6='cd ../../../../../..'
 alias getip="curl icanhazip.com"
 alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
-# Functions
-mymkdir()
-{
+# --------------------------------------------------------------------------------
+#   Functions
+# --------------------------------------------------------------------------------
+
+# create folder
+jmkdir() {
     mkdir -p -- "$1" &&
     cd -P -- "$1"
 }
 
+# now time
+jdate() {
+    echo "watch -t -n 1 date +%T"
+    watch -t -n 1 date +%T
+}
+
+# copy files
+jcp() {
+    rsync -avv --stats --human-readable --itemize-changes --partial
+}
 
 
 #
