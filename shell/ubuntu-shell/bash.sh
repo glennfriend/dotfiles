@@ -85,7 +85,7 @@ jcounter() {
 
     for ((i = $1; i >= 1; i--)); do
         timeFormat=$(date -u -d@$(($i)) +"%H:%M:%S")
-        printf "\r%d <= %s" $i $timeFormat
+        printf "\r%d <= %s " $i $timeFormat
         sleep 1
     done
     echo "\r0"
