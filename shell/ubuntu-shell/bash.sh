@@ -31,10 +31,16 @@ alias    ..3='cd ../../..'
 alias    ..4='cd ../../../..'
 alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
+alias gow='cd /var/www && ls -lah';
+alias ch755='chmod -R 755 '
+alias ch777='chmod -R 777 '
+alias chwww='chown -R www-data:www-data '
+alias chnobody='chown -R nobody:nogroup '
+
 
 # get ip
-alias jip="curl icanhazip.com"
-alias jlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+alias getip="curl icanhazip.com"
+alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # copy files
 alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
@@ -44,7 +50,7 @@ alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 # --------------------------------------------------------------------------------
 
 # reload .bashrc
-jreloadbash() {
+jbash() {
     source ~/.bashrc
 }
 
@@ -56,18 +62,11 @@ jmkdir() {
 
 # now time
 jdate() {
-    echo "watch -t -n 1 date +%T"
-    watch -t -n 1 date +%T
+    echo "watch -t -n 1 date +%Z [%z] %Y-%m-%d %T"
+    watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
 }
-
-#
-alias gow='cd /var/www; ls -lah;';
-
-alias ch755='chmod -R 755 '
-alias ch777='chmod -R 777 '
-alias chwww='chown -R www-data:www-data '
-alias chnobody='chown -R nobody:nogroup '
-
+# --------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------
 
 # crontab
 export EDITOR=vim
