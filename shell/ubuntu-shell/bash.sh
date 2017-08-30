@@ -40,6 +40,11 @@ alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo
 #   Functions
 # --------------------------------------------------------------------------------
 
+# reload dotfile
+jreloadbash() {
+    source ~/.bashrc
+}
+
 # create folder
 jmkdir() {
     mkdir -p -- "$1" &&
