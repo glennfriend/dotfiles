@@ -32,15 +32,18 @@ alias    ..4='cd ../../../..'
 alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
 
-#
-alias getip="curl icanhazip.com"
-alias localip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+# get ip
+alias jip="curl icanhazip.com"
+alias jlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+
+# copy files
+alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
 # --------------------------------------------------------------------------------
 #   Functions
 # --------------------------------------------------------------------------------
 
-# reload dotfile
+# reload .bashrc
 jreloadbash() {
     source ~/.bashrc
 }
@@ -56,12 +59,6 @@ jdate() {
     echo "watch -t -n 1 date +%T"
     watch -t -n 1 date +%T
 }
-
-# copy files
-jcp() {
-    rsync -avv --stats --human-readable --itemize-changes --partial
-}
-
 
 #
 alias gow='cd /var/www; ls -lah;';
