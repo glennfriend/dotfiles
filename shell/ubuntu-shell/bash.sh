@@ -12,10 +12,19 @@
 #
 #
 
+# --------------------------------------------------------------------------------
+#   env
+# --------------------------------------------------------------------------------
 
 # history
 export HISTTIMEFORMAT="%F %T: "
 
+# crontab
+export EDITOR=vim
+
+# --------------------------------------------------------------------------------
+#   custom
+# --------------------------------------------------------------------------------
 #
 alias     ll='echo; last -n20; date "+%Y-%m-%d %H:%M:%S"; pwd; echo "----------"; l | grep "^l"; ls -d */; l | grep "^-";'
 alias      l='ls -lhA --color'
@@ -37,7 +46,6 @@ alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
 
-
 # get ip
 alias getip="curl icanhazip.com"
 alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
@@ -46,7 +54,7 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
 # --------------------------------------------------------------------------------
-#   Functions
+#   Custom Functions
 # --------------------------------------------------------------------------------
 
 # load my bash shell
@@ -87,12 +95,9 @@ jcounter() {
 
 
 # --------------------------------------------------------------------------------
+#   git
 # --------------------------------------------------------------------------------
 
-# crontab
-export EDITOR=vim
-
-# git
 alias   gitlog='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit -10 '
 alias  gitlog2='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --graph -10 '
 alias  gitlog3='git log --abbrev-commit --abbrev=4 --pretty=format:"%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s" -10 '
@@ -117,11 +122,9 @@ function git_since_last_commit {
 }
 
 
-
-
+# --------------------------------------------------------------------------------
+#
+# --------------------------------------------------------------------------------
 echo
 echo "Completely"
 echo
-
-
-
