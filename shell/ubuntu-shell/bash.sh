@@ -64,19 +64,19 @@ j.bash() {
 }
 
 # create folder
-jmkdir() {
+j.mkdir() {
     mkdir -p -- "$1" &&
     cd -P -- "$1"
 }
 
 # now time
-jdate() {
+j.date() {
     echo "watch -t -n 1 date +%Z [%z] %Y-%m-%d %T"
     watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
 }
 
 # 到數計時器
-jcounter() {
+j.sheep() {
     if [ -z "$1" ]
         then
             echo "No arguments supplied"
