@@ -51,32 +51,32 @@ alias getip="curl icanhazip.com"
 alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # copy files
-alias j.cp="rsync -avv --stats --human-readable --itemize-changes --partial"
+alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
 # --------------------------------------------------------------------------------
 #   Custom Functions
 # --------------------------------------------------------------------------------
 
 # load my bash shell
-j.bash() {
+jbash() {
     url="https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh"
     source <( curl --insecure {$url} )
 }
 
 # create folder
-j,mkdir() {
+jmkdir() {
     mkdir -p -- "$1" &&
     cd -P -- "$1"
 }
 
 # now time
-j.date() {
+jdate() {
     echo "watch -t -n 1 date +%Z [%z] %Y-%m-%d %T"
     watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
 }
 
 # 到數計時器
-j.sheep() {
+jsheep() {
     if [ -z "$1" ]
         then
             echo "No arguments supplied"
