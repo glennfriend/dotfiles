@@ -51,14 +51,14 @@ alias getip="curl icanhazip.com"
 alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # copy files
-alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
+alias j.cp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
 # --------------------------------------------------------------------------------
 #   Custom Functions
 # --------------------------------------------------------------------------------
 
 # load my bash shell
-jmybash() {
+j.bash() {
     url="https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh"
     source <( curl --insecure {$url} )
 }
