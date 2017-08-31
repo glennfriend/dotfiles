@@ -64,7 +64,7 @@ j.bash() {
 }
 
 # create folder
-j.mkdir() {
+j,mkdir() {
     mkdir -p -- "$1" &&
     cd -P -- "$1"
 }
