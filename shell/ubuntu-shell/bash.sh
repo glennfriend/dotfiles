@@ -51,6 +51,11 @@ alias getip="curl icanhazip.com"
 alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # copy files
+#   >f        傳輸文件
+#   cd        建立目錄
+#   st        檔案大小 & 時間 不同, 表示檔案內容有異動
+#   +++++++++ 新增檔案
+#
 alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
 # --------------------------------------------------------------------------------
