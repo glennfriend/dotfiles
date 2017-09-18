@@ -115,10 +115,14 @@ jread() {
 
     if [ $ext == "md" ] ; then
         pandoc $1 | lynx -stdin
-    elif [ $ext == "jpg" ] && [ $ext == "jpeg" ] && [ $ext == "gif" ] && [ $ext == "png" ]
+    elif [ $ext == "jpg" ] || [ $ext == "jpeg" ] || [ $ext == "gif" ] || [ $ext == "png" ] ; then
         file $1
+    elif [ $ext == "php" ] || [ $ext == "js" ] || [ $ext == "css" ] ; then
+        cat -b $1 | more
+    elif [ $ext == "conf" ] ; then
+        cat -b $1 | more
     else
-        tig $1
+        cat $1 | more
     fi
 }
 
