@@ -98,6 +98,37 @@ jsheep() {
 
 }
 
+#閱讀器 自動判斷
+jread() {
+    if [ -z "$1" ]
+        then
+            echo "No arguments supplied"
+            return
+    fi
+
+    filename=$(basename "$1")
+    ext="${filename##*.}"
+    filename="${filename%.*}"
+
+    #echo $filename
+    #echo $ext
+
+    if [ $ext == "md" ] ; then
+        pandoc $1 | lynx -stdin
+    elif [ $ext == "jpg" ] && [ $ext == "jpeg" ] && [ $ext == "gif" ] && [ $ext == "png" ]
+        file $1
+    else
+        tig $1
+    fi
+}
+
+
+# jrm
+#
+# 將檔案移至 /tmp/mmddhhiiss_forder_name/*
+
+
+
 
 # --------------------------------------------------------------------------------
 #   git
