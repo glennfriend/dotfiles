@@ -118,11 +118,11 @@ jread() {
     elif [ $ext == "jpg" ] || [ $ext == "jpeg" ] || [ $ext == "gif" ] || [ $ext == "png" ] ; then
         file $1
     elif [ $ext == "php" ] || [ $ext == "js" ] || [ $ext == "css" ] ; then
-        cat -b $1 | more
+        less -mN $1
     elif [ $ext == "conf" ] ; then
-        cat -b $1 | more
+        less -mN $1
     else
-        cat $1 | more
+        less -m $1
     fi
 }
 
