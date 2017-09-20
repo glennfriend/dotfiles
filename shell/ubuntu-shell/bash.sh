@@ -76,8 +76,8 @@ jmkdir() {
 
 # now time
 jdate() {
-    echo "watch -t -n 1 date +%Z [%z] %Y-%m-%d %T"
-    watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
+    # watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
+    while [ 1 ] ; do echo -en "  $(date +%Z\ [%z]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
 }
 
 # 到數計時器
