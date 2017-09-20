@@ -93,7 +93,7 @@ jsleep() {
         printf "\r%d <= %s " $i $timeFormat
         sleep 1
     done
-    echo "\r0"
+    printf "\r"
     echo ""
 
 }
