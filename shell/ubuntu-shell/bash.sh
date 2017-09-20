@@ -81,7 +81,7 @@ jdate() {
 }
 
 # 到數計時器
-jsheep() {
+jsleep() {
     if [ -z "$1" ]
         then
             echo "No arguments supplied"
