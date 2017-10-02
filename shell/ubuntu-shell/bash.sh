@@ -126,11 +126,40 @@ jread() {
     fi
 }
 
-
-# jrm
 #
-# 將檔案移至 /tmp/mmddhhiiss_forder_name/*
+# 先備份, 後刪除
+#
+jrm() {
 
+    left="\033[1;33m"
+    right="\033[0m"
+
+    absolute_path=$(readlink -m $1)
+    echo ">"
+    echo "> rm -rf $left$absolute_path$right"
+    echo ">"
+
+
+    if [ -z "$1" ] ; then
+        echo "Input delete folder or files"
+        return
+    elif [ $1 == "." ] ; then
+        echo "You must describe a directory"
+        return
+    elif [ $1 == ".." ] || [ $1 == "../" ]; then
+        echo "You can not delete up floor directory"
+        return
+    fi
+
+    now=$(date "+%m%d-%H%M%S")
+    delete_folder="/tmp/delete/$now/"
+    mkdir -p $delete_folder
+
+    rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && rm -rf $1
+    echo ""
+    echo "ls -la $delete_folder"
+    echo "----"
+}
 
 
 
