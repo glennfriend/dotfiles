@@ -157,6 +157,7 @@ jrm() {
 
     rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && rm -rf $1
     echo ""
+    echo "rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && rm -rf $1"
     echo "ls -la $delete_folder"
     echo "----"
 }
