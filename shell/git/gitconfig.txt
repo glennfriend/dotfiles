@@ -8,6 +8,9 @@
     lg  = log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
     lg2 = log --pretty=format:'%Cred%h%Creset %Cgreen(%cr)%Creset %an%C(yellow)%d%Creset%n%B' --abbrev-commit --date=relative --graph --name-only # 只顯示有修改的檔名
 
+    ## branch
+    allbr = for-each-ref --sort=committerdate --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+
     ## commit
     ci  = commit
 
