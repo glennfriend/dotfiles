@@ -33,3 +33,7 @@
     ## 參考自
     ## kos -> https://gist.github.com/koshuang/87b18953766da787f2ffce1387d82565
 
+[core]
+	autocrlf = true
+[credential]
+	helper = cache --timeout=14400
