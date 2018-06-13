@@ -197,9 +197,19 @@ function git_since_last_commit {
 
 
 # --------------------------------------------------------------------------------
-#   Laravel
+#   PHP, Laravel
 # --------------------------------------------------------------------------------
+alias cu="composer update"
+
+alias testdox="php vendor/bin/phpunit --testdox"
+
 alias art="php artisan"
+alias migrate="php artisan migrate"
+alias serve="artisan serve"
+alias tinker="artisan tinker"
+alias route-list="php artisan route:list"
+
+
 
 # --------------------------------------------------------------------------------
 #
