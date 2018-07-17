@@ -19,4 +19,9 @@ return [
         'origin'    => 'shell/tmuxinator',
         'to'        => '.tmuxinator',
     ],
+    [
+        'desc'      => 'vim config',
+        'origin'    => 'shell/vim/vimrc.txt',
+        'to'        => '.vimrc',
+    ],
 ];
