@@ -171,7 +171,7 @@ jrm() {
 #   desktop editor
 # --------------------------------------------------------------------------------
 
-xx() {
+ed() {
     # EXEC="vi"
     # EXEC="gedit"
     EXEC="/opt/sublime_text/sublime_text"
