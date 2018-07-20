@@ -168,10 +168,23 @@ jrm() {
 }
 
 # --------------------------------------------------------------------------------
-#   desktop
+#   desktop editor
 # --------------------------------------------------------------------------------
-# alias ed='gedit'
-alias   ed='/opt/sublime_text/sublime_text'
+
+xx() {
+    # EXEC="vi"
+    # EXEC="gedit"
+    EXEC="/opt/sublime_text/sublime_text"
+
+    if [ -z "$1" ] ; then
+        $EXEC "/fs/000/Dropbox/tmp.txt"
+    elif [ $1 == ",shell" ] || [ $1 == "sh" ] ; then
+        $EXEC "/fs/var/www/tool/dotfiles/shell/ubuntu-shell/bash.sh"
+    else
+        $EXEC $1
+    fi
+}
+
 
 # --------------------------------------------------------------------------------
 #   git
