@@ -174,7 +174,8 @@ jrm() {
 ed() {
     # EXEC="vi"
     # EXEC="gedit"
-    EXEC="/opt/sublime_text/sublime_text"
+    # EXEC="/opt/sublime_text/sublime_text"
+    EXEC="subl"
 
     if [ -z "$1" ] ; then
         $EXEC "/fs/000/Dropbox/tmp.txt"
