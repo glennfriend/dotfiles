@@ -198,12 +198,12 @@ alias       g2='clear; echo "---------- branch -av"; git branch -v; echo "------
 alias        g='clear; echo "---------- branch -av"; git branch -v; echo "---------- status"; git status -sb'
 alias  gitdiff='git diff --color | diff-so-fancy'
 
-function git_branch {
+git_branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
     echo "("${ref#refs/heads/}") ";
 }
 
-function git_since_last_commit {
+git_since_last_commit() {
     now=`date +%s`;
     last_commit=$(git log --pretty=format:%at -1 2> /dev/null) || return;
     seconds_since_last_commit=$((now-last_commit));
