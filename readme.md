@@ -12,3 +12,4 @@ php install.php
 - [x] git config
 - [x] tmux config
 - [x] tmuxinator yml configs
+- [x] vim config

@@ -237,3 +237,4 @@ alias route-list="php artisan route:list"
 echo
 echo "Completely"
 echo
+
