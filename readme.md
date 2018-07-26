@@ -5,6 +5,7 @@
 #### Install
 ```sh
 php install.php
+php custom-install.php
 ```
 
 #### shell
