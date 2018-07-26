@@ -178,7 +178,7 @@ ed() {
     EXEC="subl"
 
     if [ -z "$1" ] ; then
-        $EXEC "/fs/000/Dropbox/tmp.txt"
+        $EXEC "/fs/data/desktop/tmp.txt"
     elif [ $1 == "..shell" ] || [ $1 == "..sh" ] ; then
         $EXEC "/fs/var/www/tool/dotfiles/shell/ubuntu-shell/bash.sh"
     else
