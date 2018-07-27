@@ -181,6 +181,8 @@ ed() {
         $EXEC "/fs/data/desktop/tmp.txt"
     elif [ $1 == "..shell" ] || [ $1 == "..sh" ] ; then
         $EXEC "/fs/var/www/tool/dotfiles/shell/ubuntu-shell/bash.sh"
+    elif [ $1 == "..bookmark" ] ; then
+        $EXEC "/fs/000/Dropbox/work/common_text/page/bookmark.htm"
     else
         $EXEC $1
     fi
