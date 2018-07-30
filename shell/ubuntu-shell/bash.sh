@@ -196,8 +196,8 @@ ed() {
 alias   gitlog='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit -10 '
 alias  gitlog2='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --graph -10 '
 alias  gitlog3='git log --abbrev-commit --abbrev=4 --pretty=format:"%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s" -10 '
-alias       g2='clear; echo "---------- branch -av"; git branch -v; echo "---------- log"; gitlog -n 12; echo "---------- status"; git status -sb'
-alias        g='clear; echo "---------- branch -av"; git branch -v; echo "---------- status"; git status -sb'
+alias       g2='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog -n 12; echo "---------- status"; git status -sb'
+alias        g='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 alias  gitdiff='git diff --color | diff-so-fancy'
 
 git_branch() {
