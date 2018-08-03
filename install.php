@@ -16,7 +16,7 @@ if (!$input) {
     exit;
 }
 
-if ('/'===mb_substr($input, 0, 1)) {
+if ('/'===substr($input, 0, 1)) {
     $installFolder = $input;
 }
 else {

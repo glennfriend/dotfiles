@@ -118,13 +118,13 @@ jread() {
     #echo $filename
     #echo $ext
 
-    if [ $ext == "md" ] ; then
+    if [ $ext = "md" ] ; then
         pandoc $1 | lynx -stdin
-    elif [ $ext == "jpg" ] || [ $ext == "jpeg" ] || [ $ext == "gif" ] || [ $ext == "png" ] ; then
+    elif [ $ext = "jpg" ] || [ $ext = "jpeg" ] || [ $ext = "gif" ] || [ $ext = "png" ] ; then
         file $1
-    elif [ $ext == "php" ] || [ $ext == "js" ] || [ $ext == "css" ] ; then
+    elif [ $ext = "php" ] || [ $ext = "js" ] || [ $ext = "css" ] ; then
         less -mN $1
-    elif [ $ext == "conf" ] ; then
+    elif [ $ext = "conf" ] ; then
         less -mN $1
     else
         less -m $1
@@ -148,10 +148,10 @@ jrm() {
     if [ -z "$1" ] ; then
         echo "Input delete folder or files"
         return
-    elif [ $1 == "." ] ; then
+    elif [ $1 = "." ] ; then
         echo "You must describe a directory"
         return
-    elif [ $1 == ".." ] || [ $1 == "../" ]; then
+    elif [ $1 = ".." ] || [ $1 = "../" ]; then
         echo "You can not delete up floor directory"
         return
     fi
@@ -179,9 +179,9 @@ ed() {
 
     if [ -z "$1" ] ; then
         $EXEC "/fs/data/desktop/tmp.txt"
-    elif [ $1 == "..shell" ] || [ $1 == "..sh" ] ; then
+    elif [ "$1" = "..shell" ] || [ "$1" = "..sh" ] ; then
         $EXEC "/fs/var/www/tool/dotfiles/shell/ubuntu-shell/bash.sh"
-    elif [ $1 == "..bookmark" ] ; then
+    elif [ "$1" = "..bookmark" ] ; then
         $EXEC "/fs/000/Dropbox/work/common_text/page/bookmark.htm"
     else
         $EXEC $1
