@@ -48,8 +48,9 @@ alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
 
-# cover
+# command line helper
 alias tail='tail -f '
+alias copy='xclip -selection clipboard'
 
 # get ip
 alias getip="curl icanhazip.com"
