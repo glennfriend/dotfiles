@@ -200,6 +200,7 @@ alias  gitlog3='git log --abbrev-commit --abbrev=4 --pretty=format:"%C(yellow)%h
 alias       g2='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog -n 12; echo "---------- status"; git status -sb'
 alias        g='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 alias  gitdiff='git diff --color | diff-so-fancy'
+alias       gp='git pull --rebase'
 
 git_branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
