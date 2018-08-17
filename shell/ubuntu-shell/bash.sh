@@ -64,9 +64,25 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 #
 alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
 
+
+# --------------------------------------------------------------------------------
+#   取代原有的功能
+# --------------------------------------------------------------------------------
+
+# https://github.com/kaelzhang/shell-safe-rm
+alias rm='safe-rm'
+
+
 # --------------------------------------------------------------------------------
 #   Custom Functions
 # --------------------------------------------------------------------------------
+
+# 文字翻譯
+# google translate
+#   - https://www.npmjs.com/package/google-translate-cli
+jtr() {
+    translate -s en -t zh-TW \"$@\"
+}
 
 # load my bash shell
 jbash() {
