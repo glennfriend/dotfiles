@@ -184,6 +184,26 @@ jrm() {
     echo "----"
 }
 
+#
+# fzf cat
+#
+jcat() {
+    fzf --preview '[[ $(file --mime {}) =~ binary ]] && echo {} is a binary file || (rougify {}  || highlight -O ansi -l {} || coderay {} || cat {}) 2> /dev/null | head -500'
+}
+
+#
+# fzf cd
+#
+jcd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+
+
+
+
 # --------------------------------------------------------------------------------
 #   desktop editor
 # --------------------------------------------------------------------------------
