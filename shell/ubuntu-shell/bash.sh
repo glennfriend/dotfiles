@@ -27,7 +27,7 @@ export EDITOR=vim
 # --------------------------------------------------------------------------------
 #
 alias     ll='echo; last -n20; date "+%Y-%m-%d %H:%M:%S"; pwd; echo "----------"; l | grep "^l"; ls -d */; l | grep "^-";'
-alias      l='ls -lhA --color'
+alias      l='ls -lhA --color --time-style=long-iso'
 alias     ld='ls */ -d'
 alias     df='df -h'
 alias        ..='cd ..'
@@ -62,7 +62,7 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 #   st        檔案大小 & 時間 不同, 表示檔案內容有異動
 #   +++++++++ 新增檔案
 #
-alias jcp="rsync -avv --stats --human-readable --itemize-changes --partial"
+alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 
 
 # --------------------------------------------------------------------------------
@@ -99,8 +99,15 @@ jmkdir() {
 # now time
 jdate() {
     # watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
+
+    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`" - LA     " &&
+    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`" - UTC    " &&
+    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`" - Taipei "
+    echo
+
     while [ 1 ] ; do echo -en "  $(date +%Z\ [%z]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
 }
+
 
 # 到數計時器
 jsleep() {
@@ -201,7 +208,12 @@ jcd() {
   cd "$dir"
 }
 
-
+#
+#
+#
+jlast() {
+    last -i | awk '{print $3}' | sort | uniq -c
+}
 
 
 # --------------------------------------------------------------------------------
