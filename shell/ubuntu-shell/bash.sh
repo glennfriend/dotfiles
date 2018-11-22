@@ -28,7 +28,9 @@ export EDITOR=vim
 #
 alias     ll='echo; last -n20; date "+%Y-%m-%d %H:%M:%S"; pwd; echo "----------"; l | grep "^l"; ls -d */; l | grep "^-";'
 alias      l='ls -lhA --color --time-style=long-iso'
+alias     lt='l --sort=time'
 alias     ld='ls */ -d'
+alias     l.='ls -dlhA .??* --time-style=long-iso'
 alias     df='df -h'
 alias        ..='cd ..'
 alias       ...='cd ../..'
@@ -40,13 +42,15 @@ alias    ..3='cd ../../..'
 alias    ..4='cd ../../../..'
 alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
-alias gow='cd /var/www      && ls -lah';
-alias fs=' cd /fs           && ls -lah';
-alias fsw='cd /fs/var/www   && ls -lah';
+alias gow='cd /var/www      && l';
+alias fs=' cd /fs           && l';
+alias fsw='cd /fs/var/www   && l';
 alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
+alias ackphp='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage '
+alias diff='diff --color -ruB'
 
 # command line helper
 alias tail='tail -f '
@@ -100,9 +104,9 @@ jmkdir() {
 jdate() {
     # watch -t -n 1 date "+%Z\ [%z]\ %Y-%m-%d\ %T"
 
-    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`" - LA     " &&
-    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`" - UTC    " &&
-    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`" - Taipei "
+    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
+    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
+    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
     echo
 
     while [ 1 ] ; do echo -en "  $(date +%Z\ [%z]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
@@ -223,9 +227,12 @@ jlast() {
 ed() {
     # EXEC="vi"
     # EXEC="gedit"
+    # EXEC="subl"
     # EXEC="/opt/sublime_text/sublime_text"
-    EXEC="subl"
+    # EXEC="code"
+    EXEC="code"
 
+    $EXEC   # vscode 需要先開啟一次, 才不會讓之前開始的檔案列表都消失
     if [ -z "$1" ] ; then
         $EXEC "/fs/data/desktop/tmp.txt"
     elif [ "$1" = "..shell" ] || [ "$1" = "..sh" ] ; then
