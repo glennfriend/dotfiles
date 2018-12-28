@@ -21,6 +21,7 @@ export HISTTIMEFORMAT="%F %T: "
 
 # crontab
 export EDITOR=vim
+export VISUAL=vim
 
 # --------------------------------------------------------------------------------
 #   custom
@@ -248,14 +249,9 @@ ed() {
 # --------------------------------------------------------------------------------
 #   git
 # --------------------------------------------------------------------------------
-
-alias   gitlog='git log --oneline --decorate --all --graph --stat '
-alias  gitlog2='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --graph -30 '
-alias  gitlog9='git log --abbrev-commit --abbrev=4 --pretty=format:"%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s" -12 '
-alias       g2='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog9 -n 12; echo "---------- status"; git status -sb'
-alias        g='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
-alias  gitdiff='git diff --color | diff-so-fancy'
-alias       gp='git pull --rebase'
+alias       gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+alias      gll='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog9 -n 12; echo "---------- status"; git status -sb'
+alias    gdiff='git diff --color | diff-so-fancy'
 
 git_branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
@@ -278,15 +274,13 @@ git_since_last_commit() {
 # --------------------------------------------------------------------------------
 #   PHP, Laravel
 # --------------------------------------------------------------------------------
-alias cu="composer update"
-
 alias testdox="php vendor/bin/phpunit --testdox"
 
 alias art="php artisan"
 alias migrate="php artisan migrate"
 alias serve="artisan serve"
 alias tinker="artisan tinker"
-alias route-list="php artisan route:list"
+alias routelist="php artisan route:list"
 
 
 
