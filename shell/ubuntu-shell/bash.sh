@@ -245,13 +245,42 @@ ed() {
     fi
 }
 
+# --------------------------------------------------------------------------------
+#   system information
+# --------------------------------------------------------------------------------
+
+jinfo() {
+    clear
+
+    echo '[$PATH]'
+    # echo $PATH
+    sed 's/:/\n/g' <<< "$PATH"
+
+    echo "\n"'[system]'
+    uname -a
+    lsb_release -a
+
+    echo "\n"'[mysql]'
+    mysql -V
+
+    echo "\n"'[Apache]'
+    apache2 -v
+
+    echo "\n"'[Nginx]'
+    nginx -v
+
+    echo "\n"'[PHP]'
+    php -v
+
+}
 
 # --------------------------------------------------------------------------------
 #   git
 # --------------------------------------------------------------------------------
 alias       gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 alias      gll='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog9 -n 12; echo "---------- status"; git status -sb'
-alias    gdiff='git diff --color | diff-so-fancy'
+alias       gd='git diff --color          | diff-so-fancy | less'
+alias      gdc='git diff --color --cached | diff-so-fancy | less'
 
 git_branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
