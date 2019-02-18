@@ -260,17 +260,33 @@ jinfo() {
     uname -a
     lsb_release -a
 
-    echo "\n"'[mysql]'
-    mysql -V
+    my_mysql="$(which mysql)"
+    if [ ! -z "$my_mysql" ]
+    then
+        echo "\n"'[mysql]'
+        mysql -V
+    fi
 
-    echo "\n"'[Apache]'
-    apache2 -v
+    my_apache2="$(which apache2)"
+    if [ ! -z "$my_apache2" ]
+    then
+        echo "\n"'[Apache]'
+        apache2 -v
+    fi
 
-    echo "\n"'[Nginx]'
-    nginx -v
+    my_nginx="$(which nginx)"
+    if [ ! -z "$my_nginx" ]
+    then
+        echo "\n"'[Nginx]'
+        nginx -v
+    fi
 
-    echo "\n"'[PHP]'
-    php -v
+    my_php="$(which php)"
+    if [ ! -z "$my_php" ]
+    then
+        echo "\n"'[PHP]'
+        php -v
+    fi
 
 }
 
