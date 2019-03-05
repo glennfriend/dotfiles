@@ -85,9 +85,13 @@ alias rm='safe-rm'
 # 文字翻譯
 # google translate
 #   - https://www.npmjs.com/package/google-translate-cli
-jtr() {
-    translate -s en -t zh-TW \"$@\"
-}
+#
+# example
+#   translate -h | jtr
+#   jtr "today is good day"
+#
+alias jtr='translate -s en -t zh-TW'
+
 
 # load my bash shell
 jbash() {
@@ -267,6 +271,13 @@ jinfo() {
         mysql -V
     fi
 
+    my_openssl="$(which openssl)"
+    if [ ! -z "$my_openssl" ]
+    then
+        echo "\n"'[openssl]'
+        openssl version
+    fi
+
     my_apache2="$(which apache2)"
     if [ ! -z "$my_apache2" ]
     then
@@ -327,6 +338,33 @@ alias serve="artisan serve"
 alias tinker="artisan tinker"
 alias routelist="php artisan route:list"
 
+
+# --------------------------------------------------------------------------------
+#   phpbrew execute all fpm restart
+# --------------------------------------------------------------------------------
+jphpbrew_todo() {
+    #
+    tmp_content="/tmp/execute_phpbrew_fpm_restart.sh"
+
+    #
+    phpbrew list | grep php | cut -c 3- | awk -F' ' '{print("phpbrew use "$1" && phpbrew fpm restart")}' > $tmp_content
+    echo '--------------------'
+    cat $tmp_content
+
+    #
+    echo '--------------------'
+    chmod +x $tmp_content
+    source $tmp_content && rm $tmp_content
+
+    #
+    phpbrew list | head -n1 | awk -F' ' '{print("phpbrew use "$1)}' > $tmp_content
+    chmod +x $tmp_content
+    source $tmp_content && rm $tmp_content
+
+    #
+    echo '--------------------'
+    phpbrew list
+}
 
 
 # --------------------------------------------------------------------------------
