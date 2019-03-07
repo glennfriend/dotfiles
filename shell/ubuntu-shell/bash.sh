@@ -27,7 +27,7 @@ export VISUAL=vim
 #   custom
 # --------------------------------------------------------------------------------
 #
-alias     ll='echo; last -n20; date "+%Y-%m-%d %H:%M:%S"; pwd; echo "----------"; l | grep "^l"; ls -d */; l | grep "^-";'
+alias     ll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------"; echo "> "`pwd`; l | grep "^l"; ls -d */; l | grep "^-";'
 alias      l='ls -lhA --color --time-style=long-iso'
 alias     lt='l --sort=time'
 alias     ld='ls */ -d'
@@ -303,6 +303,9 @@ jinfo() {
 
 # --------------------------------------------------------------------------------
 #   git
+#
+#       npm install -g diff-so-fancy
+#
 # --------------------------------------------------------------------------------
 alias       gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 alias      gll='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog9 -n 12; echo "---------- status"; git status -sb'
