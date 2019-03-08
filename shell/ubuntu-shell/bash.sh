@@ -260,42 +260,48 @@ jinfo() {
     # echo $PATH
     sed 's/:/\n/g' <<< "$PATH"
 
-    echo "\n"'[system]'
+    echo 
+    echo '[system]'
     uname -a
     lsb_release -a
 
     my_mysql="$(which mysql)"
     if [ ! -z "$my_mysql" ]
     then
-        echo "\n"'[mysql]'
+        echo 
+        echo '[mysql]'
         mysql -V
     fi
 
     my_openssl="$(which openssl)"
     if [ ! -z "$my_openssl" ]
     then
-        echo "\n"'[openssl]'
+        echo 
+        echo '[openssl]'
         openssl version
     fi
 
     my_apache2="$(which apache2)"
     if [ ! -z "$my_apache2" ]
     then
-        echo "\n"'[Apache]'
+        echo 
+        echo '[Apache]'
         apache2 -v
     fi
 
     my_nginx="$(which nginx)"
     if [ ! -z "$my_nginx" ]
     then
-        echo "\n"'[Nginx]'
+        echo 
+        echo '[Nginx]'
         nginx -v
     fi
 
     my_php="$(which php)"
     if [ ! -z "$my_php" ]
     then
-        echo "\n"'[PHP]'
+        echo 
+        echo '[PHP]'
         php -v
     fi
 
