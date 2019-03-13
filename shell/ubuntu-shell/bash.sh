@@ -114,7 +114,11 @@ jdate() {
     echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
     echo
 
-    while [ 1 ] ; do echo -en "  $(date +%Z\ [%z]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
+    #
+    # while [ 1 ] ; do echo -en "  $(date +%Z\ [%z]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
+    #
+    # 本來是使用上面的指令, 但不確定是不是 zsh 版本的關系, 現在 "[]" 這兩個符號前方要加上 backslash "\"
+    while [ 1 ] ; do echo -en "  $(date +%Z\ \[%z\]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
 }
 
 
