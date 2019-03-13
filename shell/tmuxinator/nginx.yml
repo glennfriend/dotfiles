@@ -1,0 +1,10 @@
+# ~/.tmuxinator/nginx.yml
+name: nginx
+root: /var/www
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - ls -lhA --color --time-style=long-iso
+        - tail -F /var/log/nginx/access.log
+        - watch -d -n 1 "ls -ltAG --time-style=long-iso /var/log/nginx/*.log | cut -d ' ' -f 1,2,3 --complement"

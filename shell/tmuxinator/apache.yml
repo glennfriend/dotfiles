@@ -1,4 +1,4 @@
-# ~/.tmuxinator/wms.yml
+# ~/.tmuxinator/apache.yml
 
 name: apache
 root: /var/www
