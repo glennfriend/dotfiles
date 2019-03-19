@@ -353,6 +353,72 @@ alias routelist="php artisan route:list"
 
 
 # --------------------------------------------------------------------------------
+#   log rewrite
+#
+#   tail laravel log
+#   tail wordpress log
+#
+# --------------------------------------------------------------------------------
+log() {
+    FILES=(`ls | sed 's/ /\n/g'`);
+
+    # -eq   =
+    # -ne   !=
+    # -gt   >
+    # -lt   <
+    # -ge   >=
+    # -le   <=
+
+    #
+    # wordpress
+    #
+    let TOTAL_COUNT=0
+    for FILE in "${FILES[@]}"; do
+        if [[ "$FILE" = "wp-includes" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+        if [[ "$FILE" = "wp-settings.php" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+        if [[ "$FILE" = "wp-cron.php" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+    done
+
+    LOG_FILE="wp-content/debug.log";
+    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
+        echo -e tail -f $LOG_FILE
+        echo
+        tail -f $LOG_FILE
+    fi
+
+    #
+    # laravel
+    #
+    let TOTAL_COUNT=0
+    for FILE in "${FILES[@]}"; do
+        if [[ "$FILE" = "artisan" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+        if [[ "$FILE" = "bootstrap" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+        if [[ "$FILE" = "routes" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+    done
+
+    LOG_FILE="storage/logs/laravel.log";
+    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
+        echo -e tail -f $LOG_FILE
+        echo
+        tail -f $LOG_FILE
+    fi
+
+}
+
+
+# --------------------------------------------------------------------------------
 #   phpbrew execute all fpm restart
 # --------------------------------------------------------------------------------
 jphpbrew_todo() {
