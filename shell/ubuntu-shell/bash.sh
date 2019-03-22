@@ -75,7 +75,12 @@ alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 # --------------------------------------------------------------------------------
 
 # https://github.com/kaelzhang/shell-safe-rm
-alias rm='safe-rm'
+# alias rm='safe-rm'
+
+# rm to trash for ubuntu
+# 請注意: rm 本身就是 rm -rf 的功能 !
+alias rm='gio trash'
+
 
 
 # --------------------------------------------------------------------------------
@@ -257,7 +262,7 @@ ed() {
 #   system information
 # --------------------------------------------------------------------------------
 
-jinfo() {
+jsystem() {
     clear
 
     echo '[$PATH]'
@@ -268,6 +273,11 @@ jinfo() {
     echo '[system]'
     uname -a
     lsb_release -a
+}
+
+
+jinfo() {
+    clear
 
     my_mysql="$(which mysql)"
     if [ ! -z "$my_mysql" ]
@@ -286,7 +296,7 @@ jinfo() {
     fi
 
     my_apache2="$(which apache2)"
-    if [ ! -z "$my_apache2" ]
+    if [ ! -z "$my_apache2" ] && [ "apache2 not found" != "$my_apache2" ]
     then
         echo 
         echo '[Apache]'
