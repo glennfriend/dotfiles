@@ -137,7 +137,7 @@ jsleep() {
 
     for ((i = $1; i >= 1; i--)); do
         timeFormat=$(date -u -d@$(($i)) +"%H:%M:%S")
-        printf "\r%d <= %s " $i $timeFormat
+        printf "\r%d <= %s " $i "$timeFormat"
         sleep 1
     done
     printf "\r"
@@ -160,16 +160,16 @@ jread() {
     #echo $filename
     #echo $ext
 
-    if [ $ext = "md" ] ; then
-        pandoc $1 | lynx -stdin
-    elif [ $ext = "jpg" ] || [ $ext = "jpeg" ] || [ $ext = "gif" ] || [ $ext = "png" ] ; then
-        file $1
-    elif [ $ext = "php" ] || [ $ext = "js" ] || [ $ext = "css" ] ; then
-        less -mN $1
-    elif [ $ext = "conf" ] ; then
-        less -mN $1
+    if [ "$ext" = "md" ] ; then
+        pandoc "$1" | lynx -stdin
+    elif [ "$ext" = "jpg" ] || [ "$ext" = "jpeg" ] || [ "$ext" = "gif" ] || [ "$ext" = "png" ] ; then
+        file "$1"
+    elif [ "$ext" = "php" ] || [ "$ext" = "js" ] || [ "$ext" = "css" ] ; then
+        less -mN "$1"
+    elif [ "$ext" = "conf" ] ; then
+        less -mN "$1"
     else
-        less -m $1
+        less -m "$1"
     fi
 }
 
@@ -181,7 +181,7 @@ jrm() {
     left="\033[1;33m"
     right="\033[0m"
 
-    absolute_path=$(readlink -m $1)
+    absolute_path=$(readlink -m "$1")
     echo ">"
     echo "> rm -rf $left$absolute_path$right"
     echo ">"
@@ -190,19 +190,19 @@ jrm() {
     if [ -z "$1" ] ; then
         echo "Input delete folder or files"
         return
-    elif [ $1 = "." ] ; then
+    elif [ "$1" = "." ] ; then
         echo "You must describe a directory"
         return
-    elif [ $1 = ".." ] || [ $1 = "../" ]; then
+    elif [ "$1" = ".." ] || [ "$1" = "../" ]; then
         echo "You can not delete up floor directory"
         return
     fi
 
     now=$(date "+%m%d-%H%M%S")
     delete_folder="/tmp/delete/$now/"
-    mkdir -p $delete_folder
+    mkdir -p "$delete_folder"
 
-    rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && rm -rf $1
+    rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && rm -rf "$1"
     echo ""
     echo "rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && rm -rf $1"
     echo "ls -la $delete_folder"
@@ -246,15 +246,18 @@ ed() {
     # EXEC="code"
     EXEC="code"
 
-    $EXEC   # vscode 需要先開啟一次, 才不會讓之前開始的檔案列表都消失
+    # vscode 需要先開啟一次, 才不會讓之前開始的檔案列表都消失
+    $EXEC
+
+    #
     if [ -z "$1" ] ; then
         $EXEC "/fs/data/desktop/tmp.txt"
     elif [ "$1" = "..shell" ] || [ "$1" = "..sh" ] ; then
         $EXEC "/fs/var/www/tool/dotfiles/shell/ubuntu-shell/bash.sh"
     elif [ "$1" = "..bookmark" ] ; then
-        $EXEC "/fs/000/Dropbox/work/common_text/page/bookmark.htm"
+        $EXEC "/fs/000/Dropbox/work/bookmark/page/bookmark.htm"
     else
-        $EXEC $1
+        $EXEC "$1"
     fi
 }
 
@@ -265,7 +268,7 @@ ed() {
 jsystem() {
     clear
 
-    echo '[$PATH]'
+    echo '[PATH]'
     # echo $PATH
     sed 's/:/\n/g' <<< "$PATH"
 
@@ -279,44 +282,43 @@ jsystem() {
 jinfo() {
     clear
 
-    my_mysql="$(which mysql)"
-    if [ ! -z "$my_mysql" ]
+    my_php="$(command -v php)"
+    if [ -n "$my_php" ]
+    then
+        echo '[PHP]'
+        php -v
+    fi
+
+    my_mysql="$(command -v mysql)"
+    if [ -n "$my_mysql" ]
     then
         echo 
         echo '[mysql]'
         mysql -V
     fi
 
-    my_openssl="$(which openssl)"
-    if [ ! -z "$my_openssl" ]
+    my_openssl="$(command -v openssl)"
+    if [ -n "$my_openssl" ]
     then
         echo 
         echo '[openssl]'
         openssl version
     fi
 
-    my_apache2="$(which apache2)"
-    if [ ! -z "$my_apache2" ] && [ "apache2 not found" != "$my_apache2" ]
+    my_apache2="$(command -v apache2)"
+    if [ -n "$my_apache2" ] && [ "apache2 not found" != "$my_apache2" ]
     then
         echo 
         echo '[Apache]'
         apache2 -v
     fi
 
-    my_nginx="$(which nginx)"
-    if [ ! -z "$my_nginx" ]
+    my_nginx="$(command -v nginx)"
+    if [ -n "$my_nginx" ]
     then
         echo 
         echo '[Nginx]'
         nginx -v
-    fi
-
-    my_php="$(which php)"
-    if [ ! -z "$my_php" ]
-    then
-        echo 
-        echo '[PHP]'
-        php -v
     fi
 
 }
