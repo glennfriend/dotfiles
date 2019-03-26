@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#
+# --------------------------------------------------------------------------------
 # Using wget or curl command
+# --------------------------------------------------------------------------------
 #
 # source <( curl --insecure         https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 # sh <(curl -L                      https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
@@ -10,7 +11,26 @@
 # bash < <(wget -O -                https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 # bash < <(curl -s                  https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
-#
+
+# --------------------------------------------------------------------------------
+#   前導函式
+# --------------------------------------------------------------------------------
+_strict_mode_start() {
+    set -uo pipefail
+    BACKUP_IFS="$IFS"
+    IFS=$'\n\t'
+}
+
+_strict_mode_end() {
+    set +u
+    IFS="$BACKUP_IFS"
+}
+
+# --------------------------------------------------------------------------------
+#   start
+# --------------------------------------------------------------------------------
+_strict_mode_start
+
 
 # --------------------------------------------------------------------------------
 #   env
@@ -459,8 +479,7 @@ jphpbrew_todo() {
 
 
 # --------------------------------------------------------------------------------
-#
+#   end
 # --------------------------------------------------------------------------------
 echo `TZ=Asia/Taipei        date "+%Z [%z] %Y-%m-%d %T"`" - Asia/Taipei"
-
-
+_strict_mode_end
