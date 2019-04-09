@@ -45,8 +45,8 @@
 
 
 
-
-
+[branch]
+    autosetuprebase = always
 [core]
 	autocrlf = false
     pager = less -FXRS -x2

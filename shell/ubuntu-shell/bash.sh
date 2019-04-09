@@ -253,6 +253,43 @@ jlast() {
     last -i | awk '{print $3}' | sort | uniq -c
 }
 
+# --------------------------------------------------------------------------------
+#   解壓縮
+# --------------------------------------------------------------------------------
+unfile() {
+    unset unfile_command
+    if [[ -f $1 ]] ; then
+        case $1 in
+            *.tar.bz2)  unfile_command="tar xvjf $1"        ;;
+            *.tar.gz)   unfile_command="tar xvzf $1"        ;;
+            *.bz2)      unfile_command="bunzip2 $1"         ;;
+            *.rar)      unfile_command="unrar x $1"         ;;
+            *.gz)       unfile_command="gunzip $1"          ;;
+            *.tar)      unfile_command="tar xvf $1"         ;;
+            *.tbz2)     unfile_command="tar xvjf $1"        ;;
+            *.tgz)      unfile_command="tar xvzf $1"        ;;
+            *.zip)      unfile_command="unzip $1"           ;;
+            *.Z)        unfile_command="uncompress $1"      ;;
+            *.7z)       unfile_command="7z x $1"            ;;
+            *.lzma)     unfile_command="tar -Jxf $1"        ;;  # sudo apt-get install xz-utils
+            *)          echo "'$1' cannot be extracted via >unfile<" ;;
+        esac
+
+        if [[ -n $unfile_command ]] ; then
+            echo "> ""$unfile_command"
+            echo 'Yes/No: '
+            read yes_or_no
+            echo ""
+
+            if [[ $yes_or_no == "y" ]] || [[ $yes_or_no == "Y" ]] ; then
+                bash -c "$unfile_command"
+            fi
+        fi
+
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
 
 # --------------------------------------------------------------------------------
 #   desktop editor
