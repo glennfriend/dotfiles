@@ -64,6 +64,7 @@ alias    ..4='cd ../../../..'
 alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
 alias gow='cd /var/www      && l';
+alias goow='cd /opt/www     && l';
 alias fs=' cd /fs           && l';
 alias fsw='cd /fs/var/www   && l';
 alias ch755='chmod -R 755 '
@@ -74,7 +75,8 @@ alias ackphp='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=sto
 alias diff='diff --color -ruB'
 
 # command line helper
-alias tail='tail -f '
+alias head='head -n 40'
+alias tail='tail -n 40 -f'
 alias copy='xclip -selection clipboard'
 
 # get ip
@@ -333,6 +335,10 @@ jsystem() {
     echo '[system]'
     uname -a
     lsb_release -a
+
+    echo 
+    echo '[other]'
+    echo 'system is '`getconf LONG_BIT `' bits'
 }
 
 

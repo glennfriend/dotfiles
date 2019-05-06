@@ -7,17 +7,13 @@
     la = "!git config -l | grep alias | cut -c 7-"
 
     ## log
-    lg  = log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
-    lg2 = log --pretty=format:'%Cred%h%Creset %Cgreen(%cr)%Creset %an%C(yellow)%d%Creset%n%B' --abbrev-commit --date=relative --graph --stat
-    lg3 = log --abbrev-commit --pretty=format:'%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s'
+    lg  = log --pretty=format:'%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s' --abbrev-commit 
+    lg2 = log --pretty=format:'%C(yellow)%h %C(green)[%cn] %C(cyan)%ar %C(bold magenta)%d %C(reset)%s' --abbrev-commit --date=relative --graph --stat
 
     ## list all branch
     allbr = for-each-ref --sort=committerdate --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
 
-    ## commit
     ci  = commit
-
-    ## checkout
     co  = checkout
 
     ## 立刻編輯 git config
