@@ -71,7 +71,7 @@ alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
-alias ackphp='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage '
+alias ackphp='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --type-set=DUMB=.log --noDUMB'
 alias diff='diff --color -ruB'
 
 # command line helper
@@ -338,7 +338,15 @@ jsystem() {
 
     echo 
     echo '[other]'
-    echo 'system is '`getconf LONG_BIT `' bits'
+    echo 'System is '`getconf LONG_BIT `' bits'
+
+    rotational="$(cat /sys/block/sda/queue/rotational)"
+    if [[ "0" == "$rotational" ]]
+    then
+        echo 'HD is SSD';
+    else
+        echo 'HD is HDD';
+    fi
 }
 
 
@@ -392,10 +400,24 @@ jinfo() {
 #       npm install -g diff-so-fancy
 #
 # --------------------------------------------------------------------------------
-alias       gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
-alias      gll='clear; echo "---------- branch -v"; git branch -v; echo "---------- log"; gitlog9 -n 12; echo "---------- status"; git status -sb'
-alias       gd='git diff --color          | diff-so-fancy | less'
-alias      gdc='git diff --color --cached | diff-so-fancy | less'
+alias  gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+
+gdc() {
+    git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
+}
+
+unalias gd
+gd() {
+    git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
+}
+
+# 現在目錄有 git 異動的檔案, 顯示最後一次 commit 時的 message
+# list Git Last Commit message
+#      ^   ^    ^
+glc() {
+    clear
+    git status -s | cut -c 4- | awk -F: '{ system("echo " $1 " ; git log --pretty=\"  => %s\" " $1 ";" "echo") }'
+}
 
 git_branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
