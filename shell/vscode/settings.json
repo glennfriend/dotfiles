@@ -1,0 +1,26 @@
+{
+  "files.associations": {
+    "*.tpl": "php"
+  },
+  "vetur.validation.template": false,
+  "eslint.validate": [
+    {
+      "language": "vue",
+      "autoFix": true
+    },
+    {
+      "language": "html",
+      "autoFix": true
+    },
+    {
+      "language": "javascript",
+      "autoFix": true
+    }
+  ],
+  "eslint.autoFixOnSave": true,
+  "editor.formatOnSave": false,
+  "window.zoomLevel": 0,
+  "breadcrumbs.enabled": true,
+  "editor.fontFamily": "'Hack', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+  "workbench.editor.highlightModifiedTabs": true
+}

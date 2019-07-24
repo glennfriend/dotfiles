@@ -24,4 +24,9 @@ return [
         'origin'    => 'shell/vim/vimrc.txt',
         'to'        => '.vimrc',
     ],
+    [
+        'desc'      => 'vscode',
+        'origin'    => 'shell/vscode/settings.json',
+        'to'        => '.config/Code/User/settings.json',
+    ],
 ];
