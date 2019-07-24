@@ -21,6 +21,6 @@
   "editor.formatOnSave": false,
   "window.zoomLevel": 0,
   "breadcrumbs.enabled": true,
-  "editor.fontFamily": "'Hack', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+  "editor.fontFamily": "'Hack', 'monospace', monospace, 'Droid Sans Mono'",
   "workbench.editor.highlightModifiedTabs": true
 }
