@@ -416,7 +416,7 @@ gd() {
 #      ^   ^    ^
 glc() {
     clear
-    git status -s | cut -c 4- | awk -F: '{ system("echo " $1 " ; git log --pretty=\"  => %s\" " $1 ";" "echo") }'
+    git status -s | cut -c 4- | awk -F: '{ system("echo " $1 " ; git log -n1 --pretty=\"  => %s\" " $1 ";" "echo") }'
 }
 
 git_branch() {
