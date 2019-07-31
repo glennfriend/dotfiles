@@ -71,7 +71,7 @@ alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
-alias ackphp='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --type-set=DUMB=.log --noDUMB'
+alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --type-set=DUMB=.log,.xml --noDUMB'
 alias diff='diff --color -ruB'
 
 # command line helper
