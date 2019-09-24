@@ -71,12 +71,13 @@ alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
-alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --type-set=DUMB=.log,.xml --noDUMB'
+alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next --type-set=DUMB=.log,.xml --noDUMB'
 alias diff='diff --color -ruB'
 
 # command line helper
 alias head='head -n 40'
 alias tail='tail -n 40 -f'
+# date | copy
 alias copy='xclip -selection clipboard'
 
 # get ip
@@ -91,6 +92,8 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 #
 alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 
+# other
+alias mux="tmuxinator"
 
 # --------------------------------------------------------------------------------
 #   取代原有的功能
@@ -443,10 +446,10 @@ git_since_last_commit() {
 alias testdox="php vendor/bin/phpunit --testdox"
 
 alias art="php artisan"
-alias migrate="php artisan migrate"
-alias serve="artisan serve"
-alias tinker="artisan tinker"
-alias routelist="php artisan route:list"
+#alias migrate="php artisan migrate"
+#alias serve="artisan serve"
+#alias tinker="artisan tinker"
+#alias routelist="php artisan route:list"
 
 
 # --------------------------------------------------------------------------------
@@ -457,6 +460,8 @@ alias routelist="php artisan route:list"
 #
 # --------------------------------------------------------------------------------
 log() {
+    
+
     FILES=(`ls | sed 's/ /\n/g'`);
 
     # -eq   =
@@ -504,6 +509,15 @@ log() {
             TOTAL_COUNT=$TOTAL_COUNT+1;
         fi
     done
+
+
+    TODAY=`date +"%Y-%m-%d"`;
+    LOG_FILE="storage/logs/laravel-${TODAY}.log";
+    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
+        echo -e tail -f $LOG_FILE
+        echo
+        tail -f $LOG_FILE
+    fi
 
     LOG_FILE="storage/logs/laravel.log";
     if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then

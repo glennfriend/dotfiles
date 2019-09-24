@@ -15,12 +15,30 @@
     {
       "language": "javascript",
       "autoFix": true
-    }
+    },
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
   ],
   "eslint.autoFixOnSave": true,
   "editor.formatOnSave": false,
   "window.zoomLevel": 0,
   "breadcrumbs.enabled": true,
   "editor.fontFamily": "'Hack', 'monospace', monospace, 'Droid Sans Mono'",
-  "workbench.editor.highlightModifiedTabs": true
+  "workbench.editor.highlightModifiedTabs": true,
+  "//": "plugin ---> esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
+
+
