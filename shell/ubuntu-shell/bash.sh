@@ -93,7 +93,7 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 
 # other
-alias mux="tmuxinator"
+# alias mux="tmuxinator"
 
 # --------------------------------------------------------------------------------
 #   取代原有的功能
@@ -121,6 +121,7 @@ alias rm='gio trash'
 #   jtr "today is good day"
 #
 alias jtr='translate -s en -t zh-TW'
+alias jtrl='translate -s en -t zh-TW | less'
 
 
 # load my bash shell
@@ -510,8 +511,10 @@ log() {
         fi
     done
 
-
-    TODAY=`date +"%Y-%m-%d"`;
+    # 正常情況, 以系統為時區, 使用以下方式
+    #   TODAY=`date +"%Y-%m-%d"`;
+    # 實務上, 是吃 laravel 裡面 timezone 的設定, 這裡為了簡化, 直接指定時區
+    TODAY=`TZ=America/Los_Angeles date +"%Y-%m-%d"`
     LOG_FILE="storage/logs/laravel-${TODAY}.log";
     if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
         echo -e tail -f $LOG_FILE

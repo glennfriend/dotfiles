@@ -7,9 +7,9 @@ windows:
       layout: main-vertical
       panes:
         - gl
-        - phpunit-watcher watch --group only
+        - clear && echo "phpunit-watcher watch --group only"
+        - cd /var/www/samurai-world-client && yarn install && yarn start:dev
         - service mysql stop ; service redis stop ; docker-compose -f docker-compose-local.yml up
-        - cd /var/www/samurai-world-client ; yarn start:dev
 
 #  - server:
 #      layout: main-vertical
