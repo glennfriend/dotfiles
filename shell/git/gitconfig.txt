@@ -1,7 +1,16 @@
 [user]
     name = glenn
     email = glenn.profile@gmail.com
-
+[branch]
+    autosetuprebase = always
+[core]
+	autocrlf = false
+    pager = less -FXRS -x2
+    editor = vim
+[credential]
+	helper = cache --timeout=14400
+[pager]
+	branch = false
 [alias]
     ## 查看你建立了那些指令
     la = "!git config -l | grep alias | cut -c 7-"
@@ -34,20 +43,3 @@
     ## kos -> https://gist.github.com/koshuang/87b18953766da787f2ffce1387d82565
 
 
-
-
-
-
-
-
-
-[branch]
-    autosetuprebase = always
-[core]
-	autocrlf = false
-    pager = less -FXRS -x2
-    editor = vim
-[credential]
-	helper = cache --timeout=14400
-[pager]
-	branch = false

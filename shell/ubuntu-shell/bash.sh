@@ -47,7 +47,7 @@ export VISUAL=vim
 #   custom
 # --------------------------------------------------------------------------------
 #
-alias     ll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------"; echo "> "`pwd`; l | grep "^l"; ls -d */; l | grep "^-";'
+alias    lll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------"; echo "> "`pwd`; l | grep "^l"; ls -d */; l | grep "^-";'
 alias      l='ls -lhA --color --time-style=long-iso'
 alias     lt='l --sort=time'
 alias     ld='ls */ -d'
@@ -73,6 +73,7 @@ alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
 alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next --type-set=DUMB=.log,.xml --noDUMB'
 alias diff='diff --color -ruB'
+alias emo='tip emoji-1'
 
 # command line helper
 alias head='head -n 40'
@@ -257,6 +258,27 @@ jcd() {
 #
 jlast() {
     last -i | awk '{print $3}' | sort | uniq -c
+}
+
+#
+# ls guess
+#
+lg() {
+    current_folder="${PWD##*/}"
+
+    if [ -d "current" ] && [ -d "releases" ] && [ -d "repo" ] ; then
+        # deploy folder
+        l && l releases/
+        return
+    elif [ "${current_folder}" = "storage" ] && [ -d "app" ] && [ -d "framework" ] && [ -d "logs" ] ; then
+        # laravel storage folder
+        ls -lhA --color --time-style=long-iso
+        ls -lhA --color --time-style=long-iso logs
+        return
+    else
+        ls -lhA --color --time-style=long-iso
+        return
+    fi
 }
 
 # --------------------------------------------------------------------------------
@@ -461,7 +483,6 @@ alias art="php artisan"
 #
 # --------------------------------------------------------------------------------
 log() {
-    
 
     FILES=(`ls | sed 's/ /\n/g'`);
 

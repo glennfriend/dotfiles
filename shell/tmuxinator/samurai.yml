@@ -6,10 +6,18 @@ windows:
   - editor:
       layout: main-vertical
       panes:
-        - gl
-        - clear && echo "phpunit-watcher watch --group only"
-        - cd /var/www/samurai-world-client && yarn install && yarn start:dev
-        - service mysql stop ; service redis stop ; docker-compose -f docker-compose-local.yml up
+        - show-log:
+          - log
+        - backend-phpunit:
+          - clear
+          - echo "phpunit-watcher watch --group only"
+        - client:
+          - cd /var/www/samurai-world-client
+          - yarn install && yarn start:dev
+        - docker:
+          - service mysql stop
+          - # service redis stop
+          - docker-compose -f docker-compose-local.yml up
 
 #  - server:
 #      layout: main-vertical
