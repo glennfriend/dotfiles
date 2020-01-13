@@ -29,4 +29,9 @@ return [
         'origin'    => 'shell/vscode/settings.json',
         'to'        => '.config/Code/User/settings.json',
     ],
+    [
+        'desc'      => 'vscode-snippets',
+        'origin'    => 'shell/vscode-snippets',
+        'to'        => '.config/Code/User/snippets',
+    ],
 ];

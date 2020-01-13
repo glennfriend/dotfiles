@@ -1,0 +1,38 @@
+// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+// Placeholders with the same ids are connected.
+//
+// 在此處放置全局代碼段。 每個代碼段均以代碼段名稱定義，並具有範圍，前綴，主體和
+// 說明。 在範圍字段中添加代碼段適用的語言的逗號分隔ID。 如果範圍
+// 保留為空或省略，該代碼段將應用於所有語言。 前綴是什麼
+// 用於觸發代碼段，然後將展開並插入正文。 可能的變量是：
+// $1, $2 (製表位), $0（最終光標位置）, ${1:label}, ${2:another} (佔位符)
+// 連接具有相同ID的佔位符。
+//
+// Example:
+// "Print to console": {
+// 	"scope": "javascript,typescript",
+// 	"prefix": "log",
+// 	"body": [
+// 		"console.log('$1');",
+// 		"$2"
+// 	],
+// 	"description": "Log output to console"
+// }
+{
+	"emoji": {
+		"prefix": [
+			"..",
+			"..e"
+		],
+		"body": [
+			"💯😘 for (const ${2:element} of ${1:array}) {",
+			"\t$0",
+			"}"
+		],
+		"description": "A emoji sample"
+	}
+}
