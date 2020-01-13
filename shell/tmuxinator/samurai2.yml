@@ -1,0 +1,17 @@
+# ~/.tmuxinator/samurai2.yml
+name: samurai2
+root: /var/www/samurai-world-backend
+
+windows:
+  - my_editor:
+      layout: main-vertical
+      panes:
+        - show-log:
+          - log
+        - backend-phpunit:
+          - clear
+          - echo "phpunit-watcher watch --group only"
+        - docker:
+          - service mysql stop
+          - service redis stop
+          - docker-compose up

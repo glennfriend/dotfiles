@@ -290,6 +290,7 @@ unfile() {
         case $1 in
             *.tar.bz2)  unfile_command="tar xvjf $1"        ;;
             *.tar.gz)   unfile_command="tar xvzf $1"        ;;
+            *.tar.xz)   unfile_command="tar Jxvf $1"        ;;
             *.bz2)      unfile_command="bunzip2 $1"         ;;
             *.rar)      unfile_command="unrar x $1"         ;;
             *.gz)       unfile_command="gunzip $1"          ;;
@@ -442,7 +443,11 @@ gd() {
 #      ^   ^    ^
 glc() {
     clear
-    git status -s | cut -c 4- | awk -F: '{ system("echo " $1 " ; git log -n1 --pretty=\"  => %s\" " $1 ";" "echo") }'
+    git status -s | cut -c 4- | awk -F: '{ system("echo " $1 " ; \
+        git log -n1 --pretty=\"  => %s\" " $1 " ; \
+        git log -n1 --pretty=\"  => %h\" " $1 " ; \
+        " "echo") }'
+
 }
 
 git_branch() {

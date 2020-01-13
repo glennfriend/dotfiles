@@ -3,14 +3,9 @@ name: samurai
 root: /var/www/samurai-world-backend
 
 windows:
-  - editor:
-      layout: main-vertical
+  - my_server:
+      layout: even-horizontal
       panes:
-        - show-log:
-          - log
-        - backend-phpunit:
-          - clear
-          - echo "phpunit-watcher watch --group only"
         - client:
           - cd /var/www/samurai-world-client
           - yarn install && yarn start:dev
@@ -19,9 +14,13 @@ windows:
           - # service redis stop
           - docker-compose -f docker-compose-local.yml up
 
-#  - server:
-#      layout: main-vertical
+#  - my_editor:
+#      layout: even-horizontal
 #      panes:
-#        - phpunit-watcher watch --group only
-#        - echo "key + number ---> change to other window"
-#
+#        - backend-phpunit:
+#          - clear
+#          - echo "phpunit-watcher watch --group only"
+#        - show-log:
+#          - log
+
+# "key + number ---> change to other window"
