@@ -430,12 +430,36 @@ jinfo() {
 alias  gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 
 gdc() {
-    git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
+    TMP_FILE="$(mktemp)"
+    git diff --color --cached > "${TMP_FILE}"
+    TMP_LINE=$(cat "${TMP_FILE}" | wc -l)
+
+    if [[ TMP_LINE -ge 30 ]] ; then
+        git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
+    elif [[ TMP_LINE -ge 1 ]] ; then
+        git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy
+    else
+        # file is empty
+    fi
+
+    rm ${TMP_FILE}
 }
 
 unalias gd
 gd() {
-    git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
+    TMP_FILE=$(mktemp)
+    git diff --color > "${TMP_FILE}"
+    TMP_LINE=$(cat "${TMP_FILE}" | wc -l)
+
+    if [[ TMP_LINE -ge 30 ]] ; then
+        git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
+    elif [[ TMP_LINE -ge 1 ]] ; then
+        git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy
+    else
+        # file is empty
+    fi
+
+    rm ${TMP_FILE}
 }
 
 # 現在目錄有 git 異動的檔案, 顯示最後一次 commit 時的 message
