@@ -431,7 +431,7 @@ alias  gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- s
 
 gdc() {
     TMP_FILE="$(mktemp)"
-    git diff --color --cached > "${TMP_FILE}"
+    git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 > "${TMP_FILE}"
     TMP_LINE=$(cat "${TMP_FILE}" | wc -l)
 
     if [[ TMP_LINE -ge 30 ]] ; then
@@ -448,7 +448,7 @@ gdc() {
 unalias gd
 gd() {
     TMP_FILE=$(mktemp)
-    git diff --color > "${TMP_FILE}"
+    git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 > "${TMP_FILE}"
     TMP_LINE=$(cat "${TMP_FILE}" | wc -l)
 
     if [[ TMP_LINE -ge 30 ]] ; then

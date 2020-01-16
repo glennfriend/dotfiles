@@ -40,7 +40,8 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "//": "是否儲存時自動 formatter",
+    "source.fixAll.eslint": false
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
