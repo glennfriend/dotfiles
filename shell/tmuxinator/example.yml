@@ -1,0 +1,14 @@
+# ~/.tmuxinator/day.yml
+name: day
+root: /var/www
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - left:
+          - clear ; echo  '
+              docker-compose exec 'php7' php artisan dump-server  \n
+              echo tail storage/logs/laravel.log  \n
+              echo tail storage/logs/sql.log  '
+        - right-top-and-down:
+          - clear && echo 'docker-compose -f docker-compose.yml up php7 db redis'

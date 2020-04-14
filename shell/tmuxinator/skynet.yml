@@ -1,0 +1,19 @@
+# ~/.tmuxinator/skynet.yml
+name: skynet
+root: /var/www/fs-marketing-tool
+
+windows:
+  - my_server:
+      layout: main-vertical
+      panes:
+        #- show-log:
+        #  - echo 'tail storage/logs/laravel.log'
+        #  - echo 'tail storage/logs/sql.log'
+        - dump-server:
+          - sleep 0.1
+          - docker-compose exec 'php7' php artisan dump-server
+        - docker:
+          # service mysql stop
+          - service redis stop
+          # docker-compose -f docker-compose.yml up php7 db redis
+          - docker-compose -f docker-compose-geo-production.yml up

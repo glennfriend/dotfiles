@@ -2,6 +2,17 @@
 " https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim
 "
 
+"
+" 自己的定義
+"
+
+" 游標可以任意移動, 書寫 table 格式的時候很方便
+set virtualedit=all
+
+
+
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Maintainer: 
 "       Amir Salihefendic — @amix3k
