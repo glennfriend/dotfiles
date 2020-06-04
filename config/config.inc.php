@@ -15,6 +15,11 @@ return [
         'to'        => '.tmux.conf',
     ],
     [
+        'desc'      => '(folder) tmux plugins',
+        'origin'    => 'shell/tmux-plugins',
+        'to'        => '.tmux/plugins',
+    ],
+    [
         'desc'      => 'tmuxinator (mux) config',
         'origin'    => 'shell/tmuxinator',
         'to'        => '.tmuxinator',
