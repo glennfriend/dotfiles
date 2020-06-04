@@ -89,6 +89,12 @@ foreach ($configs as $config) {
     if (file_exists($toFile)) {
         continue;
     }
+
+    $toFileFolder = dirname($toFile);
+    if (! file_exists($toFileFolder)) {
+        mkdir($toFileFolder, 0700);
+    }
+
     symlink($originFile, $toFile);
 }
 
