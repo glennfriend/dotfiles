@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # --------------------------------------------------------------------------------
 # Using wget or curl command
@@ -47,10 +47,10 @@ export VISUAL=vim
 #   custom
 # --------------------------------------------------------------------------------
 #
-alias    lll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------"; echo "> "`pwd`; l | grep "^l"; ls -d */; l | grep "^-";'
+alias    lll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------";'
 alias      l='ls -lhA --color --time-style=long-iso'
 alias     lt='l --sort=time'
-alias     ld='ls */ -d'
+alias     ld='echo "> "`pwd`; echo ""; l | grep "^l"; ls -d */; l | grep "^-"';
 alias     l.='ls -dlhA .??* --time-style=long-iso'
 alias     df='df -h'
 alias        ..='cd ..'
@@ -74,6 +74,9 @@ alias chnobody='chown -R nobody:nogroup '
 alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next --type-set=DUMB=.log,.xml --noDUMB'
 alias diff='diff --color -ruB'
 alias emo='tip emoji-1'
+
+# 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
+alias sudo='sudo '
 
 # command line helper
 alias head='head -n 40'
@@ -107,6 +110,20 @@ alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 # 請注意: rm 本身就是 rm -rf 的功能 !
 alias rm='gio trash'
 
+
+# https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef
+# mv 如果後面只有輸入一個參數, 可以進入交互模式
+# for zsh version
+function mv() {
+  if [ "$#" -ne 1 ] || [ ! -f "$1" ]; then
+    command mv "$@"
+    return
+  fi
+
+  newfilename="$1"
+  vared newfilename
+  command mv -v -- "$1" "$newfilename"
+}
 
 
 # --------------------------------------------------------------------------------

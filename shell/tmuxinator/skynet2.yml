@@ -1,0 +1,13 @@
+# ~/.tmuxinator/skynet.yml
+name: skynet2
+root: /var/www/fs-marketing-tool
+
+windows:
+  - my_server:
+      layout: main-vertical
+      panes:
+        - show-log:
+          - tail storage/logs/laravel.log
+        - dump-server:
+          - sleep 0.1
+          - docker-compose exec 'php7' php artisan dump-server
