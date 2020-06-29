@@ -5,7 +5,7 @@
     autosetuprebase = always
 [core]
 	autocrlf = false
-    pager = less -FXRS -x2
+	pager = less -FXRS -x2
 
     ## editor = vim
     editor = code --wait

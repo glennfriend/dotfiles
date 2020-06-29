@@ -45,7 +45,9 @@
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "// editor.wordWrap": "自動換行 on, 不要換行 off",
+  "editor.wordWrap": "off"
 }
 
 
