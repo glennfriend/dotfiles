@@ -5,6 +5,11 @@
  */
 return [
     [
+        'desc'      => '[folder] all other config',
+        'origin'    => 'shell/config',
+        'to'        => 'config',
+    ],
+    [
         'desc'      => 'gitconfig',
         'origin'    => 'shell/git/gitconfig.txt',
         'to'        => '.gitconfig',
@@ -15,7 +20,7 @@ return [
         'to'        => '.tmux.conf',
     ],
     [
-        'desc'      => '(folder) tmux plugins',
+        'desc'      => '[folder] tmux plugins',
         'origin'    => 'shell/tmux-plugins',
         'to'        => '.tmux/plugins',
     ],

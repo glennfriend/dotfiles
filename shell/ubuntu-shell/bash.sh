@@ -457,6 +457,7 @@ gdc() {
         git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy
     else
         # file is empty
+        echo
     fi
 
     rm ${TMP_FILE}
@@ -474,6 +475,7 @@ gd() {
         git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy
     else
         # file is empty
+        echo
     fi
 
     rm ${TMP_FILE}
@@ -484,7 +486,7 @@ gd() {
 #      ^   ^    ^
 glc() {
     clear
-    git status -s | cut -c 4- | awk -F: '{ system("echo " $1 " ; \
+    git status -s | cut -c 4- | cut -d ' ' -f 1 | awk -F: '{ system("echo " $1 " ; \
         git log -n1 --pretty=\"  => %s\" " $1 " ; \
         git log -n1 --pretty=\"  => %h\" " $1 " ; \
         " "echo") }'
