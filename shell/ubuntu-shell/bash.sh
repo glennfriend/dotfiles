@@ -80,7 +80,7 @@ alias sudo='sudo '
 
 # command line helper
 alias head='head -n 40'
-alias tail='tail -n 40 -f'
+# alias tail='tail -n 40 -f'
 # date | copy
 alias copy='xclip -selection clipboard'
 
@@ -107,6 +107,8 @@ alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 # alias rm='safe-rm'
 
 # rm to trash for ubuntu
+# 查看垃圾桶使用 ls -la ~/.local/share/Trash/files
+# 清空垃圾桶使用 gio trash --empty
 # 請注意: rm 本身就是 rm -rf 的功能 !
 alias rm='gio trash'
 
@@ -627,6 +629,14 @@ jphpbrew_todo() {
     echo '--------------------'
     phpbrew list
 }
+
+
+# --------------------------------------------------------------------------------
+#   test only
+# --------------------------------------------------------------------------------
+
+
+
 
 
 # --------------------------------------------------------------------------------
