@@ -22,7 +22,6 @@
   ],
   "eslint.autoFixOnSave": true,
   "editor.formatOnSave": false,
-  "window.zoomLevel": 0,
   "breadcrumbs.enabled": true,
   "editor.fontFamily": "'Hack', 'monospace', monospace, 'Droid Sans Mono'",
   "workbench.editor.highlightModifiedTabs": true,
@@ -47,7 +46,11 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "// editor.wordWrap": "自動換行 on, 不要換行 off",
-  "editor.wordWrap": "off"
+  "editor.wordWrap": "off",
+  "// editor.useTabStops": "貼上內容後, 原本是 tab 的內容轉換成 space",
+  "//// editor.useTabStops": true,
+  "editor.insertSpaces": true,
+  "window.zoomLevel": 1
 }
 
 

@@ -1,0 +1,13 @@
+# ~/.tmuxinator/skynet.yml
+name: skynet3
+root: /var/www/fs-marketing-tool
+
+windows:
+  - my_server:
+      layout: main-vertical
+      panes:
+        - docker:
+          # service mysql stop
+          - service redis stop
+          # docker-compose -f docker-compose.yml up php7 db redis
+          - docker-compose -f docker-compose-geo-production.yml up

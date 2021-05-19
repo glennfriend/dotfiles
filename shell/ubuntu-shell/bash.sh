@@ -71,7 +71,7 @@ alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
-alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next --type-set=DUMB=.log,.xml --noDUMB'
+alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next --type-set=DUMB=.log,.xml,.csv,.sql --noDUMB'
 alias diff='diff --color -ruB'
 alias emo='tip emoji-1'
 
@@ -163,13 +163,12 @@ jdate() {
     echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
     echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
     echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
-    echo
 
     #
-    # while [ 1 ] ; do echo -en "  $(date +%Z\ [%z]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
+    # while [ 1 ] ; do echo -en "\r  $(date +%Z\ [%z]\ %Y-%m-%d\ %T)  " ; sleep 1; done
     #
     # 本來是使用上面的指令, 但不確定是不是 zsh 版本的關系, 現在 "[]" 這兩個符號前方要加上 backslash "\"
-    while [ 1 ] ; do echo -en "  $(date +%Z\ \[%z\]\ %Y-%m-%d\ %T) \r" ; sleep 1; done
+    while [ 1 ] ; do echo -en "\r  $(date +%Z\ \[%z\]\ %Y-%m-%d\ %T)  " ; sleep 1; done
 }
 
 
@@ -319,6 +318,7 @@ unfile() {
             *.zip)      unfile_command="unzip $1"           ;;
             *.Z)        unfile_command="uncompress $1"      ;;
             *.7z)       unfile_command="7z x $1"            ;;
+#           *.7z)       unfile_command="7zz x $1"           ;;
             *.lzma)     unfile_command="tar -Jxf $1"        ;;  # sudo apt-get install xz-utils
             *)          echo "'$1' cannot be extracted via >unfile<" ;;
         esac
@@ -486,14 +486,25 @@ gd() {
 # 現在目錄有 git 異動的檔案, 顯示最後一次 commit 時的 message
 # list Git Last Commit message
 #      ^   ^    ^
+#
+# glc() {
+#     clear
+#     git status -s | grep -v '?? ' | cut -c 4- | cut -d ' ' -f 1 | awk -F: '{ system("   \
+#         echo " $1 " ; \
+#         git log -n1 --pretty=\"  => %s\" " $1 " ; \
+#         git log -n1 --pretty=\"  => %h\" " $1 " ; \
+#         " "echo") }'
+# }
+#
 glc() {
     clear
-    git status -s | cut -c 4- | cut -d ' ' -f 1 | awk -F: '{ system("echo " $1 " ; \
+    git status -s | grep -v '?? ' | cut -c 4- | cut -d ' ' -f 1 | awk -F: '{ system("   \
+        echo " $1 " ; \
         git log -n1 --pretty=\"  => %s\" " $1 " ; \
-        git log -n1 --pretty=\"  => %h\" " $1 " ; \
+        git log -n1 --pretty=\"  => %h - %cr\" " $1 " ; \
         " "echo") }'
-
 }
+
 
 git_branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
