@@ -105,9 +105,10 @@ alias jcp="rsync -avv --human-readable --itemize-changes --partial"
 
 # https://github.com/kaelzhang/shell-safe-rm
 # alias rm='safe-rm'
-
+#
 # rm to trash for ubuntu
-# 查看垃圾桶使用 ls -la ~/.local/share/Trash/files
+# 查看垃圾桶使用 ls -la            ~/.local/share/Trash/files
+# 有些檔案刪不掉 sudo chmod -R 777 ~/.local/share/Trash/files
 # 清空垃圾桶使用 gio trash --empty
 # 請注意: rm 本身就是 rm -rf 的功能 !
 alias rm='gio trash'
