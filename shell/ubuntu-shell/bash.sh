@@ -371,6 +371,9 @@ ed() {
 #   system information
 # --------------------------------------------------------------------------------
 
+# 主機版型號
+#   sudo lshw -short
+#   sudo dmidecode -t 2
 jsystem() {
     clear
 
@@ -499,10 +502,13 @@ gd() {
 #
 glc() {
     clear
-    git status -s | grep -v '?? ' | cut -c 4- | cut -d ' ' -f 1 | awk -F: '{ system("   \
-        echo " $1 " ; \
-        git log -n1 --pretty=\"  => %s\" " $1 " ; \
-        git log -n1 --pretty=\"  => %h - %cr\" " $1 " ; \
+    git diff --name-only --cached | awk -F: '{ system("   \
+        echo " $1 "         ; \
+        echo -n \"  -- \"   ; \
+        ciname "$1"         ; \
+        echo \"    GUESS_IT \" ; \
+        git log -n1 --pretty=\"  -- %s\" " $1 "         ; \
+        git log -n1 --pretty=\"  -- %h - %cr\" " $1 "   ; \
         " "echo") }'
 }
 

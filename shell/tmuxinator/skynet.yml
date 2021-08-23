@@ -8,6 +8,6 @@ windows:
       panes:
         - docker:
           # docker-compose -f docker-compose.yml up php7 db redis
-          - echo "sudo service redis stop ; sudo service mysql stop ; docker-compose -f docker-compose-geo-production.yml up " | xclip -selection clipboard
+          - echo "sudo service redis stop ; docker-compose -f docker-compose-geo-production.yml up php7 db redis" | xclip -selection clipboard
         - show-time:
           - clear ; jdate
