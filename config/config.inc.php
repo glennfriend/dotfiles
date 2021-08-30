@@ -44,4 +44,9 @@ return [
         'origin'    => 'shell/vscode-snippets',
         'to'        => '.config/Code/User/snippets',
     ],
+    [
+        'desc'      => 'zsh-theme-myphp',
+        'origin'    => 'shell/oh-my-zsh-tmeme/myphp.zsh-theme',
+        'to'        => '.oh-my-zsh/themes/myphp.zsh-theme',
+    ],
 ];
