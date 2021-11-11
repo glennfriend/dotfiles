@@ -155,6 +155,8 @@ jbash() {
 jmkdir() {
     mkdir -p -- "$1" &&
     cd -P -- "$1"
+
+    # cd $_
 }
 
 # now time
@@ -182,7 +184,7 @@ jsleep() {
     fi
 
     for ((i = $1; i >= 1; i--)); do
-        timeFormat=$(date -u -d@$(($i)) +"%H:%M:%S")
+        local timeFormat=$(date -u -d@$(($i)) +"%H:%M:%S")
         printf "\r%d <= %s " $i "$timeFormat"
         sleep 1
     done
@@ -199,9 +201,9 @@ jread() {
             return
     fi
 
-    filename=$(basename "$1")
-    ext="${filename##*.}"
-    filename="${filename%.*}"
+    local filename=$(basename "$1")
+    local ext="${filename##*.}"
+    local filename="${filename%.*}"
 
     #echo $filename
     #echo $ext
@@ -224,10 +226,9 @@ jread() {
 #
 jrm() {
 
-    left="\033[1;33m"
-    right="\033[0m"
-
-    absolute_path=$(readlink -m "$1")
+    local left="\033[1;33m"
+    local right="\033[0m"
+    local absolute_path=$(readlink -m "$1")
     echo ">"
     echo "> rm -rf $left$absolute_path$right"
     echo ">"
@@ -244,8 +245,8 @@ jrm() {
         return
     fi
 
-    now=$(date "+%m%d-%H%M%S")
-    delete_folder="/tmp/delete/$now/"
+    local now=$(date "+%m%d-%H%M%S")
+    local delete_folder="/tmp/delete/$now/"
     mkdir -p "$delete_folder"
 
     rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && rm -rf "$1"
@@ -283,7 +284,7 @@ jlast() {
 # ls guess
 #
 lg() {
-    current_folder="${PWD##*/}"
+    local current_folder="${PWD##*/}"
 
     if [ -d "current" ] && [ -d "releases" ] && [ -d "repo" ] ; then
         # deploy folder
@@ -450,7 +451,8 @@ jinfo() {
 #       npm install -g diff-so-fancy
 #
 # --------------------------------------------------------------------------------
-alias  gl='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+unalias gl
+alias  gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 
 gdc() {
     TMP_FILE="$(mktemp)"
@@ -491,7 +493,7 @@ gd() {
 # list Git Last Commit message
 #      ^   ^    ^
 #
-# glc() {
+# glsc() {
 #     clear
 #     git status -s | grep -v '?? ' | cut -c 4- | cut -d ' ' -f 1 | awk -F: '{ system("   \
 #         echo " $1 " ; \
@@ -500,15 +502,15 @@ gd() {
 #         " "echo") }'
 # }
 #
-glc() {
+glsc() {
     clear
     git diff --name-only --cached | awk -F: '{ system("   \
         echo " $1 "         ; \
-        echo -n \"  -- \"   ; \
+        echo -n \"  [guess] -- \"   ; \
         ciname "$1"         ; \
-        echo \"    GUESS_IT \" ; \
-        git log -n1 --pretty=\"  -- %s\" " $1 "         ; \
-        git log -n1 --pretty=\"  -- %h - %cr\" " $1 "   ; \
+        echo \"    \" ; \
+        git log -n1 --pretty=\"  [befor] -- %s\" " $1 "         ; \
+        git log -n1 --pretty=\"  [hash ] -- %h - %cr\" " $1 "   ; \
         " "echo") }'
 }
 
@@ -539,9 +541,28 @@ alias testdox="php vendor/bin/phpunit --testdox"
 alias art="php artisan"
 #alias migrate="php artisan migrate"
 #alias serve="artisan serve"
-#alias tinker="artisan tinker"
 #alias routelist="php artisan route:list"
 
+
+# tinker 'User::first()'
+function tinker()
+{
+    if [ -z "$1" ]
+        then
+            php artisan tinker
+        else
+            php artisan tinker --execute="dd($1);"
+    fi
+}
+function dtinker()
+{
+    if [ -z "$1" ]
+        then
+            docker-compose exec 'php7' php artisan tinker
+        else
+            docker-compose exec 'php7' php artisan tinker --execute="dd($1);"
+    fi
+}
 
 # --------------------------------------------------------------------------------
 #   log rewrite
