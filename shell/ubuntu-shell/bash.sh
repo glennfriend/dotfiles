@@ -65,6 +65,7 @@ alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
 alias gow='cd /var/www      && l';
 alias goow='cd /opt/www     && l';
+alias gossh='cd ~/.ssh      && l';
 alias fs=' cd /fs           && l';
 alias fsw='cd /fs/var/www   && l';
 alias ch755='chmod -R 755 '
