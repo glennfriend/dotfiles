@@ -230,12 +230,15 @@ jrm() {
     local right="\033[0m"
     local absolute_path=$(readlink -m "$1")
     echo ">"
-    echo "> rm -rf $left$absolute_path$right"
+    echo "> rm -rf ${left}${absolute_path}${right}"
     echo ">"
 
 
     if [ -z "$1" ] ; then
         echo "Input delete folder or files"
+        return
+    elif [ "$1" = "/" ] ; then
+        echo "You can not delete root"
         return
     elif [ "$1" = "." ] ; then
         echo "You must describe a directory"
@@ -249,10 +252,11 @@ jrm() {
     local delete_folder="/tmp/delete/$now/"
     mkdir -p "$delete_folder"
 
-    rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && rm -rf "$1"
+    rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && gio trash "$1"
     echo ""
-    echo "rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && rm -rf $1"
+    echo "rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && gio trash $1"
     echo "ls -la $delete_folder"
+    echo "ls -la $delete_folder" | xclip -selection clipboard
     echo "----"
 }
 
@@ -451,7 +455,7 @@ jinfo() {
 #       npm install -g diff-so-fancy
 #
 # --------------------------------------------------------------------------------
-unalias gl
+unalias gl  2>/dev/null
 alias  gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 
 gdc() {
@@ -471,7 +475,7 @@ gdc() {
     rm ${TMP_FILE}
 }
 
-unalias gd
+unalias gd  2>/dev/null
 gd() {
     TMP_FILE=$(mktemp)
     git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 > "${TMP_FILE}"
