@@ -1,6 +1,7 @@
 {
   "files.associations": {
-    "*.tpl": "php"
+    "*.tpl": "php",
+    "*.js": "javascript"
   },
   "vetur.validation.template": false,
   "eslint.validate": [
@@ -23,7 +24,7 @@
   "eslint.autoFixOnSave": true,
   "editor.formatOnSave": false,
   "breadcrumbs.enabled": true,
-  "editor.fontFamily": "'Hack', 'monospace', monospace, 'Droid Sans Mono'",
+  "editor.fontFamily": "'monospace', 'Hack', 'Droid Sans Mono', 'Inconsolata'",
   "workbench.editor.highlightModifiedTabs": true,
   "//": "plugin ---> esbenp.prettier-vscode",
   "[typescript]": {
@@ -36,8 +37,14 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
+  "[sql]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
+  },
+  "// tor.experimental.stickyScroll.enabled": "function name 浮動停留在第一行",
   "editor.codeActionsOnSave": {
     "//": "是否儲存時自動 formatter",
     "source.fixAll.eslint": false
@@ -46,12 +53,24 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "// editor.wordWrap": "自動換行 on, 不要換行 off",
-  "editor.wordWrap": "on",
+  "editor.wordWrap": "off",
   "// editor.useTabStops": "貼上內容後, 原本是 tab 的內容轉換成 space",
   "//// editor.useTabStops": true,
   "editor.insertSpaces": true,
   "hediet.vscode-drawio.local-storage": "eyIuZHJhd2lvLWNvbmZpZyI6IntcImxhbmd1YWdlXCI6XCJcIixcImN1c3RvbUZvbnRzXCI6W10sXCJsaWJyYXJpZXNcIjpcImdlbmVyYWxcIixcImN1c3RvbUxpYnJhcmllc1wiOltcIkwuc2NyYXRjaHBhZFwiXSxcInBsdWdpbnNcIjpbXSxcInJlY2VudENvbG9yc1wiOltcIkZGRkZGRlwiLFwiQ0NGRkU2XCJdLFwiZm9ybWF0V2lkdGhcIjpcIjI0MFwiLFwiY3JlYXRlVGFyZ2V0XCI6ZmFsc2UsXCJwYWdlRm9ybWF0XCI6e1wieFwiOjAsXCJ5XCI6MCxcIndpZHRoXCI6ODI3LFwiaGVpZ2h0XCI6MTE2OX0sXCJzZWFyY2hcIjp0cnVlLFwic2hvd1N0YXJ0U2NyZWVuXCI6dHJ1ZSxcImdyaWRDb2xvclwiOlwiI2QwZDBkMFwiLFwiZGFya0dyaWRDb2xvclwiOlwiIzZlNmU2ZVwiLFwiYXV0b3NhdmVcIjp0cnVlLFwicmVzaXplSW1hZ2VzXCI6bnVsbCxcIm9wZW5Db3VudGVyXCI6MCxcInZlcnNpb25cIjoxOCxcInVuaXRcIjoxLFwiaXNSdWxlck9uXCI6ZmFsc2UsXCJ1aVwiOlwiXCJ9In0=",
-  "workbench.editor.untitled.hint": "hidden"
+  "workbench.editor.untitled.hint": "hidden",
+  "plantuml.render": "PlantUMLServer",
+  "cSpell.userWords": [
+    "loggly"
+  ],
+  "php.suggest.basic": false,
+  "php.validate.enable": false,
+  "emmet.excludeLanguages": [
+    "markdown",
+    "php"
+  ],
+  "editor.stickyScroll.enabled": true,
+  "window.zoomLevel": 1
 }
 
 

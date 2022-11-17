@@ -4,15 +4,16 @@ root: /var/www/samurai-world-backend
 
 windows:
   - my_server:
-      layout: even-horizontal
+      layout: main-horizontal
       panes:
-        - client:
+        - frontend:
           - cd /var/www/samurai-world-client
+          - nvm use v16.18.0
           - yarn install && yarn start:dev
         - docker:
-          - service mysql stop
-          - # service redis stop
-          - docker-compose -f docker-compose-local.yml up
+          - # echo "service mysql stop ; service redis stop ; docker-compose up" | xclip -selection clipboard
+          - # service redis stop ; docker-compose up
+          - docker-compose up
 
 #  - my_editor:
 #      layout: even-horizontal

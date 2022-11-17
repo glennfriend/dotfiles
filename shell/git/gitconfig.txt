@@ -1,5 +1,5 @@
 [user]
-    name = glenn
+	name = glenn guan
     email = glenn.profile@gmail.com
 [branch]
     autosetuprebase = always
@@ -10,6 +10,9 @@
     ## editor = vim
     editor = code --wait
     whitespace = cr-at-eol
+
+[pull]
+	rebase = true
 
 [credential]
 	helper = cache --timeout=14400
@@ -45,5 +48,4 @@
 
     ## 參考自
     ## kos -> https://gist.github.com/koshuang/87b18953766da787f2ffce1387d82565
-
 

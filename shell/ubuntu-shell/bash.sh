@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 
+
+#set -o errexit      # 發生錯誤時, 包含 Ctrl + c , 程式終止
+set -o nounset      # 使用沒有設定的變數, 程式終止
+set -o pipefail     # 這將確保 pipeline 命令被視為失敗，即使 pipeline 中的一個命令失敗
+if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
+
+
 # --------------------------------------------------------------------------------
 # Using wget or curl command
 # --------------------------------------------------------------------------------
 #
-# source <( curl --insecure         https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
+# source <( curl -sS --insecure     https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 # sh <(curl -L                      https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 # sh <(wget --no-check-certificate  https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh -O -)
-# wget -q -O -                      https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh | sh
-# bash < <(wget -O -                https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
-# bash < <(curl -s                  https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
+# bash < <(curl -sS                 https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
 
 # --------------------------------------------------------------------------------
@@ -72,9 +77,15 @@ alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
-alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next --type-set=DUMB=.log,.xml,.csv,.sql --noDUMB'
+alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock --noDUMB'
 alias diff='diff --color -ruB'
 alias emo='tip emoji-1'
+alias beep='paplay  /usr/share/sounds/sound-icons/xylofon.wav'
+alias beep-finish='paplay  /fs/data/sound/finish.wav'
+alias beep-alert='paplay   /fs/data/sound/alert.wav'
+alias folder='nautilus'
+alias myip='curl wtfismyip.com/json'
+
 
 # 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
 alias sudo='sudo '
@@ -129,6 +140,16 @@ function mv() {
   command mv -v -- "$1" "$newfilename"
 }
 
+# --------------------------------------------------------------------------------
+#   composer bin
+# --------------------------------------------------------------------------------
+# mkdir -p ~/tools/bartlett_umlwriter
+# cd       ~/tools/bartlett_umlwriter
+# echo     '{}' >> composer.json
+# composer config minimum-stability dev
+# composer require bartlett/umlwriter:3.1.1
+# alias php-plantuml='~/tools/bartlett_umlwriter/vendor/bin/umlwriter'
+# 以上不成功, 可能會移除
 
 # --------------------------------------------------------------------------------
 #   Custom Functions
@@ -148,7 +169,7 @@ alias jtrl='translate -s en -t zh-TW | less'
 
 # load my bash shell
 jbash() {
-    url="https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh"
+    local url="https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh"
     source <( curl --insecure {$url} )
 }
 
@@ -213,6 +234,7 @@ jread() {
         pandoc "$1" | lynx -stdin
     elif [ "$ext" = "jpg" ] || [ "$ext" = "jpeg" ] || [ "$ext" = "gif" ] || [ "$ext" = "png" ] ; then
         file "$1"
+        eog "$1" &
     elif [ "$ext" = "php" ] || [ "$ext" = "js" ] || [ "$ext" = "css" ] ; then
         less -mN "$1"
     elif [ "$ext" = "conf" ] ; then
@@ -448,6 +470,15 @@ jinfo() {
         nginx -v
     fi
 
+    my_docker="$(command -v docker)"
+    if [ -n "$my_docker" ]
+    then
+        echo 
+        echo '[Docker like]'
+        docker -v
+        docker-compose -v
+    fi
+
 }
 
 # --------------------------------------------------------------------------------
@@ -457,7 +488,10 @@ jinfo() {
 #
 # --------------------------------------------------------------------------------
 unalias gl  2>/dev/null
-alias  gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+
+# 該指令同於 zsh 內建的 git 指令
+alias ggpush='git push origin "$(git_current_branch)"'
 
 gdc() {
     TMP_FILE="$(mktemp)"
@@ -535,6 +569,10 @@ git_since_last_commit() {
 
     echo "${hours_since_last_commit}h${minutes_since_last_commit}m ";
 }
+
+# go to git root path
+# alias gitroot='cd "$(git rev-parse --show-toplevel)"'
+
 
 
 
@@ -655,7 +693,7 @@ jphpbrew_todo() {
     tmp_content="/tmp/execute_phpbrew_fpm_restart.sh"
 
     #
-    phpbrew list | grep php | cut -c 3- | awk -F' ' '{print("phpbrew use "$1" && phpbrew fpm restart")}' > $tmp_content
+    phpbrew list | grep php | cut -c 3- | sort | awk -F' ' '{print("phpbrew use "$1" && phpbrew fpm restart")}' > $tmp_content
     echo '--------------------'
     cat $tmp_content
 
@@ -688,3 +726,4 @@ jphpbrew_todo() {
 # --------------------------------------------------------------------------------
 echo `TZ=Asia/Taipei        date "+%Z [%z] %Y-%m-%d %T"`" - Asia/Taipei"
 _strict_mode_end
+
