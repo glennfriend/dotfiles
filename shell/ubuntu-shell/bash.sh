@@ -484,7 +484,8 @@ jinfo() {
 # --------------------------------------------------------------------------------
 #   git
 #
-#       npm install -g diff-so-fancy
+#       install https://github.com/dandavison/delta
+#       [deprecated] npm install -g diff-so-fancy
 #
 # --------------------------------------------------------------------------------
 unalias gl  2>/dev/null
@@ -494,7 +495,7 @@ alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------
 alias ggpush='git push origin "$(git_current_branch)"'
 
 gdc() {
-    git diff --cached
+    git diff --cached $1 $2 $3 $4 $5 $6 $7 $8 $9
 }
 # gdc() {
 #     TMP_FILE="$(mktemp)"
@@ -515,7 +516,7 @@ gdc() {
 
 unalias gd  2>/dev/null
 gd() {
-    git diff
+    git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9
 }
 # gd-old() {
 #     TMP_FILE=$(mktemp)
@@ -581,6 +582,80 @@ git_since_last_commit() {
 
 
 
+
+# --------------------------------------------------------------------------------
+#   github gh cli
+#       未來可能改成 ??
+#       mygh issue create
+#       mygh pr create
+#
+# --------------------------------------------------------------------------------
+gh-issue-create() {
+    : ${LABEL:=feat}
+
+    echo "TITLE=\"${TITLE}\""
+    echo "TRELLO_URL=\"${TRELLO_URL}\""
+    echo "LABEL=\"${LABEL}\""
+    echo "------------------------------------------------------------"
+    echo "label example: feat, bug, enhancement"
+    echo "------------------------------------------------------------"
+
+	if [ -z "${TITLE}" ]; then
+    	echo "TITLE not found !"
+		return
+	fi
+	if [ -z "${TRELLO_URL}" ]; then
+    	echo "TRELLO_URL not found !"
+		return
+	fi
+
+    echo -n 5 ; sleep 1 ; 
+    echo -n 4 ; sleep 1 ; 
+    echo -n 3 ; sleep 1 ; 
+    echo -n 2 ; sleep 1 ; 
+    echo -n 1 ; sleep 1 ; 
+
+    gh issue create --title "${TITLE}" --body "${TRELLO_URL}" --assignee @me --label "${LABEL}" > /tmp/gh.1
+    # "https://github.com/username/project/issues/100";
+
+    REGEX='/issues\/([0-9]+)/'
+    # cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); print_r(\$matches);"
+      cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read ISSUE
+    echo
+    echo "[${ISSUE}] ->"
+    echo -n "git switch -c "
+    echo "issue-${ISSUE}-${TITLE}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[:\.]+//g' | sed -r 's/[\.\,\_\ \-]+/-/g' 
+}
+
+gh-pr-create()
+{
+    : ${LABEL:=feat}
+
+    echo "TITLE=\"${TITLE}\""
+    echo "ISSUE=\"${ISSUE}\""
+    echo "LABEL=\"${LABEL}\""
+    echo "------------------------------------------------------------"
+
+	if [ -z "${ISSUE}" ]; then
+    	echo "ISSUE not found !"
+		return
+	fi
+	if [ -z "${TITLE}" ]; then
+    	echo "TITLE not found !"
+		return
+	fi
+
+    echo "請切到 target branch -> 可以顯示現在的 branch"
+    echo "已經有至少 1 個 push"
+    echo "please setting 'Reviewers'"
+    echo -n 5 ; sleep 1 ; 
+    echo -n 4 ; sleep 1 ; 
+    echo -n 3 ; sleep 1 ; 
+    echo -n 2 ; sleep 1 ; 
+    echo -n 1 ; sleep 1 ;
+    echo
+    gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
+}
 
 # --------------------------------------------------------------------------------
 #   PHP, Laravel
