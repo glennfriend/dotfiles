@@ -1,0 +1,12 @@
+# ~/.tmuxinator/my-php.yml
+name: my-php
+root: /var/www/samurai-world-backend
+
+windows:
+  - my_server:
+      layout: main-horizontal
+      panes:
+        - main:
+          - clear && jdate
+        - phpstorm:
+          - /fs/linux/run_it/PhpStorm-2023.2.1/bin/phpstorm.sh

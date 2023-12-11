@@ -3,6 +3,8 @@
     "*.tpl": "php",
     "*.js": "javascript"
   },
+  "// files.trimFinalNewlines": "若啟用，則會在儲存檔案時，修剪檔案末新行尾的所有新行",
+  "files.trimFinalNewlines": true,
   "vetur.validation.template": false,
   "eslint.validate": [
     {
@@ -25,29 +27,44 @@
   "editor.formatOnSave": false,
   "breadcrumbs.enabled": true,
   "editor.fontFamily": "'monospace', 'Hack', 'Droid Sans Mono', 'Inconsolata'",
+  "editor.fontSize": 14,
+  "gitlens.codeLens.enabled": false,
+  "gitlens.currentLine.enabled": false,
+  "editor.minimap.enabled": false,
   "workbench.editor.highlightModifiedTabs": true,
-  "//": "plugin ---> esbenp.prettier-vscode",
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features",
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false
   },
+  "[typescript]": {
+    "//": "plugin ---> esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[javascriptreact]": {},
+  "[css]": {
+      "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "[scss]": {
+      "editor.defaultFormatter": "sasa.vscode-sass-format"
   },
   "[sql]": {
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false
   },
-  "// tor.experimental.stickyScroll.enabled": "function name 浮動停留在第一行",
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "// editor.stickyScroll.enabled": "function name 浮動停留在第一行",
+  "editor.stickyScroll.enabled": false,
   "editor.codeActionsOnSave": {
     "//": "是否儲存時自動 formatter",
     "source.fixAll.eslint": false
@@ -59,7 +76,7 @@
     "editor.detectIndentation": false
   },
   "// editor.wordWrap": "自動換行 on, 不要換行 off",
-  "editor.wordWrap": "off",
+  "editor.wordWrap": "on",
   "// editor.useTabStops": "貼上內容後, 原本是 tab 的內容轉換成 space",
   "//// editor.useTabStops": true,
   "editor.insertSpaces": true,
@@ -67,7 +84,8 @@
   "workbench.editor.untitled.hint": "hidden",
   "plantuml.render": "PlantUMLServer",
   "cSpell.userWords": [
-    "loggly"
+    "loggly",
+    "TCPA"
   ],
   "php.suggest.basic": false,
   "php.validate.enable": false,
@@ -75,8 +93,14 @@
     "markdown",
     "php"
   ],
-  "editor.stickyScroll.enabled": true,
-  "window.zoomLevel": 1
+  "liveSassCompile.settings.formats": [
+    {
+      "extensionName": ".css",
+      "format": "compressed"
+    }
+  ],
+  "liveSassCompile.settings.generateMap": false,
+  "window.zoomLevel": 2
 }
 
 

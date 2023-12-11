@@ -70,6 +70,7 @@ alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
 alias gow='cd /var/www      && l';
 alias goow='cd /opt/www     && l';
+alias got='cd ~/tools       && l';
 alias gossh='cd ~/.ssh      && l';
 alias fs=' cd /fs           && l';
 alias fsw='cd /fs/var/www   && l';
@@ -77,7 +78,7 @@ alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
-alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock --noDUMB'
+alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock,.phar --noDUMB'
 alias diff='diff --color -ruB'
 alias emo='tip emoji-1'
 alias beep='paplay  /usr/share/sounds/sound-icons/xylofon.wav'
@@ -194,6 +195,17 @@ jdate() {
     #
     # 本來是使用上面的指令, 但不確定是不是 zsh 版本的關系, 現在 "[]" 這兩個符號前方要加上 backslash "\"
     while [ 1 ] ; do echo -en "\r  $(date +%Z\ \[%z\]\ %Y-%m-%d\ %T)  " ; sleep 1; done
+}
+
+jdate2() {
+    echo "PST -8 太平洋標準時間 Pacific Standard Time"
+    echo "PDT -7 太平洋夏令時間 Pacific Daylight Time 日光節約時間"
+    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
+    echo "  "`TZ=America/Denver      date "+%Z [%z] %Y-%m-%d %T"`"  Denver"
+    echo "  "`TZ=America/Chicago     date "+%Z [%z] %Y-%m-%d %T"`"  Chicago"
+    echo "  "`TZ=America/New_York    date "+%Z [%z] %Y-%m-%d %T"`"  NY     "
+    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
+    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
 }
 
 
@@ -414,13 +426,21 @@ jsystem() {
     uname -a
     lsb_release -a
 
+    machine="$(uname -m)"
+    echo -n "$machine:         ";
+    if [ "$machine" = "aarch64" ] || [ "$machine" = "arm64" ] ; then
+        echo 'ARM64 架構';
+    elif [ "$machine" = "x86_64" ] ; then
+        echo '64 位元的 x86 架構';
+    fi
+
+
     echo 
     echo '[other]'
     echo 'System is '`getconf LONG_BIT `' bits'
 
     rotational="$(cat /sys/block/sda/queue/rotational)"
-    if [[ "0" == "$rotational" ]]
-    then
+    if [[ "0" == "$rotational" ]] then
         echo 'HD is SSD';
     else
         echo 'HD is HDD';
@@ -428,7 +448,7 @@ jsystem() {
 }
 
 
-jinfo() {
+jsystem2() {
     clear
 
     my_php="$(command -v php)"
@@ -491,8 +511,24 @@ jinfo() {
 unalias gl  2>/dev/null
 alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 
-# 該指令同於 zsh 內建的 git 指令
-alias ggpush='git push origin "$(git_current_branch)"'
+#
+unalias ggpush 2>/dev/null
+ggpush() {
+    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+    if [[ "$BRANCH_NAME" = "master" ]]; then
+        echo "Fail ! you can not push to master"
+        return
+    fi
+    if [[ "$BRANCH_NAME" = "main" ]]; then
+        echo "Fail ! you can not push to main"
+        return
+    fi
+
+    git push origin "$(git_current_branch)" $1 $2 $3
+}
+# 該指令同於 zsh 內建的 git ggpush 指令
+alias gggpush='git push origin "$(git_current_branch)"'
+
 
 gdc() {
     git diff --cached $1 $2 $3 $4 $5 $6 $7 $8 $9
@@ -591,13 +627,13 @@ git_since_last_commit() {
 #
 # --------------------------------------------------------------------------------
 gh-issue-create() {
-    : ${LABEL:=feat}
+    : ${LABEL:=chore}
 
     echo "TITLE=\"${TITLE}\""
     echo "TRELLO_URL=\"${TRELLO_URL}\""
     echo "LABEL=\"${LABEL}\""
     echo "------------------------------------------------------------"
-    echo "label example: feat, bug, enhancement"
+    echo "label example: chore, feat, bug, enhancement"
     echo "------------------------------------------------------------"
 
 	if [ -z "${TITLE}" ]; then
@@ -623,13 +659,13 @@ gh-issue-create() {
       cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read ISSUE
     echo
     echo "[${ISSUE}] ->"
-    echo -n "git switch -c "
-    echo "issue-${ISSUE}-${TITLE}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[:\.]+//g' | sed -r 's/[\.\,\_\ \-]+/-/g' 
+    echo -n "git branch "
+    echo "${ISSUE}-${LABEL}-${TITLE}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[:\.\"]+//g' | sed -r 's/[\.\,\_\ \-]+/-/g' 
 }
 
 gh-pr-create()
 {
-    : ${LABEL:=feat}
+    : ${LABEL:=chore}
 
     echo "TITLE=\"${TITLE}\""
     echo "ISSUE=\"${ISSUE}\""
@@ -654,6 +690,7 @@ gh-pr-create()
     echo -n 2 ; sleep 1 ; 
     echo -n 1 ; sleep 1 ;
     echo
+    # --reviewer "chenghung,ericHao22,FishChen1202" 不能跟 --web 一起使用
     gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
 }
 
@@ -793,6 +830,36 @@ jphpbrew_todo() {
     phpbrew list
 }
 
+# --------------------------------------------------------------------------------
+#   curl
+# --------------------------------------------------------------------------------
+
+# jurl 
+function jurl()
+{
+    # if ! command -v pygmentize; then
+    #     echo "-> sudo apt-get install python-pygments"
+    # fi
+    if [ -z "$1" ]
+        then
+            echo "No arguments url"
+            return
+    fi
+    if [ -z "${Authorization}" ]
+        then
+            echo '-> Authorization="Bearer xxx.xxxxxx.xxx"'
+            return
+    fi
+
+    # curl -kis
+
+    # curl -ks "$1" \
+    curl -ks "$@" \
+        -H "Authorization: ${Authorization}" \
+        -H 'Accept: application/json, text/plain, */*' \
+        -H 'Content-Type: application/json;charset=utf-8' \
+        --compressed
+}
 
 # --------------------------------------------------------------------------------
 #   test only
