@@ -440,7 +440,7 @@ jsystem() {
     echo 'System is '`getconf LONG_BIT `' bits'
 
     rotational="$(cat /sys/block/sda/queue/rotational)"
-    if [[ "0" == "$rotational" ]] then
+    if [[ "0" == "$rotational" ]] ; then
         echo 'HD is SSD';
     else
         echo 'HD is HDD';
