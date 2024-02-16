@@ -879,7 +879,7 @@ function jurl()
 # }
 function jqjsonlog()
 {
-    if [ -z "$" ]
+    if [ -z "$1" ]
         then
             echo "No arguments supplied"
             return
