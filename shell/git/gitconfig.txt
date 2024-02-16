@@ -3,6 +3,7 @@
     email = glenn.profile@gmail.com
 [branch]
     autosetuprebase = always
+	sort = -committerdate
 [core]
 	autocrlf = false
 	# pager = less -FXRS -x2

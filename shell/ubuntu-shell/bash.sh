@@ -511,6 +511,12 @@ jsystem2() {
 unalias gl  2>/dev/null
 alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
 
+# 測試中的功能
+alias    gdw='gd --word-diff '
+
+# 測試中的功能
+alias    gdcw='gdc --word-diff '
+
 #
 unalias ggpush 2>/dev/null
 ggpush() {
@@ -527,7 +533,7 @@ ggpush() {
     git push origin "$(git_current_branch)" $1 $2 $3
 }
 # 該指令同於 zsh 內建的 git ggpush 指令
-alias gggpush='git push origin "$(git_current_branch)"'
+# alias gggpush='git push origin "$(git_current_branch)"'
 
 
 gdc() {
@@ -860,6 +866,56 @@ function jurl()
         -H 'Content-Type: application/json;charset=utf-8' \
         --compressed
 }
+
+# --------------------------------------------------------------------------------
+#   jq
+# --------------------------------------------------------------------------------
+
+# jq json log
+# {
+#     "message": "update contact skip",
+#     "reason": "contact is opt out",
+#     "error_message": "contact phone_number not found"
+# }
+function jqjsonlog()
+{
+    if [ -z "$" ]
+        then
+            echo "No arguments supplied"
+            return
+    fi
+
+    local FILE="$1"
+    local ERROR=$(  cat ${FILE} | jq .error_message | sort -h | uniq -c)
+    local REASON=$( cat ${FILE} | jq .reason        | sort -h | uniq -c)
+    local MESSAGE=$(cat ${FILE} | jq .message       | sort -h | uniq -c)
+
+    #
+    local ERROR_COUNT=$(echo ${ERROR} | wc -l)
+    if [[ "1" == ${ERROR_COUNT} ]] ; then
+        echo -e "\033[1;36m[error message]\033[0m nothing"
+    else
+        echo -e "\033[1;36m[error message]\033[0m"
+        echo $ERROR
+    fi
+
+    #
+    echo
+    local REASON_COUNT=$(echo ${REASON} | wc -l)
+    if [[ "1" == ${REASON_COUNT} ]] ; then
+        echo -e "\033[1;36m[reason]\033[0m nothing"
+    else
+        echo -e "\033[1;36m[reason]\033[0m"
+        echo $REASON
+    fi
+
+    #
+    echo
+    echo -e "\033[1;36m[message]\033[0m"
+    echo $MESSAGE
+}
+
+
 
 # --------------------------------------------------------------------------------
 #   test only
