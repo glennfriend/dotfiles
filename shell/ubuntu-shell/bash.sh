@@ -633,71 +633,154 @@ git_since_last_commit() {
 #
 # --------------------------------------------------------------------------------
 gh-issue-create() {
-    : ${LABEL:=chore}
+    check="$(command -v php)"
+    if [ -z "$check" ]; then
+        echo "please to install: php"
+        return
+    fi
 
-    echo "TITLE=\"${TITLE}\""
-    echo "TRELLO_URL=\"${TRELLO_URL}\""
-    echo "LABEL=\"${LABEL}\""
-    echo "------------------------------------------------------------"
-    echo "label example: chore, feat, bug, enhancement"
-    echo "------------------------------------------------------------"
+    check="$(command -v gh)"
+    if [ -z "$check" ]; then
+        echo "please to install: https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
+        return
+    fi
 
-	if [ -z "${TITLE}" ]; then
-    	echo "TITLE not found !"
-		return
-	fi
-	if [ -z "${TRELLO_URL}" ]; then
-    	echo "TRELLO_URL not found !"
-		return
-	fi
 
-    echo -n 5 ; sleep 1 ; 
-    echo -n 4 ; sleep 1 ; 
-    echo -n 3 ; sleep 1 ; 
-    echo -n 2 ; sleep 1 ; 
-    echo -n 1 ; sleep 1 ; 
 
-    gh issue create --title "${TITLE}" --body "${TRELLO_URL}" --assignee @me --label "${LABEL}" > /tmp/gh.1
-    # "https://github.com/username/project/issues/100";
 
+    # default
+    local label="chore"
+
+    while [[ $# -gt 0 ]]; do
+        key="$1"
+        case $key in
+            --title=*)
+                title="${key#*=}"
+                ;;
+            --url=*)
+                url="${key#*=}"
+                ;;
+            --label=*)
+                label="${key#*=}"
+                ;;
+            *)
+                # Unknown option
+                ;;
+        esac
+        shift
+    done
+
+    # check params
+    if [ -z "$title" ] || [ -z "$url" ]; then
+        echo "command example"
+        echo "   " $0 '--label="chore" --title="" --url=""'
+        echo
+        echo "description"
+        echo
+        echo "   " "--title"
+        echo "       " "github title"
+        echo
+        echo "   " "--url"
+        echo "       " "link to task card url"
+        echo
+        echo "   " "--label"
+        echo "       " "chore, feat, bug, enhancement"
+        return
+    fi
+
+    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${title}\" --body \"${url}\""
+    echo "-> ${COMMAND}"
+
+    # Prompt for confirmation to continue
+    echo -n "Continue (y/n): "
+    read response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        # continue
+    else
+        echo "exit 0"
+        return
+    fi
+
+    # issue create
+    # get like "https://github.com/username/project/issues/100"
+    eval ${COMMAND} > /tmp/gh.1
+
+    # 取得 issue number
     REGEX='/issues\/([0-9]+)/'
-    # cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); print_r(\$matches);"
-      cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read ISSUE
+    cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read ISSUE
+
+    # check ISSUE
+    if [ -z "$ISSUE" ] ; then
+        echo "create failed !"
+        return
+    fi
+
+    # branch name
+    echo "${ISSUE}-${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[:\.\"]+//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
+
+    # show information
     echo
-    echo "[${ISSUE}] ->"
-    echo -n "git branch "
-    echo "${ISSUE}-${LABEL}-${TITLE}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[:\.\"]+//g' | sed -r 's/[\.\,\_\ \-]+/-/g' 
+    echo "## issue ${ISSUE}"
+    echo "## branch ${BRANCH_NAME}"
+    echo "-> gh issue develop ${ISSUE} --name ${BRANCH_NAME}"
+    echo
+    echo ">>>>"
+    gh issue develop ${ISSUE} --name ${BRANCH_NAME}
+    echo "<<<<"
+    echo
+    echo "## continue"
+    echo "    git checkout ${BRANCH_NAME}"
+
 }
 
-gh-pr-create()
-{
-    : ${LABEL:=chore}
+gh-pr-create() {
+    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+    # BRANCH_NAME="100-feat-your-title"
+    ISSUE=$(echo $BRANCH_NAME | cut -d '-' -f 1)
+    LABEL=$(echo $BRANCH_NAME | cut -d '-' -f 2)
+    TITLE=$(echo $BRANCH_NAME | cut -d '-' -f 3-)
 
-    echo "TITLE=\"${TITLE}\""
-    echo "ISSUE=\"${ISSUE}\""
-    echo "LABEL=\"${LABEL}\""
-    echo "------------------------------------------------------------"
+    if [ "$ISSUE" = "master" ] || [ "$LABEL" = "master" ] || [ "$TITLE" = "master" ] ; then
+        echo "請切到 target branch"
+        return
+    fi
+    if [ -z "$ISSUE" ] || [ -z "$LABEL" ] || [ -z "$TITLE" ]; then
+        echo "請切到 target branch."
+        return
+    fi
 
-	if [ -z "${ISSUE}" ]; then
-    	echo "ISSUE not found !"
-		return
-	fi
-	if [ -z "${TITLE}" ]; then
-    	echo "TITLE not found !"
-		return
-	fi
+    while [[ $# -gt 0 ]]; do
+        key="$1"
+        case $key in
+            --reviewer=*)
+                reviewer="${key#*=}"
+                ;;
+            *)
+                # Unknown option
+                ;;
+        esac
+        shift
+    done
 
-    echo "請切到 target branch -> 可以顯示現在的 branch"
-    echo "已經有至少 1 個 push"
-    echo "please setting 'Reviewers'"
-    echo -n 5 ; sleep 1 ; 
-    echo -n 4 ; sleep 1 ; 
-    echo -n 3 ; sleep 1 ; 
-    echo -n 2 ; sleep 1 ; 
-    echo -n 1 ; sleep 1 ;
-    echo
-    # --reviewer "chenghung,ericHao22,FishChen1202" 不能跟 --web 一起使用
-    gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
+    COMMAND="gh pr create --title \"${TITLE}\" --body \"#${ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
+    echo "## Tips: 至少要有一個 commit push 才能建立 pull request"
+    echo "-> ${COMMAND}"
+
+    # Prompt for confirmation to continue
+    echo -n "Continue (y/n): "
+    read response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        # continue
+    else
+        echo "exit 0"
+        return
+    fi
+
+    # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
+    # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --draft --reviewer "alice,bob"
+    echo ">>>>"
+    eval ${COMMAND}
+    echo "<<<<"
 }
 
 # --------------------------------------------------------------------------------
