@@ -10,7 +10,7 @@ windows:
           - cd /var/www/samurai-world-client
           - # nvm use v16.18.0
           - # yarn install && yarn dev
-          - docker-compose up frontend
+          - docker-compose -f docker-compose-local.yml up
         - docker:
           - # echo "service mysql stop ; service redis stop ; docker-compose up" | xclip -selection clipboard
           - # service redis stop ; docker-compose up

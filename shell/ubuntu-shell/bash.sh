@@ -694,9 +694,7 @@ gh-issue-create() {
     # Prompt for confirmation to continue
     echo -n "Continue (y/n): "
     read response
-    if [[ "$response" =~ ^[Yy]$ ]]; then
-        # continue
-    else
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
         echo "exit 0"
         return
     fi
@@ -769,12 +767,11 @@ gh-pr-create() {
     # Prompt for confirmation to continue
     echo -n "Continue (y/n): "
     read response
-    if [[ "$response" =~ ^[Yy]$ ]]; then
-        # continue
-    else
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
         echo "exit 0"
         return
     fi
+
 
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --draft --reviewer "alice,bob"
