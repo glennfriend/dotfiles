@@ -1,0 +1,12 @@
+# ~/.tmuxinator/phpunit-test-case.yml
+name: phpunit-test-case
+
+windows:
+  - my_server:
+      layout: even-horizontal
+      panes:
+        - test-case:
+          - moni --files "Modules/ packages/ app" --action "docker-compose exec php php vendor/bin/phpunit  --group only"
+        - dump-server:
+          - docker-compose exec 'php' php artisan dump-server -q -vvv
+

@@ -1,0 +1,18 @@
+# ~/.tmuxinator/chat-fusion.yml
+name: chat-fusion
+root: /var/www/less/chat-fusion-backend
+
+windows:
+  - my_server:
+      layout: main-horizontal
+      panes:
+        - frontend:
+          - cd /var/www/less/chat-fusion-frontend
+          - # nvm use "20.11.1"
+          - nvm use "18.19.1"
+          - yarn install && yarn dev
+        - backend:
+          - docker-compose up
+        - KB:
+          - cd /var/www/less/fusion-kb-backend
+          - echo "docker-compose up"

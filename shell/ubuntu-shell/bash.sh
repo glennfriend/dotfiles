@@ -340,6 +340,12 @@ lg() {
     fi
 }
 
+jnotify() {
+    beep
+    notify-send "Notify Task :-)"
+    jdate
+}
+
 # --------------------------------------------------------------------------------
 #   解壓縮
 # --------------------------------------------------------------------------------
@@ -423,7 +429,7 @@ jsystem() {
 
     echo 
     echo '[system]'
-    uname -a
+    uname -s -n -r -m -o    # uname -a
     lsb_release -a
 
     machine="$(uname -m)"
@@ -509,13 +515,35 @@ jsystem2() {
 #
 # --------------------------------------------------------------------------------
 unalias gl  2>/dev/null
-alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+# alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+gls() {
+    clear; 
+    echo "---------- branch -v"; 
+    git branch -v; 
+    echo "---------- status"; 
+    git status -sb
+}
+
+unalias glg 2>/dev/null
+glg() {
+    if git show-ref --verify --quiet refs/heads/master; then
+        git log @ ^master --oneline --graph
+        echo
+        git log master -1 --oneline
+    elif git show-ref --verify --quiet refs/heads/main; then
+        git log @ ^main --oneline --graph
+        echo
+        git log main -1 --oneline
+    else
+        git log @ --oneline --graph
+    fi
+}
+
+
 
 # 測試中的功能
-alias    gdw='gd --word-diff '
-
-# 測試中的功能
-alias    gdcw='gdc --word-diff '
+alias    gdw=' GIT_EXTERNAL_DIFF=difft gd '
+alias    gdcw='GIT_EXTERNAL_DIFF=difft gdc '
 
 #
 unalias ggpush 2>/dev/null
@@ -530,7 +558,7 @@ ggpush() {
         return
     fi
 
-    git push origin "$(git_current_branch)" $1 $2 $3
+    git push origin "$(git_current_branch)" --force-with-lease $1 $2 $3
 }
 # 該指令同於 zsh 內建的 git ggpush 指令
 # alias gggpush='git push origin "$(git_current_branch)"'
@@ -645,9 +673,6 @@ gh-issue-create() {
         return
     fi
 
-
-
-
     # default
     local label="chore"
 
@@ -689,12 +714,13 @@ gh-issue-create() {
     fi
 
     COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${title}\" --body \"${url}\""
+    echo
     echo "-> ${COMMAND}"
 
     # Prompt for confirmation to continue
-    echo -n "Continue (y/n): "
-    read response
-    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+    echo -n "Continue (y/N): "
+    read RESPONSE
+    if [[ ! "$RESPONSE" =~ ^[Yy]$ ]]; then
         echo "exit 0"
         return
     fi
@@ -760,14 +786,17 @@ gh-pr-create() {
         shift
     done
 
-    COMMAND="gh pr create --title \"${TITLE}\" --body \"#${ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
+
+    TITLE_FORMAT=$(echo "$TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
+    COMMAND="gh pr create --title \"${TITLE_FORMAT}\" --body \"#${ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
+    echo
     echo "## Tips: 至少要有一個 commit push 才能建立 pull request"
     echo "-> ${COMMAND}"
 
     # Prompt for confirmation to continue
-    echo -n "Continue (y/n): "
-    read response
-    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+    echo -n "Continue (y/N): "
+    read RESPONSE
+    if [[ ! "$RESPONSE" =~ ^[Yy]$ ]]; then
         echo "exit 0"
         return
     fi
@@ -776,8 +805,12 @@ gh-pr-create() {
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --draft --reviewer "alice,bob"
     echo ">>>>"
-    eval ${COMMAND}
+    eval ${COMMAND} > /tmp/gh.1
     echo "<<<<"
+
+    # TODO: debug, will remove it
+    echo "result:"
+    cat /tmp/gh.1
 }
 
 # --------------------------------------------------------------------------------

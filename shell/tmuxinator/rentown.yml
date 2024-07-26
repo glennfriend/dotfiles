@@ -1,0 +1,16 @@
+# ~/.tmuxinator/rentown.yml
+name: rentown
+root: /var/www/less/rentown_new
+
+windows:
+  - my_server:
+      layout: main-horizontal
+      panes:
+        - docker:
+          - # docker-compose.dev.yml 裡面的 note 區塊先註解起來
+          - # docker-compose exec 'php7' composer install
+          - # docker-compose exec 'php7' php artisan migrate
+          - chmod -R 777 storage/logs/laravel.log storage/framework
+          - docker-compose -f docker-compose.dev.yml up
+        - frontend:
+          - jdate

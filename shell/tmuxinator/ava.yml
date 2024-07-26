@@ -1,0 +1,14 @@
+# ~/.tmuxinator/ava.yml
+name: ava
+root: /var/www/less/ava
+
+windows:
+  - my_server:
+      layout: main-horizontal
+      panes:
+        - frontend:
+          - cd /var/www/less/ava-client
+          - nvm use v16.18.0
+          - yarn install && yarn dev
+        - docker:
+          - docker-compose up

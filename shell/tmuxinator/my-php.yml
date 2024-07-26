@@ -9,4 +9,4 @@ windows:
         - main:
           - clear && jdate
         - phpstorm:
-          - /fs/linux/run_it/PhpStorm-2023.2.1/bin/phpstorm.sh
+          - /fs/linux/run_it/PhpStorm-2024.1.3/bin/phpstorm.sh
