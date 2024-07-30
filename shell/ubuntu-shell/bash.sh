@@ -926,6 +926,12 @@ log() {
 #   phpbrew execute all fpm restart
 # --------------------------------------------------------------------------------
 jphpbrew_todo() {
+    if [ -n "$(command -v nginx)" ]
+    then
+        echo 'nginx not exists'
+        return
+    fi
+
     #
     tmp_content="/tmp/execute_phpbrew_fpm_restart.sh"
 
