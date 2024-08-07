@@ -81,6 +81,7 @@ alias chnobody='chown -R nobody:nogroup '
 alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock,.phar --noDUMB'
 alias diff='diff --color -ruB'
 alias emo='tip emoji-1'
+# paplay --> sudo apt install pulseaudio-utils
 alias beep='paplay  /usr/share/sounds/sound-icons/xylofon.wav'
 alias beep-finish='paplay  /fs/data/sound/finish.wav'
 alias beep-alert='paplay   /fs/data/sound/alert.wav'
@@ -107,7 +108,7 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 #   st        檔案大小 & 時間 不同, 表示檔案內容有異動
 #   +++++++++ 新增檔案
 #
-alias jcp="rsync -avv --human-readable --itemize-changes --partial"
+alias jcp="rsync -avv --human-readable --itemize-changes --partial "
 
 # other
 # alias mux="tmuxinator"
@@ -444,13 +445,19 @@ jsystem() {
     echo 
     echo '[other]'
     echo 'System is '`getconf LONG_BIT `' bits'
+    echo $XDG_CURRENT_DESKTOP
 
-    rotational="$(cat /sys/block/sda/queue/rotational)"
-    if [[ "0" == "$rotational" ]] ; then
-        echo 'HD is SSD';
-    else
-        echo 'HD is HDD';
-    fi
+
+    for disk in $(ls /sys/block | grep -E 'sd|nvme|vd'); do
+        if [ -e /sys/block/$disk/queue/rotational ]; then
+            rota=$(cat /sys/block/$disk/queue/rotational)
+            if [ $rota -eq 0 ]; then
+                echo "$disk is an SSD"
+            else
+                echo "$disk is an HDD"
+            fi
+        fi
+    done
 }
 
 
@@ -740,7 +747,10 @@ gh-issue-create() {
     fi
 
     # branch name
-    echo "${ISSUE}-${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[:\.\"]+//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
+    echo "${ISSUE}-${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[\.\":]+//g' | sed -e 's/\[//g' -e 's/\]//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
+
+    # 這個是 River 加上的命名規則
+    BRANCH_NAME="T${BRANCH_NAME}"
 
     # show information
     echo
@@ -926,7 +936,7 @@ log() {
 #   phpbrew execute all fpm restart
 # --------------------------------------------------------------------------------
 jphpbrew_todo() {
-    if [ -n "$(command -v nginx)" ]
+    if [ -z "$(command -v nginx)" ]
     then
         echo 'nginx not exists'
         return
@@ -1049,4 +1059,3 @@ function jqjsonlog()
 # --------------------------------------------------------------------------------
 echo `TZ=Asia/Taipei        date "+%Z [%z] %Y-%m-%d %T"`" - Asia/Taipei"
 _strict_mode_end
-

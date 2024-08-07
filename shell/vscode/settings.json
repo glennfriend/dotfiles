@@ -67,7 +67,7 @@
   "editor.stickyScroll.enabled": false,
   "editor.codeActionsOnSave": {
     "//": "是否儲存時自動 formatter",
-    "source.fixAll.eslint": false
+    "source.fixAll.eslint": "never"
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -102,5 +102,3 @@
   "liveSassCompile.settings.generateMap": false,
   "window.zoomLevel": 2
 }
-
-
