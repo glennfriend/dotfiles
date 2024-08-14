@@ -670,13 +670,13 @@ git_since_last_commit() {
 gh-issue-create() {
     check="$(command -v php)"
     if [ -z "$check" ]; then
-        echo "please to install: php"
+        echo "please to install `php`"
         return
     fi
 
     check="$(command -v gh)"
     if [ -z "$check" ]; then
-        echo "please to install: https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
+        echo "please to install `gh`: https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
         return
     fi
 
@@ -694,6 +694,9 @@ gh-issue-create() {
                 ;;
             --label=*)
                 label="${key#*=}"
+                ;;
+            --custom_issue=*)
+                custom_issue="${key#*=}"
                 ;;
             *)
                 # Unknown option
@@ -715,14 +718,21 @@ gh-issue-create() {
         echo "   " "--url"
         echo "       " "link to task card url"
         echo
+        echo "   " "--custom_issue"
+        echo "       " "issue id: 1234, T2234"
+        echo "       " "做為開頭編號使用"
+        echo
         echo "   " "--label"
         echo "       " "chore, feat, bug, enhancement"
         return
     fi
 
-    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${title}\" --body \"${url}\""
+    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${title}\" --body \"${url}\" "
     echo
     echo "-> ${COMMAND}"
+    if [ -n "$custom_issue" ] ; then
+        echo "-> custom issue=""$custom_issue"
+    fi
 
     # Prompt for confirmation to continue
     echo -n "Continue (y/N): "
@@ -738,28 +748,32 @@ gh-issue-create() {
 
     # 取得 issue number
     REGEX='/issues\/([0-9]+)/'
-    cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read ISSUE
-
+    cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read GITHUB_ISSUE_ID
     # check ISSUE
-    if [ -z "$ISSUE" ] ; then
+    if [ -z "$GITHUB_ISSUE_ID" ] ; then
         echo "create failed !"
         return
     fi
 
-    # branch name
-    echo "${ISSUE}-${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[\.\":]+//g' | sed -e 's/\[//g' -e 's/\]//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
+    # 如果已經有填 $issue, 就不用使用 github issue id 做為 prefix
+    if [ -z "$custom_issue" ] ; then
+        issue=$GITHUB_ISSUE_ID
+    else
+        issue=$custom_issue
+    fi
 
-    # 這個是 River 加上的命名規則
-    BRANCH_NAME="T${BRANCH_NAME}"
+    # branch name
+    echo "${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[\.\":]+//g' | sed -e 's/\[//g' -e 's/\]//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
+    BRANCH_NAME="${issue}-${BRANCH_NAME}"
 
     # show information
     echo
-    echo "## issue ${ISSUE}"
+    echo "## issue ${issue}"
     echo "## branch ${BRANCH_NAME}"
-    echo "-> gh issue develop ${ISSUE} --name ${BRANCH_NAME}"
+    echo "-> gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}"
     echo
     echo ">>>>"
-    gh issue develop ${ISSUE} --name ${BRANCH_NAME}
+    gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}
     echo "<<<<"
     echo
     echo "## continue"
