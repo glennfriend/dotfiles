@@ -201,12 +201,12 @@ jdate() {
 jdate2() {
     echo "PST -8 太平洋標準時間 Pacific Standard Time"
     echo "PDT -7 太平洋夏令時間 Pacific Daylight Time 日光節約時間"
-    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
-    echo "  "`TZ=America/Denver      date "+%Z [%z] %Y-%m-%d %T"`"  Denver"
-    echo "  "`TZ=America/Chicago     date "+%Z [%z] %Y-%m-%d %T"`"  Chicago"
-    echo "  "`TZ=America/New_York    date "+%Z [%z] %Y-%m-%d %T"`"  NY     "
-    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
     echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
+    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
+    echo "  "`TZ=America/New_York    date "+%Z [%z] %Y-%m-%d %T"`"  NY     "
+    echo "  "`TZ=America/Chicago     date "+%Z [%z] %Y-%m-%d %T"`"  Chicago"
+    echo "  "`TZ=America/Denver      date "+%Z [%z] %Y-%m-%d %T"`"  Denver"
+    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
 }
 
 
@@ -552,7 +552,8 @@ glg() {
 alias    gdw=' GIT_EXTERNAL_DIFF=difft gd '
 alias    gdcw='GIT_EXTERNAL_DIFF=difft gdc '
 
-#
+# 該指令同於 zsh 內建的 git ggpush 指令, 原本的如下
+# alias gggpush='git push origin "$(git_current_branch)"'
 unalias ggpush 2>/dev/null
 ggpush() {
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
@@ -567,8 +568,7 @@ ggpush() {
 
     git push origin "$(git_current_branch)" --force-with-lease $1 $2 $3
 }
-# 該指令同於 zsh 內建的 git ggpush 指令
-# alias gggpush='git push origin "$(git_current_branch)"'
+
 
 
 gdc() {

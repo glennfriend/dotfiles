@@ -1,0 +1,10 @@
+# ~/.tmuxinator/chat-fusion.yml
+name: fusion-kb
+root: /var/www/less/fusion-kb-backend
+
+windows:
+  - my_server:
+      layout: main-horizontal
+      panes:
+        - backend:
+          - docker-compose up

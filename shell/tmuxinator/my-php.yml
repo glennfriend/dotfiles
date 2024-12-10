@@ -4,10 +4,11 @@ root: /var/www/samurai-world-backend
 
 windows:
   - my_server:
-      layout: main-horizontal
+      layout: even-vertical
       panes:
         - main:
-          - clear && jdate
+          - clear && jdate2
         - phpstorm:
-          - nohup  /fs/linux/run_it/PhpStorm-2024.1.3/bin/phpstorm.sh > /dev/null 2>&1 &
+          - # nohup /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm.sh > /dev/null 2>&1 &
+          - nohup   /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm    > /dev/null 2>&1 &
           
