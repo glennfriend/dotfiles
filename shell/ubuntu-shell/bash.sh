@@ -125,7 +125,7 @@ alias jcp="rsync -avv --human-readable --itemize-changes --partial "
 # 有些檔案刪不掉 sudo chmod -R 777 ~/.local/share/Trash/files
 # 清空垃圾桶使用 gio trash --empty
 # 請注意: rm 本身就是 rm -rf 的功能 !
-alias rm='gio trash'
+# alias rm='gio trash'
 
 
 # https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef

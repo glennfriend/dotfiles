@@ -1,6 +1,6 @@
 # ~/.tmuxinator/my-php.yml
 name: my-php
-root: /var/www/samurai-world-backend
+root: /var/www/cl/samurai-world-backend
 
 windows:
   - my_server:
@@ -9,6 +9,5 @@ windows:
         - main:
           - clear && jdate2
         - phpstorm:
-          - # nohup /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm.sh > /dev/null 2>&1 &
           - nohup   /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm    > /dev/null 2>&1 &
           

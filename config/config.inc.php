@@ -4,11 +4,13 @@
  *  須要安裝的 config
  */
 return [
+    /*
     [
         'desc'      => '[folder] all other config',
         'origin'    => 'shell/config',
         'to'        => 'config',
     ],
+    */
     [
         'desc'      => 'gitconfig',
         'origin'    => 'shell/git/gitconfig.txt',
@@ -43,6 +45,16 @@ return [
         'desc'      => 'vscode-snippets',
         'origin'    => 'shell/vscode-snippets',
         'to'        => '.config/Code/User/snippets',
+    ],
+    [
+        'desc'      => 'vscode - OSS',
+        'origin'    => 'shell/vscode/settings.json',
+        'to'        => '.config/Code - OSS/User/settings.json',
+    ],
+    [
+        'desc'      => 'vscode-snippets - OSS',
+        'origin'    => 'shell/vscode-snippets',
+        'to'        => '.config/Code - OSS/User/snippets',
     ],
     [
         'desc'      => 'zsh-theme-myphp',
