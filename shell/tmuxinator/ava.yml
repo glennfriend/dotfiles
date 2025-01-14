@@ -1,14 +1,15 @@
 # ~/.tmuxinator/ava.yml
 name: ava
-root: /var/www/less/ava
+root: /var/www/cl/ava
 
 windows:
   - my_server:
       layout: main-horizontal
       panes:
         - frontend:
-          - cd /var/www/less/ava-client
+          - cd /var/www/cl/ava-client
           - nvm use v16.18.0
           - yarn install && yarn dev
         - docker:
+          - # "docker-compose up php db horizon kibana redis phpmyadmin elasticsearch"
           - docker-compose up

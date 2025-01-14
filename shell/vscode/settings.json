@@ -26,7 +26,7 @@
   "eslint.autoFixOnSave": true,
   "editor.formatOnSave": false,
   "breadcrumbs.enabled": true,
-  "editor.fontFamily": "'monospace', 'Hack', 'Droid Sans Mono', 'Inconsolata'",
+  "editor.fontFamily": "'Hack', 'monospace', 'Droid Sans Mono', 'Inconsolata'",
   "editor.fontSize": 14,
   "gitlens.codeLens.enabled": false,
   "gitlens.currentLine.enabled": false,

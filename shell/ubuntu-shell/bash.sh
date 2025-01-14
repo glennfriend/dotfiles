@@ -45,8 +45,8 @@ _strict_mode_start
 export HISTTIMEFORMAT="%F %T: "
 
 # crontab
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=vi
+export VISUAL=vi
 
 # --------------------------------------------------------------------------------
 #   custom
@@ -557,13 +557,14 @@ alias    gdcw='GIT_EXTERNAL_DIFF=difft gdc '
 unalias ggpush 2>/dev/null
 ggpush() {
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-    if [[ "$BRANCH_NAME" = "master" ]]; then
-        echo "Fail ! you can not push to master"
-        return
-    fi
-    if [[ "$BRANCH_NAME" = "main" ]]; then
-        echo "Fail ! you can not push to main"
-        return
+
+    if [[ "$BRANCH_NAME" = "master" || "$BRANCH_NAME" = "main" ]]; then
+        echo -n "You are trying to push to '$BRANCH_NAME'. Type 'force' to confirm: "
+        read CONFIRMATION
+        if [[ "$CONFIRMATION" != "force" ]]; then
+            echo "Fail! Push to '$BRANCH_NAME' aborted."
+            return
+        fi
     fi
 
     git push origin "$(git_current_branch)" --force-with-lease $1 $2 $3
@@ -1059,6 +1060,13 @@ function jqjsonlog()
 }
 
 
+# --------------------------------------------------------------------------------
+#   同 zsh 指令 rewrite
+# --------------------------------------------------------------------------------
+unalias ggpush 2>/dev/null
+git_current_branch() {
+    git rev-parse --abbrev-ref HEAD
+}
 
 # --------------------------------------------------------------------------------
 #   test only

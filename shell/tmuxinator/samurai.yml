@@ -1,20 +1,23 @@
 # ~/.tmuxinator/samurai.yml
 name: samurai
-root: /var/www/samurai-world-backend
+root: /var/www/cl/samurai-world-backend
 
 windows:
   - my_server:
       layout: main-horizontal
       panes:
         - frontend:
-          - cd /var/www/samurai-world-client
+          - cd /var/www/cl/samurai-world-client
           - nvm use v16.18.0
           - yarn install && yarn dev
           - # docker-compose -f docker-compose-local.yml up
         - docker:
           - # echo "service mysql stop ; service redis stop ; docker-compose up" | xclip -selection clipboard
           - # service redis stop ; docker-compose up
-          - docker-compose up
+          - # docker-compose up
+          - # ava 一定要開啟 elasticsearch, 所以 samurai 在 ava 開啟的情況下, 就避開 elasticsearch
+          - docker-compose up php db horizon node redis phpmyadmin elasticsearch
+
 
 #  - my_editor:
 #      layout: even-horizontal

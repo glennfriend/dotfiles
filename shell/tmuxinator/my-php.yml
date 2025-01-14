@@ -4,10 +4,13 @@ root: /var/www/cl/samurai-world-backend
 
 windows:
   - my_server:
-      layout: even-vertical
+      layout: tiled
       panes:
         - main:
           - clear && jdate2
         - phpstorm:
-          - nohup   /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm    > /dev/null 2>&1 &
-          
+          - nohup /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm > /dev/null 2>&1 &
+        - chrome:
+          - # nohup /fs/arch/run_it/google-chrome/opt/google/chrome/google-chrome > /dev/null 2>&1
+        - dropbox:
+          - nohup /fs/arch/run_it/dropbox/dropboxd > /dev/null 2>&1           
