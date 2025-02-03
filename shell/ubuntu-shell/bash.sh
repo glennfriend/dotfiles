@@ -558,10 +558,19 @@ unalias ggpush 2>/dev/null
 ggpush() {
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
-    if [[ "$BRANCH_NAME" = "master" || "$BRANCH_NAME" = "main" ]]; then
-        echo -n "You are trying to push to '$BRANCH_NAME'. Type 'force' to confirm: "
+    if [[ "$BRANCH_NAME" = "master" ]]; then
+        echo -n "You are trying to push to '$BRANCH_NAME'. Type 'master' to confirm: "
         read CONFIRMATION
-        if [[ "$CONFIRMATION" != "force" ]]; then
+        if [[ "$CONFIRMATION" != "master" ]]; then
+            echo "Fail! Push to '$BRANCH_NAME' aborted."
+            return
+        fi
+    fi
+
+    if [[ "$BRANCH_NAME" = "main" ]]; then
+        echo -n "You are trying to push to '$BRANCH_NAME'. Type 'main' to confirm: "
+        read CONFIRMATION
+        if [[ "$CONFIRMATION" != "main" ]]; then
             echo "Fail! Push to '$BRANCH_NAME' aborted."
             return
         fi
@@ -682,7 +691,7 @@ gh-issue-create() {
     fi
 
     # default
-    local label="chore"
+    local label="feat"
 
     while [[ $# -gt 0 ]]; do
         key="$1"
@@ -709,7 +718,7 @@ gh-issue-create() {
     # check params
     if [ -z "$title" ] || [ -z "$url" ]; then
         echo "command example"
-        echo "   " $0 '--label="chore" --title="" --url=""'
+        echo "   " $0 '--label="feat" --title="" --url=""'
         echo
         echo "description"
         echo
@@ -728,7 +737,7 @@ gh-issue-create() {
         return
     fi
 
-    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${title}\" --body \"${url}\" "
+    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${custom_issue} ${title}\" --body \"${url}\" "
     echo
     echo "-> ${COMMAND}"
     if [ -n "$custom_issue" ] ; then
@@ -769,13 +778,13 @@ gh-issue-create() {
 
     # show information
     echo
-    echo "## issue ${issue}"
-    echo "## branch ${BRANCH_NAME}"
+    # echo "## issue ${issue}"
+    # echo "## branch ${BRANCH_NAME}"
     echo "-> gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}"
     echo
-    echo ">>>>"
+    echo ">>>>>>"
     gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}
-    echo "<<<<"
+    echo "<<<<<<"
     echo
     echo "## continue"
     echo "    git checkout ${BRANCH_NAME}"
@@ -812,7 +821,7 @@ gh-pr-create() {
     done
 
 
-    TITLE_FORMAT=$(echo "$TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
+    TITLE_FORMAT=$(echo "$ISSUE $TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
     COMMAND="gh pr create --title \"${TITLE_FORMAT}\" --body \"#${ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
     echo
     echo "## Tips: 至少要有一個 commit push 才能建立 pull request"
@@ -829,9 +838,9 @@ gh-pr-create() {
 
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --draft --reviewer "alice,bob"
-    echo ">>>>"
+    echo ">>>>>>"
     eval ${COMMAND} > /tmp/gh.1
-    echo "<<<<"
+    echo "<<<<<<"
 
     # TODO: debug, will remove it
     echo "result:"
