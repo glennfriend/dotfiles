@@ -55,7 +55,7 @@ export VISUAL=vi
 alias    lll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------";'
 alias      l='ls -lhA --color --time-style=long-iso'
 alias     lt='l --sort=time'
-alias     ld='echo "> "`pwd`; echo ""; l | grep "^l"; ls -d */; l | grep "^-"';
+alias     ld='l | grep "^-" ; l | grep "^l"; ls -d */; echo "> "`pwd`;';
 alias     l.='ls -dlhA .??* --time-style=long-iso'
 alias     df='df -h'
 alias        ..='cd ..'
@@ -534,16 +534,47 @@ gls() {
 unalias glg 2>/dev/null
 glg() {
     if git show-ref --verify --quiet refs/heads/master; then
-        git log @ ^master --oneline --graph
+        git log --oneline --graph @ ^master
         echo
-        git log master -1 --oneline
+        git log --oneline master -1
     elif git show-ref --verify --quiet refs/heads/main; then
-        git log @ ^main --oneline --graph
+        git log --oneline --graph @ ^main
         echo
-        git log main -1 --oneline
+        git log --oneline main -1
     else
-        git log @ --oneline --graph
+        git log --oneline --graph @
     fi
+}
+
+# glg2() {
+#     if git show-ref --verify --quiet refs/heads/master; then
+#         ref=master
+#     elif git show-ref --verify --quiet refs/heads/main; then
+#         ref=main
+#     else
+#         ref=""
+#     fi
+# 
+#     if [ -n "$ref" ]; then
+#         echo "Diff from $ref"
+#         git log --graph --pretty=format:'%an %-20s | %h | %s' @ ^$ref
+#         echo
+#         echo "Latest commit on $ref"
+#         git log -1 --pretty=format:'%an %-20s | %h | %s' $ref
+#     else
+#         git log --graph --pretty=format:'%an %-20s | %h | %s' @
+#     fi
+# }
+
+
+
+gpr() {
+    # git fetch origin --prune
+    # git for-each-ref --sort=-committerdate --format='%(committerdate:iso8601) %(refname:short)' refs/remotes/origin | head -n 10
+
+    git for-each-ref --sort=-committerdate --format='%(authorname) | %(committerdate:iso8601) | %(refname:short)' refs/remotes/origin | \
+        awk -F'|' '{ printf "%-10.10s | %s | %s\n", $1, $2, $3 }' | head -n 10
+
 }
 
 
@@ -741,7 +772,8 @@ gh-issue-create() {
     echo
     echo "-> ${COMMAND}"
     if [ -n "$custom_issue" ] ; then
-        echo "-> custom issue=""$custom_issue"
+        echo
+        echo "NOTE: custom issue=""$custom_issue"
     fi
 
     # Prompt for confirmation to continue
@@ -785,10 +817,11 @@ gh-issue-create() {
     echo ">>>>>>"
     gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}
     echo "<<<<<<"
-    echo
-    echo "## continue"
-    echo "    git checkout ${BRANCH_NAME}"
 
+    echo
+    echo "NOTE: 以下指令已複製到記憶體"
+    echo "NOTE: git checkout ${BRANCH_NAME}"
+    echo "git checkout ${BRANCH_NAME}" | xclip -selection clipboard
 }
 
 gh-pr-create() {
@@ -824,7 +857,7 @@ gh-pr-create() {
     TITLE_FORMAT=$(echo "$ISSUE $TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
     COMMAND="gh pr create --title \"${TITLE_FORMAT}\" --body \"#${ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
     echo
-    echo "## Tips: 至少要有一個 commit push 才能建立 pull request"
+    echo "NOTE: 至少要有一個 commit push 才能建立 pull request"
     echo "-> ${COMMAND}"
 
     # Prompt for confirmation to continue
@@ -838,13 +871,17 @@ gh-pr-create() {
 
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
     # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --draft --reviewer "alice,bob"
+    echo
     echo ">>>>>>"
     eval ${COMMAND} > /tmp/gh.1
     echo "<<<<<<"
+    echo
 
-    # TODO: debug, will remove it
-    echo "result:"
+    echo "RESULT: "
+    echo "NOTE: 以下指令已複製到記憶體"
+    echo -n "NOTE: "
     cat /tmp/gh.1
+    cat /tmp/gh.1 | xclip -selection clipboard
 }
 
 # --------------------------------------------------------------------------------
@@ -1076,6 +1113,40 @@ unalias ggpush 2>/dev/null
 git_current_branch() {
     git rev-parse --abbrev-ref HEAD
 }
+
+# --------------------------------------------------------------------------------
+#   go to phpmyadmin service
+# --------------------------------------------------------------------------------
+gotopma() {
+    cd /fs/var/www/phpmyadmin-self-v2
+    phpbrew use "$(phpbrew list | grep '^  php-8\.1\.' | awk '{print $1}' | sort -V | tail -n1)"
+
+    echo 'NOTE: '
+    echo 'NOTE: php -S 127.0.0.1:7701 -t ./'
+    echo 'NOTE: '
+    echo 'php -S 127.0.0.1:7701 -t ./' | copy
+}
+
+gotocode() {
+    cd /fs/var/www/tool/code-generator
+    phpbrew use "$(phpbrew list | grep '^  php-8\.4\.' | awk '{print $1}' | sort -V | tail -n1)"
+
+    echo 'NOTE: '
+    echo 'NOTE: php -S 127.0.0.1:7702 -t ./'
+    echo 'NOTE: '
+    echo 'php -S 127.0.0.1:7702 -t ./' | copy
+}
+
+gotoquerydata() {
+    cd /fs/var/www/tool/query-data
+    phpbrew use "$(phpbrew list | grep '^  php-8\.4\.' | awk '{print $1}' | sort -V | tail -n1)"
+
+    echo 'NOTE: '
+    echo 'NOTE: php -S 127.0.0.1:7703 -t ./public/'
+    echo 'NOTE: '
+    echo 'php -S 127.0.0.1:7703 -t ./public/' | copy
+}
+
 
 # --------------------------------------------------------------------------------
 #   test only

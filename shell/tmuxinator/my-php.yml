@@ -12,5 +12,9 @@ windows:
           - nohup /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm > /dev/null 2>&1 &
         - chrome:
           - # nohup /fs/arch/run_it/google-chrome/opt/google/chrome/google-chrome > /dev/null 2>&1
+          - cd /fs/var/www/phpmyadmin-self-v2
+          - phpbrew use php-8.1.32
+          - echo "php -S 127.0.0.1:8008 -t ./" | xclip -selection clipboard
         - dropbox:
-          - nohup /fs/arch/run_it/dropbox/dropboxd > /dev/null 2>&1           
+          - nohup /fs/arch/run_it/dropbox/dropboxd   > /dev/null 2>&1
+          - nohup /fs/linux/run_it/telegram/Telegram > /dev/null 2>&1 

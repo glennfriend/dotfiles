@@ -84,7 +84,10 @@
   "workbench.editor.untitled.hint": "hidden",
   "plantuml.render": "PlantUMLServer",
   "cSpell.userWords": [
+    "Laravel",
     "loggly",
+    "phpdoc",
+    "Skynet",
     "TCPA"
   ],
   "php.suggest.basic": false,
@@ -100,5 +103,7 @@
     }
   ],
   "liveSassCompile.settings.generateMap": false,
-  "window.zoomLevel": 2
+  "window.zoomLevel": 2,
+  "editor.pasteAs.preferences": [],
+  "plantuml.server": "http://127.0.0.1:8888/"
 }
