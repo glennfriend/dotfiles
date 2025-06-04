@@ -569,6 +569,7 @@ glg() {
 
 
 gpr() {
+    # 查看最近誰推了哪些分支
     # git fetch origin --prune
     # git for-each-ref --sort=-committerdate --format='%(committerdate:iso8601) %(refname:short)' refs/remotes/origin | head -n 10
 
@@ -582,6 +583,20 @@ gpr() {
 # 測試中的功能
 alias    gdw=' GIT_EXTERNAL_DIFF=difft gd '
 alias    gdcw='GIT_EXTERNAL_DIFF=difft gdc '
+
+# 測試中的功能
+batdiff() {
+    git diff --name-only --relative --diff-filter=d | xargs bat --diff
+}
+
+
+
+
+
+
+
+
+
 
 # 該指令同於 zsh 內建的 git ggpush 指令, 原本的如下
 # alias gggpush='git push origin "$(git_current_branch)"'
@@ -997,11 +1012,11 @@ log() {
 #   phpbrew execute all fpm restart
 # --------------------------------------------------------------------------------
 jphpbrew_todo() {
-    if [ -z "$(command -v nginx)" ]
-    then
-        echo 'nginx not exists'
-        return
-    fi
+    # if [ -z "$(command -v nginx)" ]
+    # then
+    #     echo 'nginx not exists'
+    #     return
+    # fi
 
     #
     tmp_content="/tmp/execute_phpbrew_fpm_restart.sh"

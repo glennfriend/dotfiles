@@ -11,5 +11,5 @@ windows:
           - nvm use v16.18.0
           - yarn install && yarn dev
         - docker:
-          - # "docker-compose up php db horizon kibana redis phpmyadmin elasticsearch"
-          - docker-compose up
+          - # "docker compose up php db horizon kibana redis phpmyadmin elasticsearch"
+          - docker compose up
