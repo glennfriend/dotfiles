@@ -79,7 +79,8 @@ alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias chnobody='chown -R nobody:nogroup '
 alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock,.phar --noDUMB'
-alias diff='diff --color -ruB'
+#alias diff='diff --color -ruB'
+alias diff='function _ddelta(){ git diff --no-index --color=always "$1" "$2" | delta; }; _ddelta'
 alias emo='tip emoji-1'
 # paplay --> sudo apt install pulseaudio-utils
 alias beep='paplay  /usr/share/sounds/sound-icons/xylofon.wav'
@@ -522,7 +523,8 @@ jsystem2() {
 #
 # --------------------------------------------------------------------------------
 unalias gl  2>/dev/null
-# alias    gls='clear; echo "---------- branch -v"; git branch -v; echo "---------- status"; git status -sb'
+
+# git ls
 gls() {
     clear; 
     echo "---------- branch -v"; 
@@ -531,6 +533,7 @@ gls() {
     git status -sb
 }
 
+# git log
 unalias glg 2>/dev/null
 glg() {
     if git show-ref --verify --quiet refs/heads/master; then
@@ -626,7 +629,7 @@ ggpush() {
 }
 
 
-
+# git diff for cached
 gdc() {
     git diff --cached $1 $2 $3 $4 $5 $6 $7 $8 $9
 }
@@ -647,6 +650,8 @@ gdc() {
 #     rm ${TMP_FILE}
 # }
 
+
+# git diff
 unalias gd  2>/dev/null
 gd() {
     git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9
@@ -1045,7 +1050,11 @@ jphpbrew_todo() {
 #   curl
 # --------------------------------------------------------------------------------
 
-# jurl 
+# jurl
+#
+# Authorization="Bearer xxx.xxxxxx.xxx"
+# jurl https://localhost/
+#
 function jurl()
 {
     # if ! command -v pygmentize; then

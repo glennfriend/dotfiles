@@ -105,5 +105,6 @@
   "liveSassCompile.settings.generateMap": false,
   "window.zoomLevel": 2,
   "editor.pasteAs.preferences": [],
-  "plantuml.server": "http://127.0.0.1:8888/"
+  "plantuml.server": "http://127.0.0.1:8888/",
+  "terminal.integrated.defaultProfile.linux": "zsh"
 }

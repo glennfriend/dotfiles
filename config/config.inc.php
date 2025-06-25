@@ -57,6 +57,11 @@ return [
         'to'        => '.config/Code - OSS/User/snippets',
     ],
     [
+        'desc'      => 'cursor',
+        'origin'    => 'shell/cursor/settings.json',
+        'to'        => '.config/Cursor/User/settings.json',
+    ],
+    [
         'desc'      => 'zsh-theme-myphp',
         'origin'    => 'shell/oh-my-zsh-tmeme/myphp.zsh-theme',
         'to'        => '.oh-my-zsh/themes/myphp.zsh-theme',
