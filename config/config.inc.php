@@ -46,6 +46,11 @@ return [
         'origin'    => 'shell/vscode-snippets',
         'to'        => '.config/Code/User/snippets',
     ],
+    [ // vscode for github copilot
+        'desc'      => 'vscode-insiders-for-github-copilot',
+        'origin'    => 'shell/vscode-insiders/settings.json',
+        'to'        => '.config/Code - Insiders/User/settings.json',
+    ],
     [
         'desc'      => 'vscode - OSS',
         'origin'    => 'shell/vscode/settings.json',
