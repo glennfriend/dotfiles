@@ -77,7 +77,6 @@ alias fsw='cd /fs/var/www   && l';
 alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
-alias chnobody='chown -R nobody:nogroup '
 alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock,.phar --noDUMB'
 #alias diff='diff --color -ruB'
 alias diff='function _ddelta(){ git diff --no-index --color=always "$1" "$2" | delta; }; _ddelta'
@@ -1133,7 +1132,7 @@ function jqjsonlog()
 # --------------------------------------------------------------------------------
 #   同 zsh 指令 rewrite
 # --------------------------------------------------------------------------------
-unalias ggpush 2>/dev/null
+unalias git_current_branch 2>/dev/null
 git_current_branch() {
     git rev-parse --abbrev-ref HEAD
 }

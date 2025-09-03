@@ -8,15 +8,22 @@ windows:
       panes:
         - info:
           - clear
-          - echo "台北信義區 8 小時之內的氣象預報 , 重大國際新聞 3 則, 台灣重要新聞 3 則" | gemini | bat
+          - echo "台北信義區 8 小時之內的氣象預報, 下雨情況, 攝氏溫標, 重大國際新聞 5 則, 台灣重要新聞 5 則" | gemini > /tmp/news.txt
+          - cat /tmp/news.txt | bat
         - chrome:
           - clear
           - # nohup /fs/arch/run_it/google-chrome/opt/google/chrome/google-chrome > /dev/null 2>&1
-          - cd /fs/var/www/phpmyadmin-self-v2
-          - phpbrew use php-8.1.32
-          - echo "php -S 127.0.0.1:8008 -t ./" | xclip -selection clipboard
+          - # cd /fs/var/www/phpmyadmin-self-v2
+          - # phpbrew use php-8.1.32
+          - # echo "php -S 127.0.0.1:8008 -t ./" | xclip -selection clipboard
           - jdate2
+          - cd /var/www/tool/health-server
+          - ./entry.sh
+          - cat docs/CHECK-SERVER-LOG.prompot.md | gemini | tee /tmp/health.txt
+          - cat /tmp/health.txt | bat
         - app:
-          - nohup /fs/arch/run_it/dropbox/dropboxd   > /dev/null 2>&1
-          - nohup /fs/linux/run_it/telegram/Telegram > /dev/null 2>&1 
+          - clear
+          - nohup /fs/arch/run_it/dropbox/dropboxd              > /dev/null 2>&1 &
+          - nohup /fs/linux/run_it/telegram/Telegram            > /dev/null 2>&1 &
           - nohup /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm > /dev/null 2>&1 &
+          - #

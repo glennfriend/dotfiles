@@ -7,7 +7,7 @@
 [core]
 	autocrlf = false
 	# pager = less -FXRS -x2
-    pager = delta
+	pager = delta
 
     ## editor = vim
     editor = code --wait
