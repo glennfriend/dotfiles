@@ -7,9 +7,11 @@ windows:
       layout: main-horizontal
       panes:
         - info:
-          - clear
-          - echo "台北信義區 8 小時之內的氣象預報, 下雨情況, 攝氏溫標, 重大國際新聞 5 則, 台灣重要新聞 5 則" | gemini > /tmp/news.txt
-          - cat /tmp/news.txt | bat
+          - cd /var/www/tool/health-server
+          - bash entry.sh --config=.env --log ; echo '----------'
+          - cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt
+          - cat /tmp/health.txt | bat
+          - echo "台北信義區 8 小時之內的氣象預報, 下雨情況, 攝氏溫標, 重大國際新聞 5 則, 台灣重要新聞 5 則" | gemini > /tmp/news.txt ; cat /tmp/news.txt | bat
         - chrome:
           - clear
           - # nohup /fs/arch/run_it/google-chrome/opt/google/chrome/google-chrome > /dev/null 2>&1
@@ -17,10 +19,6 @@ windows:
           - # phpbrew use php-8.1.32
           - # echo "php -S 127.0.0.1:8008 -t ./" | xclip -selection clipboard
           - jdate2
-          - cd /var/www/tool/health-server
-          - ./entry.sh
-          - cat docs/CHECK-SERVER-LOG.prompot.md | gemini | tee /tmp/health.txt
-          - cat /tmp/health.txt | bat
         - app:
           - clear
           - nohup /fs/arch/run_it/dropbox/dropboxd              > /dev/null 2>&1 &

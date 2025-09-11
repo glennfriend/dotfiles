@@ -159,7 +159,7 @@ function mv() {
 
 # 文字翻譯
 # google translate
-#   - https://www.npmjs.com/package/google-translate-cli
+#   - npm install -g google-translate-cli
 #
 # example
 #   translate -h | jtr
@@ -247,7 +247,10 @@ jread() {
         pandoc "$1" | lynx -stdin
     elif [ "$ext" = "jpg" ] || [ "$ext" = "jpeg" ] || [ "$ext" = "gif" ] || [ "$ext" = "png" ] ; then
         file "$1"
-        eog "$1" &
+        set +m  # 關閉 job control
+        nohup eog "$1" >/dev/null 2>&1 &
+        set -m
+        disown  # 不會追蹤背景工作, 關閉時也不會顯示 done 訊息
     elif [ "$ext" = "php" ] || [ "$ext" = "js" ] || [ "$ext" = "css" ] ; then
         less -mN "$1"
     elif [ "$ext" = "conf" ] ; then
@@ -445,16 +448,17 @@ jsystem() {
     echo 
     echo '[other]'
     echo 'System is '`getconf LONG_BIT `' bits'
-    echo $XDG_CURRENT_DESKTOP
+    echo "XDG current desktop: $XDG_CURRENT_DESKTOP"
+    echo "XDG session type   : $XDG_SESSION_TYPE"
 
 
     for disk in $(ls /sys/block | grep -E 'sd|nvme|vd'); do
         if [ -e /sys/block/$disk/queue/rotational ]; then
             rota=$(cat /sys/block/$disk/queue/rotational)
             if [ $rota -eq 0 ]; then
-                echo "$disk is an SSD"
+                echo "disk: SSD -> $disk"
             else
-                echo "$disk is an HDD"
+                echo "disk: HDD -> $disk"
             fi
         fi
     done
