@@ -323,6 +323,12 @@ jlast() {
     last -i | awk '{print $3}' | sort | uniq -c
 }
 
+jnotify() {
+    beep
+    notify-send "Notify Task :-)"
+    jdate
+}
+
 #
 # ls guess
 #
@@ -344,11 +350,33 @@ lg() {
     fi
 }
 
-jnotify() {
-    beep
-    notify-send "Notify Task :-)"
-    jdate
+#
+# ls -la | copysearch ".env"
+# >>>>
+# -rw-rw-r--    1 ubuntu ubuntu   2072 Nov 12  2024 .env
+#
+copysearch() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: command | copysearch <search_text>" >&2
+        echo "Example: tools/tinker/run.sh | grep php | copysearch test-" >&2
+        exit 1
+    fi
+
+    search_text="$1"
+
+    while IFS= read -r line; do
+        if [[ "$line" == *"$search_text"* ]]; then
+            # 去除前後空白
+            trimmed_line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            echo "$trimmed_line" | xclip -selection clipboard
+            echo "Copied to Clipboard: $trimmed_line"
+            exit 0
+        fi
+    done
+
+    echo "Nothing can be copied" >&2
 }
+
 
 # --------------------------------------------------------------------------------
 #   解壓縮
@@ -783,15 +811,15 @@ gh-issue-create() {
         echo "       " "link to task card url"
         echo
         echo "   " "--custom_issue"
-        echo "       " "issue id: 1234, T2234"
-        echo "       " "做為開頭編號使用"
+        echo "       " "issue id: T1234"
+        echo "       " "做為特殊編號使用"
         echo
         echo "   " "--label"
         echo "       " "chore, feat, bug, enhancement"
         return
     fi
 
-    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${custom_issue} ${title}\" --body \"${url}\" "
+    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${custom_issue} ${label} ${title}\" --body \"${url}\" "
     echo
     echo "-> ${COMMAND}"
     if [ -n "$custom_issue" ] ; then
@@ -829,16 +857,21 @@ gh-issue-create() {
 
     # branch name
     echo "${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[\.\":]+//g' | sed -e 's/\[//g' -e 's/\]//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
-    BRANCH_NAME="${issue}-${BRANCH_NAME}"
+    BRANCH_NAME="${GITHUB_ISSUE_ID}-${issue}-${BRANCH_NAME}"
 
     # show information
     echo
     # echo "## issue ${issue}"
     # echo "## branch ${BRANCH_NAME}"
-    echo "-> gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}"
-    echo
+    echo "-> gh issue develop ${GITHUB_ISSUE_ID} --base $(git branch --show-current) --name ${BRANCH_NAME}"
     echo ">>>>>>"
     gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}
+    echo "<<<<<<"
+
+    echo
+    echo "-> gh issue develop --list ${GITHUB_ISSUE_ID}"
+    echo ">>>>>>"
+    gh issue develop --list ${GITHUB_ISSUE_ID}
     echo "<<<<<<"
 
     echo
@@ -849,11 +882,15 @@ gh-issue-create() {
 
 gh-pr-create() {
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-    # BRANCH_NAME="100-feat-your-title"
+    # BRANCH_NAME="34-T100-feat-your-title"
     ISSUE=$(echo $BRANCH_NAME | cut -d '-' -f 1)
-    LABEL=$(echo $BRANCH_NAME | cut -d '-' -f 2)
-    TITLE=$(echo $BRANCH_NAME | cut -d '-' -f 3-)
+    LABEL=$(echo $BRANCH_NAME | cut -d '-' -f 3)
+    TITLE=$(echo $BRANCH_NAME | cut -d '-' -f 4-)
 
+    if [ "$ISSUE" = "main" ] || [ "$LABEL" = "main" ] || [ "$TITLE" = "main" ] ; then
+        echo "請切到 target branch"
+        return
+    fi
     if [ "$ISSUE" = "master" ] || [ "$LABEL" = "master" ] || [ "$TITLE" = "master" ] ; then
         echo "請切到 target branch"
         return

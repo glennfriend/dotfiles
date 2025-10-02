@@ -8,9 +8,14 @@ windows:
       panes:
         - info:
           - cd /var/www/tool/health-server
-          - bash entry.sh --config=.env --log ; echo '----------'
-          - cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt
-          - cat /tmp/health.txt | bat
+          - |
+            bash -c "
+              bash entry.sh --config=.env --log ;
+              echo '====' ;
+              cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt ;
+              cat /tmp/health.txt ;
+            ";
+          - echo '---- the end ----.'
           - echo "台北信義區 8 小時之內的氣象預報, 下雨情況, 攝氏溫標, 重大國際新聞 5 則, 台灣重要新聞 5 則" | gemini > /tmp/news.txt ; cat /tmp/news.txt | bat
         - chrome:
           - clear
@@ -25,3 +30,10 @@ windows:
           - nohup /fs/linux/run_it/telegram/Telegram            > /dev/null 2>&1 &
           - nohup /fs/linux/run_it/PhpStorm-2024.3/bin/phpstorm > /dev/null 2>&1 &
           - #
+
+# - bash -c "
+#     bash entry.sh --config=.env --log ;
+#     echo '----------' ;
+#     cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt ;
+#     cat /tmp/health.txt | bat ;
+#   "
