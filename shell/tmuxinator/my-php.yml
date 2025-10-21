@@ -8,6 +8,7 @@ windows:
       panes:
         - info:
           - cd /var/www/tool/health-server
+          - nvm use v24.4.0
           - |
             bash -c "
               bash entry.sh --config=.env --log ;

@@ -603,16 +603,22 @@ glg() {
 
 
 gpr() {
+    # git pull request
     # 查看最近誰推了哪些分支
     # git fetch origin --prune
     # git for-each-ref --sort=-committerdate --format='%(committerdate:iso8601) %(refname:short)' refs/remotes/origin | head -n 10
 
-    git for-each-ref --sort=-committerdate --format='%(authorname) | %(committerdate:iso8601) | %(refname:short)' refs/remotes/origin | \
-        awk -F'|' '{ printf "%-10.10s | %s | %s\n", $1, $2, $3 }' | head -n 10
+    git for-each-ref --sort=-committerdate --format='%(authorname) | %(committerdate:iso8601) | %(refname:short)' refs/remotes/origin \
+        | awk -F'|' '{ printf "%-10.10s | %s | %s\n", $1, $2, $3 }' | head -n 10
 
 }
 
-
+gci() {
+    # git commit message
+    # 查看最近的 commit message
+    git log -n 20 --pretty=format:"%an|%ad|%s" --date=iso \
+        | awk -F'|' '{ printf "%-10.10s | %-25s | %s\n", $1, $2, $3 }'
+}
 
 # 測試中的功能
 alias    gdw=' GIT_EXTERNAL_DIFF=difft gd '

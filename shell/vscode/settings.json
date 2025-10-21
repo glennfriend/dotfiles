@@ -92,6 +92,10 @@
   ],
   "php.suggest.basic": false,
   "php.validate.enable": false,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true
+  },
   "emmet.excludeLanguages": [
     "markdown",
     "php"
