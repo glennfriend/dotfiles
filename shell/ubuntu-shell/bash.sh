@@ -97,6 +97,9 @@ alias head='head -n 40'
 # alias tail='tail -n 40 -f'
 # date | copy
 alias copy='xclip -selection clipboard'
+pwdcopy() {
+    pwd | tr -d '\n' | copy
+}
 
 # get ip
 alias getip="curl icanhazip.com"
@@ -753,8 +756,25 @@ git_since_last_commit() {
 }
 
 # go to git root path
-# alias gitroot='cd "$(git rev-parse --show-toplevel)"'
+alias gitroot='cd "$(git rev-parse --show-toplevel)"'
 
+# 切換 branch
+branch() {
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        pwd
+        echo "tips: 該目錄不包含 git repository"
+        return
+    fi
+
+    # 檢查是否有未 commit 的修改, 忽略 submodule hash
+    if ! git diff-index --quiet --ignore-submodules HEAD --; then
+        gls
+        echo "tips: You have uncommitted changes !"
+        return
+    fi
+
+    git checkout "$(git branch -v | fzf | awk '{print $1}')"
+}
 
 
 
@@ -1232,6 +1252,20 @@ slug()
     sed -r 's/[\.\,\_\ \-]+/-/g'
 }
 
+# --------------------------------------------------------------------------------
+#   快速進入 temp 目錄
+# --------------------------------------------------------------------------------
+tempe () {
+  cd /tmp
+  cd "$(mktemp -d)"
+  chmod -R 0700 .
+  if [[ $# -eq 1 ]]; then
+    \mkdir -p "$1"
+    cd "$1"
+    chmod -R 0700 .
+  fi
+  pwd
+}
 
 # --------------------------------------------------------------------------------
 #   test only
