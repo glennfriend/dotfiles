@@ -8,12 +8,12 @@ windows:
       panes:
         - info:
           - cd /var/www/tool/health-server
-          - nvm use v24.4.0
           - |
             bash -c "
+              cd /var/www/tool/health-server ;
               bash entry.sh --config=.env --log ;
               echo '====' ;
-              cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt ;
+              nvm use v24.4.0 ; cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt ;
               cat /tmp/health.txt ;
             ";
           - echo '---- the end ----.'

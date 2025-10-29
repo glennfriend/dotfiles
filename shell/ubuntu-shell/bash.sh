@@ -81,10 +81,6 @@ alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=stora
 #alias diff='diff --color -ruB'
 alias diff='function _ddelta(){ git diff --no-index --color=always "$1" "$2" | delta; }; _ddelta'
 alias emo='tip emoji-1'
-# paplay --> sudo apt install pulseaudio-utils
-alias beep='paplay  /usr/share/sounds/sound-icons/xylofon.wav'
-alias beep-finish='paplay  /fs/data/sound/finish.wav'
-alias beep-alert='paplay   /fs/data/sound/alert.wav'
 alias folder='nautilus'
 alias myip='curl wtfismyip.com/json'
 
@@ -144,6 +140,95 @@ function mv() {
   vared newfilename
   command mv -v -- "$1" "$newfilename"
 }
+
+# --------------------------------------------------------------------------------
+#   sound
+# --------------------------------------------------------------------------------
+# paplay --> sudo apt install pulseaudio-utils
+alias beep-clock='paplay  /usr/share/sounds/sound-icons/xylofon.wav'
+alias beep-finish='paplay /fs/data/sound/finish.wav'
+alias beep-alert='paplay  /fs/data/sound/alert.wav'
+
+# 依照前面指令成功與否顯示聲音
+# false ; beep ; true ; beep
+beep() {
+  local last="$?"
+  if [[ "$last" == '0' ]]; then
+    beep-finish
+  else
+    beep-alert
+  fi
+  # $(exit "$last")
+  return "$last"
+}
+
+#
+# echo 'hello, 你好' | speak
+# cat README.md | speak
+#
+speak () {
+    if ! hash php 2>/dev/null; then
+        >&2 echo "-> sudo apt install php"
+        return
+    fi
+    if ! hash pandoc 2>/dev/null; then
+        >&2 echo "-> sudo apt install pandoc"
+        return
+    fi
+    if ! hash mpv 2>/dev/null; then
+        >&2 echo "-> sudo apt install mpv"
+        return
+    fi
+
+    # 將 Markdown 轉成純文字
+    local text=$(pandoc -f commonmark -t plain --wrap=preserve)
+    
+    # 限制為整篇文字的前 n 個字符
+    text=$(echo "$text" | head -c 200)
+    
+    # 如果文字為空，則返回
+    if [ -z "$text" ]; then
+        >&2 echo "No text to speak"
+        return
+    fi
+    
+    # 設定語言
+    # local lang="${SPEAK_LANG:-zh-TW}"
+    local lang="${SPEAK_LANG:-en-US}"
+    
+    # 建立 /tmp/speak/ 目錄
+    mkdir -p /tmp/speak
+    
+    # 計算文字的 hash 值作為檔案名稱
+    local text_hash=$(echo "$text" | sha256sum | cut -d' ' -f1)
+    local audio_file="/tmp/speak/${text_hash}.mp3"
+    
+    # 檢查音訊檔案是否已存在
+    if [ -f "$audio_file" ]; then
+        echo "cache hit: $audio_file"
+        # 播放已存在的音訊檔案
+        mpv --no-video --really-quiet "$audio_file"
+    else
+        echo "cache miss: $audio_file"
+
+        # URL 編碼文字（使用 PHP 正確處理中文字符）
+        local encoded_text=$(echo "$text" | php -r "echo urlencode(file_get_contents('php://stdin'));")
+
+        # 使用 Google Translate TTS API
+        local tts_url="https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded_text}&tl=${lang}&client=tw-ob"
+        
+        # 下載音訊檔案到指定位置
+        if curl -s -A "Mozilla/5.0" "$tts_url" -o "$audio_file"; then
+            # 播放音訊檔案
+            mpv --no-video --really-quiet "$audio_file"
+        else
+            >&2 echo "無法從 Google Translate 獲取音訊"
+        fi
+    fi
+
+    # ls -la /tmp/speak/
+}
+
 
 # --------------------------------------------------------------------------------
 #   composer bin
@@ -320,19 +405,6 @@ jcd() {
 }
 
 #
-#
-#
-jlast() {
-    last -i | awk '{print $3}' | sort | uniq -c
-}
-
-jnotify() {
-    beep
-    notify-send "Notify Task :-)"
-    jdate
-}
-
-#
 # ls guess
 #
 lg() {
@@ -452,51 +524,19 @@ ed() {
 #   system information
 # --------------------------------------------------------------------------------
 
-# 主機版型號
-#   sudo lshw -short
-#   sudo dmidecode -t 2
-jsystem() {
+jsys() {
     clear
+    echo 'last'
+    last -i | awk '{print $3}' | sort | uniq -c | sort -nr
 
-    echo '[PATH]'
-    # echo $PATH
-    sed 's/:/\n/g' <<< "$PATH"
+    echo
+    echo 'ps'
+    jps | awk '{print $2}' | sort | uniq -c | sort -nr | head -n 15
 
-    echo 
-    echo '[system]'
-    uname -s -n -r -m -o    # uname -a
-    lsb_release -a
-
-    machine="$(uname -m)"
-    echo -n "$machine:         ";
-    if [ "$machine" = "aarch64" ] || [ "$machine" = "arm64" ] ; then
-        echo 'ARM64 架構';
-    elif [ "$machine" = "x86_64" ] ; then
-        echo '64 位元的 x86 架構';
-    fi
-
-
-    echo 
-    echo '[other]'
-    echo 'System is '`getconf LONG_BIT `' bits'
-    echo "XDG current desktop: $XDG_CURRENT_DESKTOP"
-    echo "XDG session type   : $XDG_SESSION_TYPE"
-
-
-    for disk in $(ls /sys/block | grep -E 'sd|nvme|vd'); do
-        if [ -e /sys/block/$disk/queue/rotational ]; then
-            rota=$(cat /sys/block/$disk/queue/rotational)
-            if [ $rota -eq 0 ]; then
-                echo "disk: SSD -> $disk"
-            else
-                echo "disk: HDD -> $disk"
-            fi
-        fi
-    done
+    # | awk '$1 >= 6'
 }
 
-
-jsystem2() {
+jsys2() {
     clear
 
     my_php="$(command -v php)"
@@ -542,12 +582,77 @@ jsystem2() {
     if [ -n "$my_docker" ]
     then
         echo 
-        echo '[Docker like]'
+        echo '[Docker]'
         docker -v
-        docker-compose -v
+        docker compose version
     fi
 
+    echo
+    echo '[PATH]'
+    # echo $PATH
+    sed 's/:/\n/g' <<< "$PATH"
 }
+
+
+# 主機版型號
+#   sudo lshw -short
+#   sudo dmidecode -t 2
+jsys3() {
+    clear
+
+    echo '[system]'
+    uname -s -n -r -m -o    # uname -a
+    lsb_release -a
+
+    machine="$(uname -m)"
+    echo -n "$machine:         ";
+    if [ "$machine" = "aarch64" ] || [ "$machine" = "arm64" ] ; then
+        echo 'ARM64 架構';
+    elif [ "$machine" = "x86_64" ] ; then
+        echo '64 位元的 x86 架構';
+    fi
+
+
+    echo 
+    echo '[other]'
+    echo 'System is '`getconf LONG_BIT `' bits'
+    echo "XDG current desktop: $XDG_CURRENT_DESKTOP"
+    echo "XDG session type   : $XDG_SESSION_TYPE"
+
+
+    for disk in $(ls /sys/block | grep -E 'sd|nvme|vd'); do
+        if [ -e /sys/block/$disk/queue/rotational ]; then
+            rota=$(cat /sys/block/$disk/queue/rotational)
+            if [ $rota -eq 0 ]; then
+                echo "disk: SSD -> $disk"
+            else
+                echo "disk: HDD -> $disk"
+            fi
+        fi
+    done
+}
+
+#
+# like `ps -aux`
+#
+jps() {
+    ps -eo pid,command \
+        | grep -v "/google/chrome/chrome" \
+        | grep -v "/usr/lib/firefox/firefox" \
+        | grep -v "/usr/share/code" \
+        | grep -v "/usr/bin/zsh" \
+        | grep -v "/.cache/JetBrains/" \
+        | grep -v "/.nvm/versions/node/" \
+        | grep -v "/proc/self/exe " \
+        | grep -v " zsh" \
+        | grep -v " -zsh" \
+        | grep -v " cat" \
+        | grep -v "\[kworker/" \
+        | grep -v "ps -eo pid,command"
+
+    # "\[sh] <defunct>"
+}
+
 
 # --------------------------------------------------------------------------------
 #   git
