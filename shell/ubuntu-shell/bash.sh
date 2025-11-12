@@ -1424,15 +1424,13 @@ se() {
                 background=true
                 ;;
             *)
-                # 預設用 cat 或根據 file 指令判斷
-                if file "$selected_file" | grep -q "text"; then
-                    command="cat \"$selected_file\""
-                    silent=false
-                else
-                    command="xdg-open \"$selected_file\""
-                    silent=true
-                    background=true
-                fi
+                # 未知格式
+                echo "==== file info ===="se
+                echo "權限: $(ls -l "$selected_file" | awk '{print $1}')"
+                echo "大小: $(ls -lh "$selected_file" | awk '{print $5}')"
+                echo "類型: $(file "$selected_file")"
+                
+                command=""  # 不執行任何指令
                 ;;
         esac
         
