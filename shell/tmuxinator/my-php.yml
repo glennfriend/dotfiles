@@ -8,16 +8,19 @@ windows:
       panes:
         - info:
           - cd /var/www/tool/health-server
+          - nvm use v24.4.0
           - |
-            bash -c "
+            zsh -c "
+              source ~/.zshrc
               cd /var/www/tool/health-server ;
               bash entry.sh --config=.env --log ;
               echo '====' ;
               nvm use v24.4.0 ; cat docs/CHECK-SERVER-LOG.prompt.md | gemini | tee /tmp/health.txt ;
               cat /tmp/health.txt ;
             ";
-          - echo '---- the end ----.'
-          - nvm use v24.4.0 ; echo "台北信義區 8 小時之內的氣象預報, 下雨情況, 攝氏溫標, 重大國際新聞 5 則, 台灣重要新聞 5 則" | gemini > /tmp/news.txt ; cat /tmp/news.txt | bat
+          - echo '---- the end ----'
+          - echo '---- the end ----'
+          - echo '---- the end ----'
         - chrome:
           - clear
           - # nohup /fs/arch/run_it/google-chrome/opt/google/chrome/google-chrome > /dev/null 2>&1

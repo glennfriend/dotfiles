@@ -5,5 +5,9 @@
     "plantuml.server": "http://127.0.0.1:8888/",
     "editor.fontFamily": "'Hack', 'Droid Sans Mono', 'monospace', monospace",
     "chat.tools.terminal.autoApprove": {
+        "/^docker compose exec php php -l [.a-zA-Z0-9][./a-zA-Z0-9]*\\.php$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }

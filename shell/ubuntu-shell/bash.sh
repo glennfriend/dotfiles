@@ -297,7 +297,6 @@ jdate2() {
     echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
 }
 
-
 # 到數計時器
 jsleep() {
     if [ -z "$1" ]
@@ -314,6 +313,8 @@ jsleep() {
     printf "\r"
     echo ""
 
+    notify-send "Time's up"
+    # beep-clock &
 }
 
 #閱讀器 自動判斷
@@ -1015,6 +1016,7 @@ gh-pr-create() {
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
     # BRANCH_NAME="34-T100-feat-your-title"
     ISSUE=$(echo $BRANCH_NAME | cut -d '-' -f 1)
+    CUSTOM_ISSUE=$(echo $BRANCH_NAME | cut -d '-' -f 2)
     LABEL=$(echo $BRANCH_NAME | cut -d '-' -f 3)
     TITLE=$(echo $BRANCH_NAME | cut -d '-' -f 4-)
 
@@ -1045,8 +1047,8 @@ gh-pr-create() {
     done
 
 
-    TITLE_FORMAT=$(echo "$ISSUE $TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
-    COMMAND="gh pr create --title \"${TITLE_FORMAT}\" --body \"#${ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
+    TITLE_FORMAT=$(echo "$ISSUE $CUSTOM_ISSUE $TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
+    COMMAND="gh pr create --title \"${TITLE_FORMAT}\" --body \"#${ISSUE} ${CUSTOM_ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
     echo
     echo "NOTE: 至少要有一個 commit push 才能建立 pull request"
     echo "-> ${COMMAND}"
@@ -1313,8 +1315,9 @@ git_current_branch() {
 #   go to phpmyadmin service
 # --------------------------------------------------------------------------------
 gotopma() {
-    cd /fs/var/www/phpmyadmin-self-v2
-    phpbrew use "$(phpbrew list | grep '^  php-8\.1\.' | awk '{print $1}' | sort -V | tail -n1)"
+    cd /fs/var/www/phpmyadmin-self-v3
+    phpbrew use "$(phpbrew list | grep 'php-8\.4\.' | tail -n1 | awk '{print $NF}')"
+    phpbrew list
 
     echo 'NOTE: '
     echo 'NOTE: php -S 127.0.0.1:7701 -t ./'
@@ -1324,7 +1327,8 @@ gotopma() {
 
 gotocode() {
     cd /fs/var/www/tool/code-generator
-    phpbrew use "$(phpbrew list | grep '^  php-8\.4\.' | awk '{print $1}' | sort -V | tail -n1)"
+    phpbrew use "$(phpbrew list | grep 'php-8\.4\.' | tail -n1 | awk '{print $NF}')"
+    phpbrew list
 
     echo 'NOTE: '
     echo 'NOTE: php -S 127.0.0.1:7702 -t ./'
@@ -1334,7 +1338,8 @@ gotocode() {
 
 gotoquerydata() {
     cd /fs/var/www/tool/query-data
-    phpbrew use "$(phpbrew list | grep '^  php-8\.4\.' | awk '{print $1}' | sort -V | tail -n1)"
+    phpbrew use "$(phpbrew list | grep 'php-8\.4\.' | tail -n1 | awk '{print $NF}')"
+    phpbrew list
 
     echo 'NOTE: '
     echo 'NOTE: php -S 127.0.0.1:7703 -t ./public/'
@@ -1358,9 +1363,96 @@ slug()
 }
 
 # --------------------------------------------------------------------------------
+#   show file 檔案顯示
+#
+#   e.g.
+#       se file.jpg
+# --------------------------------------------------------------------------------
+se() {
+    local query="$1"
+    local selected_file
+    
+    # 檢查輸入是否為現存的檔案 (相對路徑, 絕對路徑)
+    if [[ -n "$query" && ( -f "$query" || -f "./$query" ) ]]; then
+        # 如果檔案存在, 直接使用
+        if [[ -f "$query" ]]; then
+            selected_file="$query"
+        else
+            selected_file="./$query"
+        fi
+    elif [[ -n "$query" ]]; then
+        # 如果有提供搜尋字串, 直接搜尋
+        selected_file=$(find . -type f -name "*$query*" | fzf --query="$query")
+    else
+        # 沒有提供搜尋字串, 顯示所有檔案
+        selected_file=$(find . -type f | fzf)
+    fi
+    
+    if [[ -n "$selected_file" ]]; then
+        local extension="${selected_file##*.}"
+        local command=""
+        
+        case "$extension" in
+            jpg|jpeg|png|gif|bmp|webp|tiff|svg)
+                command="mpv --image-display-duration=inf \"$selected_file\""
+                silent=true
+                ;;
+            mp4|avi|mkv|mov|wmv|flv|webm|m4v)
+                command="mpv \"$selected_file\""
+                silent=true
+                ;;
+            mp3|wav|flac|aac|ogg|m4a)
+                command="mpv \"$selected_file\""
+                silent=true
+                ;;
+            pdf)
+                command="evince \"$selected_file\""
+                silent=true
+                background=true
+                ;;
+            md|txt|log|conf|config|yml|yaml|json|xml)
+                command="bat \"$selected_file\""
+                silent=false
+                ;;
+            py|js|html|css|php|sh|bash|zsh)
+                command="bat \"$selected_file\""
+                silent=false
+                ;;
+            doc|docx|xls|xlsx|ppt|pptx)
+                command="libreoffice \"$selected_file\""
+                silent=true
+                background=true
+                ;;
+            *)
+                # 預設用 cat 或根據 file 指令判斷
+                if file "$selected_file" | grep -q "text"; then
+                    command="cat \"$selected_file\""
+                    silent=false
+                else
+                    command="xdg-open \"$selected_file\""
+                    silent=true
+                    background=true
+                fi
+                ;;
+        esac
+        
+        # 根據需要修改指令
+        if [[ "$silent" == true ]]; then
+            command="$command >/dev/null 2>&1"
+        fi
+        if [[ "$background" == true ]]; then
+            command="$command &"
+        fi
+
+        # 直接執行指令
+        eval "$command"
+    fi
+}
+
+# --------------------------------------------------------------------------------
 #   快速進入 temp 目錄
 # --------------------------------------------------------------------------------
-tempe () {
+jtemp () {
   cd /tmp
   cd "$(mktemp -d)"
   chmod -R 0700 .
