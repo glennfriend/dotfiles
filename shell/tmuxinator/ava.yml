@@ -8,7 +8,7 @@ windows:
       panes:
         - frontend:
           - cd /var/www/cl/ava-client
-          - nvm use v16.18.0
+          - nvm use  # nvm use v16.18.0   # nvm use v16.20.2
           - yarn install && yarn dev
         - docker:
           - # "docker compose up php db horizon kibana redis phpmyadmin elasticsearch"

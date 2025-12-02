@@ -1,4 +1,6 @@
 {
+    "// search.followSymlinks": "專案中允許搜尋外部連結的檔案? 但是, 無效果",
+    "search.followSymlinks": true,
     "github.copilot.chat.localeOverride": "zh-TW",
     "accessibility.voice.speechLanguage": "zh-TW",
     "plantuml.render": "PlantUMLServer",

@@ -17,7 +17,7 @@ windows:
           - # service redis stop ; docker-compose up
           - # docker compose up
           - # ava 一定要開啟 elasticsearch, 所以 samurai 在 ava 開啟的情況下, 就避開 elasticsearch
-          - echo "docker compose exec 'php' php artisan horizon"
+          -  echo "docker compose exec 'php' php artisan horizon"
           - docker compose up php db horizon node redis phpmyadmin elasticsearch
 
 

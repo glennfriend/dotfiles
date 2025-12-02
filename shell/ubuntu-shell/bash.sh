@@ -93,7 +93,7 @@ alias head='head -n 40'
 # alias tail='tail -n 40 -f'
 # date | copy
 alias copy='xclip -selection clipboard'
-pwdcopy() {
+pwdcp() {
     pwd | tr -d '\n' | copy
 }
 
@@ -879,203 +879,11 @@ branch() {
         return
     fi
 
+    echo
     git checkout "$(git branch -v | fzf | awk '{print $1}')"
+    git branch -v
 }
 
-
-
-# --------------------------------------------------------------------------------
-#   github gh cli
-#       未來可能改成 ??
-#       mygh issue create
-#       mygh pr create
-#
-# --------------------------------------------------------------------------------
-gh-issue-create() {
-    check="$(command -v php)"
-    if [ -z "$check" ]; then
-        echo "please to install `php`"
-        return
-    fi
-
-    check="$(command -v gh)"
-    if [ -z "$check" ]; then
-        echo "please to install `gh`: https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
-        return
-    fi
-
-    # default
-    local label="feat"
-
-    while [[ $# -gt 0 ]]; do
-        key="$1"
-        case $key in
-            --title=*)
-                title="${key#*=}"
-                ;;
-            --url=*)
-                url="${key#*=}"
-                ;;
-            --label=*)
-                label="${key#*=}"
-                ;;
-            --custom_issue=*)
-                custom_issue="${key#*=}"
-                ;;
-            *)
-                # Unknown option
-                ;;
-        esac
-        shift
-    done
-
-    # check params
-    if [ -z "$title" ] || [ -z "$url" ]; then
-        echo "command example"
-        echo "   " $0 '--label="feat" --title="" --url=""'
-        echo
-        echo "description"
-        echo
-        echo "   " "--title"
-        echo "       " "github title"
-        echo
-        echo "   " "--url"
-        echo "       " "link to task card url"
-        echo
-        echo "   " "--custom_issue"
-        echo "       " "issue id: T1234"
-        echo "       " "做為特殊編號使用"
-        echo
-        echo "   " "--label"
-        echo "       " "chore, feat, bug, enhancement"
-        return
-    fi
-
-    COMMAND="gh issue create --assignee @me --label \"${label}\" --title \"${custom_issue} ${label} ${title}\" --body \"${url}\" "
-    echo
-    echo "-> ${COMMAND}"
-    if [ -n "$custom_issue" ] ; then
-        echo
-        echo "NOTE: custom issue=""$custom_issue"
-    fi
-
-    # Prompt for confirmation to continue
-    echo -n "Continue (y/N): "
-    read RESPONSE
-    if [[ ! "$RESPONSE" =~ ^[Yy]$ ]]; then
-        echo "exit 0"
-        return
-    fi
-
-    # issue create
-    # get like "https://github.com/username/project/issues/100"
-    eval ${COMMAND} > /tmp/gh.1
-
-    # 取得 issue number
-    REGEX='/issues\/([0-9]+)/'
-    cat /tmp/gh.1 | php -R "preg_match('$REGEX', \$argn, \$matches); echo \$matches[1];" | read GITHUB_ISSUE_ID
-    # check ISSUE
-    if [ -z "$GITHUB_ISSUE_ID" ] ; then
-        echo "create failed !"
-        return
-    fi
-
-    # 如果已經有填 $issue, 就不用使用 github issue id 做為 prefix
-    if [ -z "$custom_issue" ] ; then
-        issue=$GITHUB_ISSUE_ID
-    else
-        issue=$custom_issue
-    fi
-
-    # branch name
-    echo "${label}-${title}" | sed -r 's/([a-z0-9]+)/\L\1/ig' | sed -r 's/[\.\":]+//g' | sed -e 's/\[//g' -e 's/\]//g' | sed -r 's/[\.\,\_\ \-]+/-/g' | read BRANCH_NAME
-    BRANCH_NAME="${GITHUB_ISSUE_ID}-${issue}-${BRANCH_NAME}"
-
-    # show information
-    echo
-    # echo "## issue ${issue}"
-    # echo "## branch ${BRANCH_NAME}"
-    echo "-> gh issue develop ${GITHUB_ISSUE_ID} --base $(git branch --show-current) --name ${BRANCH_NAME}"
-    echo ">>>>>>"
-    gh issue develop ${GITHUB_ISSUE_ID} --name ${BRANCH_NAME}
-    echo "<<<<<<"
-
-    echo
-    echo "-> gh issue develop --list ${GITHUB_ISSUE_ID}"
-    echo ">>>>>>"
-    gh issue develop --list ${GITHUB_ISSUE_ID}
-    echo "<<<<<<"
-
-    echo
-    echo "NOTE: 以下指令已複製到記憶體"
-    echo "NOTE: git checkout ${BRANCH_NAME}"
-    echo "git checkout ${BRANCH_NAME}" | xclip -selection clipboard
-}
-
-gh-pr-create() {
-    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-    # BRANCH_NAME="34-T100-feat-your-title"
-    ISSUE=$(echo $BRANCH_NAME | cut -d '-' -f 1)
-    CUSTOM_ISSUE=$(echo $BRANCH_NAME | cut -d '-' -f 2)
-    LABEL=$(echo $BRANCH_NAME | cut -d '-' -f 3)
-    TITLE=$(echo $BRANCH_NAME | cut -d '-' -f 4-)
-
-    if [ "$ISSUE" = "main" ] || [ "$LABEL" = "main" ] || [ "$TITLE" = "main" ] ; then
-        echo "請切到 target branch"
-        return
-    fi
-    if [ "$ISSUE" = "master" ] || [ "$LABEL" = "master" ] || [ "$TITLE" = "master" ] ; then
-        echo "請切到 target branch"
-        return
-    fi
-    if [ -z "$ISSUE" ] || [ -z "$LABEL" ] || [ -z "$TITLE" ]; then
-        echo "請切到 target branch."
-        return
-    fi
-
-    while [[ $# -gt 0 ]]; do
-        key="$1"
-        case $key in
-            --reviewer=*)
-                reviewer="${key#*=}"
-                ;;
-            *)
-                # Unknown option
-                ;;
-        esac
-        shift
-    done
-
-
-    TITLE_FORMAT=$(echo "$ISSUE $CUSTOM_ISSUE $TITLE" | sed 's/-/ /g' | php -r 'echo ucfirst(fgets(STDIN));')
-    COMMAND="gh pr create --title \"${TITLE_FORMAT}\" --body \"#${ISSUE} ${CUSTOM_ISSUE}\" --assignee @me --label \"${LABEL}\" --draft --reviewer \"${reviewer}\" "
-    echo
-    echo "NOTE: 至少要有一個 commit push 才能建立 pull request"
-    echo "-> ${COMMAND}"
-
-    # Prompt for confirmation to continue
-    echo -n "Continue (y/N): "
-    read RESPONSE
-    if [[ ! "$RESPONSE" =~ ^[Yy]$ ]]; then
-        echo "exit 0"
-        return
-    fi
-
-
-    # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --web
-    # gh pr create --title "${TITLE}" --body "#${ISSUE}" --assignee @me --label "${LABEL}" --draft --reviewer "alice,bob"
-    echo
-    echo ">>>>>>"
-    eval ${COMMAND} > /tmp/gh.1
-    echo "<<<<<<"
-    echo
-
-    echo "RESULT: "
-    echo "NOTE: 以下指令已複製到記憶體"
-    echo -n "NOTE: "
-    cat /tmp/gh.1
-    cat /tmp/gh.1 | xclip -selection clipboard
-}
 
 # --------------------------------------------------------------------------------
 #   PHP, Laravel
@@ -1126,28 +934,6 @@ log() {
     # -ge   >=
     # -le   <=
 
-    #
-    # wordpress
-    #
-    let TOTAL_COUNT=0
-    for FILE in "${FILES[@]}"; do
-        if [[ "$FILE" = "wp-includes" ]]; then
-            TOTAL_COUNT=$TOTAL_COUNT+1;
-        fi
-        if [[ "$FILE" = "wp-settings.php" ]]; then
-            TOTAL_COUNT=$TOTAL_COUNT+1;
-        fi
-        if [[ "$FILE" = "wp-cron.php" ]]; then
-            TOTAL_COUNT=$TOTAL_COUNT+1;
-        fi
-    done
-
-    LOG_FILE="wp-content/debug.log";
-    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
-        echo -e tail -f $LOG_FILE
-        echo
-        tail -f $LOG_FILE
-    fi
 
     #
     # laravel
@@ -1183,6 +969,45 @@ log() {
         tail -f $LOG_FILE
     fi
 
+    LOG_FILE="shared/storage/logs/laravel-${TODAY}.log";
+    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
+        echo -e tail -f $LOG_FILE
+        echo
+        tail -f $LOG_FILE
+    fi
+
+    LOG_FILE="shared/storage/logs/laravel.log";
+    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
+        echo -e tail -f $LOG_FILE
+        echo
+        tail -f $LOG_FILE
+    fi
+
+
+
+
+    #
+    # wordpress
+    #
+    let TOTAL_COUNT=0
+    for FILE in "${FILES[@]}"; do
+        if [[ "$FILE" = "wp-includes" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+        if [[ "$FILE" = "wp-settings.php" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+        if [[ "$FILE" = "wp-cron.php" ]]; then
+            TOTAL_COUNT=$TOTAL_COUNT+1;
+        fi
+    done
+
+    LOG_FILE="wp-content/debug.log";
+    if [[ TOTAL_COUNT -ge 3 ]] && [ -f $LOG_FILE ] ; then
+        echo -e tail -f $LOG_FILE
+        echo
+        tail -f $LOG_FILE
+    fi
 }
 
 
@@ -1393,7 +1218,22 @@ se() {
         local command=""
         
         case "$extension" in
-            jpg|jpeg|png|gif|bmp|webp|tiff|svg)
+            jpg|jpeg|tiff|tif|webp)
+                # 顯示 EXIF 資訊
+                echo "=== EXIF 資訊 ==="
+                if command -v identify >/dev/null 2>&1; then
+                    identify -verbose "$selected_file" | grep -E "(Geometry|Resolution|Colorspace|date:)" | head -n 8
+                elif command -v exiftool >/dev/null 2>&1; then
+                    exiftool "$selected_file" | grep -E "(File Size|Image Size|Camera|Date|GPS|Flash|ISO|Exposure|Focal)" | head -n 10
+                else
+                    echo "建議安裝: sudo apt install imagemagick"
+                fi
+                echo ""
+                
+                command="mpv --image-display-duration=inf \"$selected_file\""
+                silent=true
+                ;;
+            png|gif|bmp|svg)
                 command="mpv --image-display-duration=inf \"$selected_file\""
                 silent=true
                 ;;
