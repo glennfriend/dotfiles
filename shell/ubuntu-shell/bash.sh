@@ -754,7 +754,7 @@ ggpush() {
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
     if [[ "$BRANCH_NAME" = "master" ]]; then
-        echo -n "You are trying to push to '$BRANCH_NAME'. Type 'master' to confirm: "
+        echo -n "You are trying to push to [$BRANCH_NAME]. Type 'master' to confirm: "
         read CONFIRMATION
         if [[ "$CONFIRMATION" != "master" ]]; then
             echo "Fail! Push to '$BRANCH_NAME' aborted."
@@ -763,7 +763,7 @@ ggpush() {
     fi
 
     if [[ "$BRANCH_NAME" = "main" ]]; then
-        echo -n "You are trying to push to '$BRANCH_NAME'. Type 'main' to confirm: "
+        echo -n "You are trying to push to [$BRANCH_NAME]. Type 'main' to confirm: "
         read CONFIRMATION
         if [[ "$CONFIRMATION" != "main" ]]; then
             echo "Fail! Push to '$BRANCH_NAME' aborted."

@@ -71,4 +71,9 @@ return [
         'origin'    => 'shell/oh-my-zsh-tmeme/myphp.zsh-theme',
         'to'        => '.oh-my-zsh/themes/myphp.zsh-theme',
     ],
+    [
+        'desc'      => 'ghostty-terminal',
+        'origin'    => 'shell/ghostty/config',
+        'to'        => '.config/ghostty/config',
+    ],
 ];

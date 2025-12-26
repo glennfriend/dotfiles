@@ -1,0 +1,18 @@
+# This is the configuration file for Ghostty.
+#
+#   ~/.config/ghostty/config
+#
+# 查看所有可用設定選項及其預設值的清單
+#
+#   ghostty +show-config --default --docs
+#
+# 你可以設定些什麼
+#
+#   https://ghostty.org/docs/config
+#
+# 有些設定適用於 new windows
+# 有些設定適用於 完全重啟
+# 重新載入 config
+#
+#   Control + Shift + ,
+#
