@@ -16,3 +16,68 @@
 #
 #   Control + Shift + ,
 #
+
+# ask or not (沒有作用)
+# clipboard-read = allow
+# clipboard-write = allow
+# clipboard-trim-trailing-spaces 複製時 移除結尾空白字元
+clipboard-trim-trailing-spaces = true
+
+#
+# term = xterm-ghostty
+term = xterm-256color
+
+
+# key
+keybind = ctrl+s>r=reload_config
+
+# key split
+keybind = ctrl+s>\=new_split:right
+keybind = ctrl+s>-=new_split:down
+keybind = ctrl+s>up=goto_split:top
+keybind = ctrl+s>down=goto_split:bottom
+keybind = ctrl+s>left=goto_split:left
+keybind = ctrl+s>right=goto_split:right
+# key split 暫時切換 全畫面/全分割
+keybind = ctrl+s>z=toggle_split_zoom
+# key split 平均畫面分割
+keybind = ctrl+s>e=equalize_splits
+
+
+# mouse
+# mouse-hide-while-typing = true
+# mouse-scroll-multiplier = 2
+
+
+# window
+# window-subtitle = working-directory
+# resize-overlay = never
+# window-save-state 永遠記住視窗狀態與位置，下次啟動還原
+window-save-state = always
+window-colorspace = "display-p3"
+macos-titlebar-style = transparent
+
+# theme
+# > ghostty +list-themes
+theme = Arthur
+theme = Citruszest
+
+# theme for install ?
+# theme = catppuccin-mocha
+# theme = catppuccin-frappe
+# theme = GruvboxDarkHard
+
+
+# display
+# font-family = ""
+# font-family = "Hack"
+# font-family = "DejaVu Sans Mono"
+# font-family = "Berkeley Mono"
+# font-family = "BerkeleyMono Nerd Font"
+# bold-is-bright 粗體文字同時套用亮色系 (bright colors)，讓粗體在深色主題下更清楚
+# bold-is-bright = true
+font-size = 14
+background = 090A0F
+
+
+background-opacity = 0.91
