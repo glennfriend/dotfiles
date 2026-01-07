@@ -11,5 +11,11 @@
             "approve": true,
             "matchCommandLine": true
         }
+    },
+    "chat.tools.urls.autoApprove": {
+        "https://uptimerobot.com": {
+            "approveRequest": false,
+            "approveResponse": true
+        }
     }
 }

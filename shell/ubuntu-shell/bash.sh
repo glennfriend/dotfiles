@@ -92,9 +92,9 @@ alias sudo='sudo '
 alias head='head -n 40'
 # alias tail='tail -n 40 -f'
 # date | copy
-alias copy='xclip -selection clipboard'
+alias copy='head -c -1 | xclip -selection clipboard'
 pwdcp() {
-    pwd | tr -d '\n' | copy
+    pwd | copy
 }
 
 # get ip
@@ -392,7 +392,7 @@ jrm() {
 # fzf cat
 #
 jcat() {
-    fzf --preview '[[ $(file --mime {}) =~ binary ]] && echo {} is a binary file || (rougify {}  || highlight -O ansi -l {} || coderay {} || cat {}) 2> /dev/null | head -500'
+    fzf --preview '[[ $(file --mime {}) =~ binary ]] && echo {} is a binary file || (rougify {}  || highlight -O ansi -l {} || coderay {} || cat {}) 2> /dev/null | head -500' | copy
 }
 
 #
@@ -434,8 +434,11 @@ lg() {
 copysearch() {
     if [ $# -eq 0 ]; then
         echo "Usage: command | copysearch <search_text>" >&2
-        echo "Example: tools/tinker/run.sh | grep php | copysearch test-" >&2
-        exit 1
+        echo "  Example: cat .env | copysearch DB_DATABASE" >&2
+        echo "  Example: tools/tinker/run.sh | grep php | copysearch test-" >&2
+        echo "  Example: ls -la tools/tinker/ | grep php | copysearch test-" >&2
+        
+        return 1
     fi
 
     search_text="$1"
@@ -446,7 +449,7 @@ copysearch() {
             trimmed_line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
             echo "$trimmed_line" | xclip -selection clipboard
             echo "Copied to Clipboard: $trimmed_line"
-            exit 0
+            return 0
         fi
     done
 

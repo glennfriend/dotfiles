@@ -44,9 +44,12 @@ keybind = ctrl+s>z=toggle_split_zoom
 keybind = ctrl+s>e=equalize_splits
 
 
+# 打字的游標
+cursor-color = #FFFFFF
+
 # mouse
 # mouse-hide-while-typing = true
-# mouse-scroll-multiplier = 2
+mouse-scroll-multiplier = 2
 
 
 # window
@@ -56,6 +59,7 @@ keybind = ctrl+s>e=equalize_splits
 window-save-state = always
 window-colorspace = "display-p3"
 macos-titlebar-style = transparent
+
 
 # theme
 # > ghostty +list-themes
@@ -69,6 +73,7 @@ theme = Citruszest
 
 
 # display
+background-opacity = 0.91
 # font-family = ""
 # font-family = "Hack"
 # font-family = "DejaVu Sans Mono"
@@ -78,6 +83,3 @@ theme = Citruszest
 # bold-is-bright = true
 font-size = 14
 background = 090A0F
-
-
-background-opacity = 0.91
