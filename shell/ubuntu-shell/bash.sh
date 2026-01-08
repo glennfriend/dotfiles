@@ -389,10 +389,21 @@ jrm() {
 }
 
 #
-# fzf cat
+# fzf cat - 模糊搜尋檔案並預覽，選中後複製路徑到剪貼簿
 #
 jcat() {
-    fzf --preview '[[ $(file --mime {}) =~ binary ]] && echo {} is a binary file || (rougify {}  || highlight -O ansi -l {} || coderay {} || cat {}) 2> /dev/null | head -500' | copy
+    local preview_cmd='
+        if [[ $(file --mime {}) =~ binary ]]; then
+            echo "{} is a binary file"
+        else
+            batcat --color=always {} 2>/dev/null \
+                || highlight -O ansi -l {} 2>/dev/null \
+                || coderay {} 2>/dev/null \
+                || cat {}
+        fi | head -500
+    '
+
+    fzf --preview "$preview_cmd" | copy
 }
 
 #

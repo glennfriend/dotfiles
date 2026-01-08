@@ -12,6 +12,11 @@ return [
     ],
     */
     [
+        'desc'      => 'claude skills',
+        'origin'    => 'shell/claude-skills',
+        'to'        => '.claude/skills',
+    ],
+    [
         'desc'      => 'gitconfig',
         'origin'    => 'shell/git/gitconfig.txt',
         'to'        => '.gitconfig',
