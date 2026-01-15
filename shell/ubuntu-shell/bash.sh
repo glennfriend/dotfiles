@@ -396,14 +396,16 @@ jcat() {
         if [[ $(file --mime {}) =~ binary ]]; then
             echo "{} is a binary file"
         else
-            batcat --color=always {} 2>/dev/null \
-                || highlight -O ansi -l {} 2>/dev/null \
-                || coderay {} 2>/dev/null \
-                || cat {}
+            bat --color=always          {} 2>/dev/null \
+              || batcat --color=always  {} 2>/dev/null \
+              || highlight -O ansi -l   {} 2>/dev/null \
+              || coderay                {} 2>/dev/null \
+              || cat {}
         fi | head -500
     '
 
-    fzf --preview "$preview_cmd" | copy
+    fzf --preview-window=right:70%:wrap --preview "$preview_cmd" | copy
+    echo -n "copy to Clipboard"
 }
 
 #
@@ -684,7 +686,10 @@ gls() {
     echo "---------- branch -v"; 
     git branch -v; 
     echo "---------- status"; 
-    git status -sb
+
+    # 設定 git config core.quotepath false -> 正確顯示 UTF-8
+    # 設定 git config core.quotepath true  -> "中" 會顯示為 "\344\270\255"
+    git -c core.quotepath=false status -sb
 }
 
 # git log
@@ -1062,36 +1067,41 @@ jphpbrew_todo() {
 #   curl
 # --------------------------------------------------------------------------------
 
-# jurl
 #
-# Authorization="Bearer xxx.xxxxxx.xxx"
-# jurl https://localhost/
+# jurl -I
+# jurl | jq .
 #
-function jurl()
-{
-    # if ! command -v pygmentize; then
-    #     echo "-> sudo apt-get install python-pygments"
-    # fi
-    if [ -z "$1" ]
+function jurl() {
+
+    if [ -z "$(command -v pygmentize)" ]
+    then
+        echo '-> sudo apt-get install python-pygments'
+        return
+    fi
+
+    #
+    if [ -z "$API" ]
         then
-            echo "No arguments url"
+            echo '-> API=http://localhost:5050/api/v2/users?size=1'
+            echo '-> API=http://localhost:5050/api/accounts/1/recent_lead_activities'
             return
     fi
+
     if [ -z "${Authorization}" ]
         then
             echo '-> Authorization="Bearer xxx.xxxxxx.xxx"'
             return
     fi
 
-    # curl -kis
-
-    # curl -ks "$1" \
-    curl -ks "$@" \
+    # -sk   -> 靜默 + 跳過 SSL/TLS 證書驗證
+    curl "$@" -s ${API} \
         -H "Authorization: ${Authorization}" \
         -H 'Accept: application/json, text/plain, */*' \
         -H 'Content-Type: application/json;charset=utf-8' \
         --compressed
 }
+
+
 
 # --------------------------------------------------------------------------------
 #   jq
