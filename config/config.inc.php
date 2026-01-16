@@ -12,6 +12,11 @@ return [
     ],
     */
     [
+        'desc'      => 'public config',
+        'origin'    => 'shell/public-config',
+        'to'        => 'public-config',     // 指向 ~/public-config
+    ],
+    [
         'desc'      => 'claude skills',
         'origin'    => 'shell/claude-skills',
         'to'        => '.claude/skills',

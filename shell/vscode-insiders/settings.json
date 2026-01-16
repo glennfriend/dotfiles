@@ -12,6 +12,7 @@
             "matchCommandLine": true
         }
     },
+    "github.copilot.nextEditSuggestions.enabled": true,
     "chat.tools.urls.autoApprove": {
         "https://uptimerobot.com": {
             "approveRequest": false,

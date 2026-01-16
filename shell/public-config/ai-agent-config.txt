@@ -1,0 +1,26 @@
+# show
+gemini  auto
+gemini  Flash       standard
+gemini  Flash-Lite  quick
+gemini  Pro         推理
+claude  Sonnet 4    standard
+claude  Haiku       quick, 簡單快速, 批量處理, 重複性任務
+claude  Opus        推理, 速度慢 high token, 問五題就下班
+llm     gpt-5-mini  standard
+llm     gpt-5-nano  quick
+llm     gpt-5.2     深度推理, 長時間遵循指示
+llm     gpt-4o      視覺
+
+
+# value
+gemini  -m auto                  -p
+gemini  -m gemini-2.5-flash      -p
+gemini  -m gemini-2.5-flash-lite -p
+gemini  -m gemini-2.5-pro        -p
+claude  --model sonnet   -p
+claude  --model haiku    -p
+claude  --model opus     -p
+llm     -c -m gpt-5-mini
+llm     -c -m gpt-5-nano
+llm     -c -m gpt-5.2
+llm     -c -m gpt-4o
