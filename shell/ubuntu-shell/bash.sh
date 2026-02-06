@@ -419,7 +419,14 @@ jlist() {
         fi | head -n 500
     '
 
-    fzf --preview-window=right:70%:wrap --preview "$preview_cmd" | copy
+    # 改變窗口寬度 left, right
+    # 卷動上下內容 page-up, page-down (半頁)
+    fzf --preview-window=right:70%:wrap \
+        --bind 'left:change-preview-window(right:96%)' \
+        --bind 'right:change-preview-window(right:70%)' \
+        --bind 'page-up:preview-half-page-up' \
+        --bind 'page-down:preview-half-page-down' \
+        --preview "$preview_cmd" | copy
     echo -n "copy to Clipboard"
 }
 
