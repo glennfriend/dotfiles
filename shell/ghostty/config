@@ -23,6 +23,9 @@
 # clipboard-trim-trailing-spaces 複製時 移除結尾空白字元
 clipboard-trim-trailing-spaces = true
 
+# 避免占用過多記憶體
+# scrollback-limit = 200000
+
 #
 # term = xterm-ghostty
 term = xterm-256color
@@ -49,7 +52,7 @@ cursor-color = #FFFFFF
 
 # mouse
 # mouse-hide-while-typing = true
-mouse-scroll-multiplier = 2
+mouse-scroll-multiplier = 5
 
 
 # window

@@ -11,10 +11,9 @@ if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
 # Using wget or curl command
 # --------------------------------------------------------------------------------
 #
-# source <( curl -sS --insecure     https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
-# sh <(curl -L                      https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
-# sh <(wget --no-check-certificate  https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh -O -)
-# bash < <(curl -sS                 https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
+# source <( curl -sS    https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
+# bash < <(curl -sS     https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
+# sh <(curl -L          https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
 
 # --------------------------------------------------------------------------------
@@ -55,9 +54,10 @@ export VISUAL=vi
 alias    lll='echo; last -n20; echo "----------"; echo "timezone : "`cat /etc/timezone`; echo "boot-time: "`uptime -s`; echo "now      : "`date "+%Y-%m-%d %H:%M:%S"`; echo "----------";'
 alias      l='ls -lhA --color --time-style=long-iso'
 alias     lt='l --sort=time'
-alias     ld='l | grep "^-" ; l | grep "^l"; ls -d */; echo "> "`pwd`;';
+alias     ld='l | grep "^-" ; l | grep "^l"; ls -d */; echo "> "`pwd`;'
 alias     l.='ls -dlhA .??* --time-style=long-iso'
 alias     df='df -h'
+alias     du='du -h'
 alias        ..='cd ..'
 alias       ...='cd ../..'
 alias      ....='cd ../../..'
@@ -68,12 +68,12 @@ alias    ..3='cd ../../..'
 alias    ..4='cd ../../../..'
 alias    ..5='cd ../../../../..'
 alias    ..6='cd ../../../../../..'
-alias gow='cd /var/www      && l';
-alias goow='cd /opt/www     && l';
-alias got='cd ~/tools       && l';
-alias gossh='cd ~/.ssh      && l';
-alias fs=' cd /fs           && l';
-alias fsw='cd /fs/var/www   && l';
+alias gow='cd /var/www      && l'
+alias goow='cd /opt/www     && l'
+alias got='cd ~/tools       && l'
+alias gossh='cd ~/.ssh      && l'
+alias fs=' cd /fs           && l'
+alias fsw='cd /fs/var/www   && l'
 alias ch755='chmod -R 755 '
 alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
@@ -108,6 +108,10 @@ alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep 
 #   +++++++++ 新增檔案
 #
 alias jcp="rsync -avv --human-readable --itemize-changes --partial "
+
+# 大型檔案用, 可以顯示檔案進度
+alias jbigcp="rsync -avv --partial --progress "
+
 
 # other
 # alias mux="tmuxinator"
@@ -260,7 +264,8 @@ alias jtrl='translate -s en -t zh-TW | less'
 # load my bash shell
 jbash() {
     local url="https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh"
-    source <( curl --insecure {$url} )
+    # source <( curl --insecure "{$url}" )
+    source <( curl "{$url}" )
 }
 
 # create folder
@@ -317,36 +322,36 @@ jsleep() {
     # beep-clock &
 }
 
-#閱讀器 自動判斷
-jread() {
-    if [ -z "$1" ]
-        then
-            echo "No arguments supplied"
-            return
-    fi
+#
+# jloop {次數} {指令}
+# jloop 10 "date ; sleep 1"
+#
+# 有錯誤就直接中斷
+#
+jloop() {
+      if [ -z "$1" ] || [ -z "$2" ]; then
+          echo "Usage: jloop <count> <command>"
+          return 1
+      fi
 
-    local filename=$(basename "$1")
-    local ext="${filename##*.}"
-    local filename="${filename%.*}"
+      local count=$1
+      local cmd=$2
 
-    #echo $filename
-    #echo $ext
+      # 設定 trap 處理 Ctrl+C (SIGINT)
+      trap 'echo ""; echo "Interrupted by user"; return 130' INT
 
-    if [ "$ext" = "md" ] ; then
-        pandoc "$1" | lynx -stdin
-    elif [ "$ext" = "jpg" ] || [ "$ext" = "jpeg" ] || [ "$ext" = "gif" ] || [ "$ext" = "png" ] ; then
-        file "$1"
-        set +m  # 關閉 job control
-        nohup eog "$1" >/dev/null 2>&1 &
-        set -m
-        disown  # 不會追蹤背景工作, 關閉時也不會顯示 done 訊息
-    elif [ "$ext" = "php" ] || [ "$ext" = "js" ] || [ "$ext" = "css" ] ; then
-        less -mN "$1"
-    elif [ "$ext" = "conf" ] ; then
-        less -mN "$1"
-    else
-        less -m "$1"
-    fi
+      for i in $(seq 1 $count); do
+          echo "========== Run $i/$count =========="
+          eval "$cmd"
+          local exit_code=$?
+          if [ $exit_code -ne 0 ]; then
+              echo "-> Command failed with exit code $exit_code at run $i"
+              trap - INT  # 清除 trap
+              return $exit_code  # 立即停止並返回錯誤碼
+          fi
+      done
+
+      trap - INT  # 清除 trap
 }
 
 #
@@ -389,23 +394,66 @@ jrm() {
 }
 
 #
-# fzf cat - 模糊搜尋檔案並預覽，選中後複製路徑到剪貼簿
+# fzf list - 模糊搜尋檔案並預覽，選中後複製路徑到剪貼簿
 #
-jcat() {
+jlist() {
+    if ! hash chafa 2>/dev/null; then
+        >&2 echo "-> sudo apt install chafa"
+        return
+    fi
+
     local preview_cmd='
-        if [[ $(file --mime {}) =~ binary ]]; then
-            echo "{} is a binary file"
+        mime_type=$(file --mime-type -b {})
+
+        if [[ $mime_type =~ ^image/ ]]; then
+            chafa --format=kitty -s "${FZF_PREVIEW_COLUMNS:-80}x${FZF_PREVIEW_LINES:-40}" {} 2>/dev/null \
+              || chafa -s "${FZF_PREVIEW_COLUMNS:-80}x${FZF_PREVIEW_LINES:-40}" {} 2>/dev/null \
+              || { echo "Image: {}"; file {}; }
+        elif [[ ! $mime_type =~ ^text/ ]]; then
+            echo "{} is a binary file (${mime_type})"
         else
-            bat --color=always          {} 2>/dev/null \
-              || batcat --color=always  {} 2>/dev/null \
-              || highlight -O ansi -l   {} 2>/dev/null \
-              || coderay                {} 2>/dev/null \
-              || cat {}
-        fi | head -500
+          batcat --color=always       {} 2>/dev/null \
+            || highlight -O ansi -l   {} 2>/dev/null \
+            || coderay                {} 2>/dev/null \
+            || cat {}
+        fi | head -n 500
     '
 
     fzf --preview-window=right:70%:wrap --preview "$preview_cmd" | copy
     echo -n "copy to Clipboard"
+}
+
+
+#閱讀器 自動判斷
+jcat() {
+    if [ -z "$1" ]
+        then
+            echo "No arguments supplied"
+            return
+    fi
+
+    local filename=$(basename "$1")
+    local ext="${filename##*.}"
+    local filename="${filename%.*}"
+
+    #echo $filename
+    #echo $ext
+
+    if [ "$ext" = "md" ] ; then
+        pandoc "$1" | lynx -stdin
+    elif [ "$ext" = "jpg" ] || [ "$ext" = "jpeg" ] || [ "$ext" = "gif" ] || [ "$ext" = "png" ] ; then
+        file "$1"
+        set +m  # 關閉 job control
+        nohup eog "$1" >/dev/null 2>&1 &
+        set -m
+        disown  # 不會追蹤背景工作, 關閉時也不會顯示 done 訊息
+    elif [ "$ext" = "php" ] || [ "$ext" = "js" ] || [ "$ext" = "css" ] ; then
+        less -mN "$1"
+    elif [ "$ext" = "conf" ] ; then
+        less -mN "$1"
+    else
+        less -m "$1"
+    fi
 }
 
 #
@@ -782,7 +830,7 @@ ggpush() {
     fi
 
     if [[ "$BRANCH_NAME" = "main" ]]; then
-        echo -n "You are to push to [$BRANCH_NAME]. Type 'main' to confirm: "
+        echo -n "You will push to [$BRANCH_NAME]. Type 'main' to confirm: "
         read CONFIRMATION
         if [[ "$CONFIRMATION" != "main" ]]; then
             echo "Fail! Push to '$BRANCH_NAME' aborted."
@@ -1093,14 +1141,17 @@ function jurl() {
             return
     fi
 
+    # for debug
+    # echo "$@" -s ${API}
+
     # -sk   -> 靜默 + 跳過 SSL/TLS 證書驗證
     curl "$@" -s ${API} \
         -H "Authorization: ${Authorization}" \
         -H 'Accept: application/json, text/plain, */*' \
         -H 'Content-Type: application/json;charset=utf-8' \
         --compressed
-}
 
+}
 
 
 # --------------------------------------------------------------------------------
