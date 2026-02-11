@@ -83,7 +83,7 @@ alias diff='function _ddelta(){ git diff --no-index --color=always "$1" "$2" | d
 alias emo='tip emoji-1'
 alias folder='nautilus'
 alias myip='curl wtfismyip.com/json'
-
+alias sanbox='firejail --dns=8.8.8.8 --private --nonewprivs '
 
 # 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
 alias sudo='sudo '
