@@ -112,10 +112,17 @@ docker_status() {
 
     echo '> docker --version'
     docker --version
-    echo
 
+    echo
     echo '> docker ps'
     docker ps 2>/dev/null || echo "無權限或 Docker 未運行"
+
+    echo
+    echo '--- docker inspect info ---'
+    for name in $(docker ps --format '{{.Names}}'); do
+        ip=$(docker inspect $name --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}')
+        printf "%-30s %s\n" "$name" "$ip"
+    done
 }
 
 project_directories() {
@@ -172,8 +179,8 @@ run resource_usage      "資源使用情況"
 run ports_in_use        "連接埠使用情況"
 run running_processes   "運行中的服務程序"
 run systemd_services
-run docker_status
 run project_directories "專案目錄結構"
 run nginx
 run env_file_content
 run pm2_status
+run docker_status
