@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 #
-# curl -O https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/info/linux-info.sh
+# curl -fsSL https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/info/linux-info.sh | sudo bash
+#
+# target
+#   建立新工具鏈之前, 了解所需資訊
+#   檢查不足夠的命令工具
+#   連接埠資訊, 避免衝突, 進而產生不必要的額外工作量
+#   避免私密資訊洩漏
 #
 
 if ! sudo -v > /dev/null 2>&1; then
@@ -24,9 +30,9 @@ run() {
 # function
 # ================================================================================
 current_times() {
-    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
-    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
-    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
+    echo `TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
+    echo `TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
+    echo `TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
 }
 
 hostname() {
@@ -67,23 +73,29 @@ ports_in_use() {
 }
 
 running_processes() {
-    echo "=== Node.js 進程 ==="
-    ps aux | grep -E "[n]ode|[n]pm|[y]arn" | head -n 10
+
+    echo "== Node.js Processes x10 (via ps) =="
+    ps -eo user,pid,%cpu,%mem,rss,stat,start,time,command --sort=pid | grep -E '(^USER|[n]ode|[n]pm|[y]arn)' | head -n 10
     echo ""
-    echo "=== PHP 進程 ==="
-    ps aux | grep -E "[p]hp|[p]hp-fpm" | head -n 10
+
+    echo "== PHP Processes x10 (via ps) =="
+    ps -eo user,pid,%cpu,%mem,rss,stat,start,time,command --sort=pid | grep -E '(^USER|[p]hp|[p]hp-fpm)' | head -n 10
     echo ""
-    echo "=== Web Server ==="
-    ps aux | grep -E "[n]ginx|[a]pache|[c]addy" | head -n 5
+
+    echo "== Web Server Processes x5 (via ps) =="
+    ps -eo user,pid,%cpu,%mem,rss,stat,start,time,command --sort=pid | grep -E '(^USER|[n]ginx|[a]pache|[c]addy)' | head -n 5
     echo ""
-    echo "=== MySQL/MariaDB ==="
-    ps aux | grep -E "[m]ysql|[m]ariadb|[p]ostgres" | head -n 5
+
+    echo "== MySQL/MariaDB Processes x5 (via ps) =="
+    ps -eo user,pid,%cpu,%mem,rss,stat,start,time,command --sort=pid | grep -E '(^USER|[m]ysql|[m]ariadb|[p]ostgres)' | head -n 5
     echo ""
-    echo "=== Redis ==="
-    ps aux | grep "[r]edis" | head -n 5
+
+    echo "== Redis Processes x5 (via ps) =="
+    ps -eo user,pid,%cpu,%mem,rss,stat,start,time,command --sort=pid | grep -E '(^USER|[r]edis)' | head -n 5
     echo ""
-    echo "=== Elasticsearch ==="
-    ps aux | grep "[e]lasticsearch" | head -n 5
+
+    echo "== Elasticsearch Processes x5 (via ps) =="
+    ps -eo user,pid,%cpu,%mem,rss,stat,start,time,command --sort=pid | grep -E '(^USER|[e]lasticsearch)' | head -n 5
 }
 
 systemd_services() {
@@ -93,14 +105,17 @@ systemd_services() {
 }
 
 docker_status() {
-    if command -v docker &> /dev/null; then
-        echo "Docker 已安裝: $(docker --version)"
-        echo ""
-        echo "運行中的容器:"
-        docker ps 2>/dev/null || echo "無權限或 Docker 未運行"
-    else
+    if ! command -v docker &> /dev/null; then
         echo "Docker 未安裝"
+        return
     fi
+
+    echo '> docker --version'
+    docker --version
+    echo
+
+    echo '> docker ps'
+    docker ps 2>/dev/null || echo "無權限或 Docker 未運行"
 }
 
 project_directories() {
@@ -112,21 +127,23 @@ project_directories() {
     echo
     echo "> ls -la /home/"
             ls -la /home/ 2>/dev/null
-    echo
-    echo "=== .env 檔案位置 ==="
-    find /var/www /opt/www /home -maxdepth 3 -name ".env" -type f 2>/dev/null | head -n 10
 }
 
 env_file_content() {
-    echo "尋找 .env 關鍵配置 (去除敏感資訊):"
-    local env_files=$(find /var/www /opt/www /home -maxdepth 3 -name ".env" -type f 2>/dev/null | head -n 3)
+    echo "=== find .env files ==="
+    local all_env_files=$(find /var/www /opt/www /home -maxdepth 3 -name ".env" -type f 2>/dev/null)
 
-    if [ -z "$env_files" ]; then
+    if [ -z "$all_env_files" ]; then
         echo "未找到 .env 檔案"
         return
     fi
 
-    for env_file in $env_files; do
+    echo "$all_env_files"
+
+    echo
+    echo "=== 只顯示 .env 設定內容 x2 (去除敏感資訊) ==="
+    local preview_files=$(echo "$all_env_files" | head -n 2)
+    for env_file in $preview_files; do
         echo
         echo "[$env_file]"
         cat "$env_file" 2>/dev/null | grep -E "^(APP_|DB_|REDIS_|QUEUE_|PORT|URL|ELASTICSEARCH)" | grep -v "PASSWORD\|SECRET\|KEY" || echo "無權限讀取"
@@ -153,7 +170,7 @@ run hostname            "主機名稱"
 run system_info_cmd     "系統資訊"
 run resource_usage      "資源使用情況"
 run ports_in_use        "連接埠使用情況"
-run running_processes   "運行中的服務進程"
+run running_processes   "運行中的服務程序"
 run systemd_services
 run docker_status
 run project_directories "專案目錄結構"
