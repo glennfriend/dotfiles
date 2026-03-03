@@ -990,6 +990,57 @@ function dtinker()
     fi
 }
 
+
+# --------------------------------------------------------------------------------
+#   docker helper
+# --------------------------------------------------------------------------------
+
+#
+# 編輯 container 裡面的檔案
+# 注意! 有風險的指令!
+# e.g.
+#       dvi ava_php /var/www/html/.env
+#
+dvi() {
+    if [[ -z "$1" || -z "$2" ]]; then
+      echo "Usage: dvi <container> <file>"
+      echo
+      echo "e.g."
+      echo "    docker ps"
+      echo "    docker exec ava_php tail /var/www/html/.env"
+      echo "    dvi         ava_php      /var/www/html/.env"
+      return 1
+    fi
+
+    if ! docker inspect "$1" &>/dev/null; then
+      echo "Container '$1' not found"
+      echo '->'
+      docker ps --format "{{.Names}}" | sed 's/^/  /'
+      return 1
+    fi
+
+    if ! docker exec "$1" test -f "$2" 2>/dev/null; then
+        echo "Container fail: '$2' is not a file"
+        return 1
+    fi
+
+    local TMPFILE=$(mktemp)
+    docker cp "$1:$2" "$TMPFILE"
+    local BEFORE=$(stat -c %Y "$TMPFILE")
+    vi "$TMPFILE"
+    local AFTER=$(stat -c %Y "$TMPFILE")
+
+    # 如果檔案沒有改變, 就不需要覆蓋 container 裡面的檔案
+    if [[ "$BEFORE" != "$AFTER" ]]; then
+        docker cp "$TMPFILE" "$1:$2"
+    else
+        echo "No changes, skipping copy back."
+    fi
+
+    # rm -f "$TMPFILE"
+}
+
+
 # --------------------------------------------------------------------------------
 #   log rewrite
 #
