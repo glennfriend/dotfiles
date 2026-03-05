@@ -17,6 +17,11 @@ if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
 # bash < <(curl -sS     https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 # sh <(curl -L          https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
+shcopy() {
+    local cmd=" source <( curl -sS    https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )"
+    echo "[copy] ${cmd}"
+    echo "${cmd}" | xclip -selection clipboard
+}
 
 # --------------------------------------------------------------------------------
 #   前導函式
@@ -525,6 +530,94 @@ copysearch() {
 
     echo "Nothing can be copied" >&2
 }
+
+# color
+# - 將 stdin 的文字依關鍵字上色
+# - 為文字上顯色
+# - 大小寫不敏感, 原始大小寫保留不變
+# - 後面文字會覆蓋前面的顏色
+#
+# e.g.
+#   echo "abcde1234567890_abcde_ABCDE" | color a b c d e 1 2 3 4 5 6 7 8 9 0
+#   echo "老師, 老師您好" | color "老師" "老師您好" ; echo "老師, 老師您好" | color "老師您好" "老師"
+color() {
+    local num_terms=$#
+    (( num_terms > 11 )) && num_terms=11
+
+    # 透過環境變數將關鍵字傳給 awk（可安全處理特殊字元）
+    # 用 for-in 迴圈避免 bash(0-index) vs zsh(1-index) 的陣列差異
+    local i=0
+    for term in "$@"; do
+        (( i >= num_terms )) && break
+        export "COLOR_TERM_${i}=${term}"
+        i=$(( i + 1 ))
+    done
+    export COLOR_NUM_TERMS=$num_terms
+
+gawk '
+    BEGIN {
+        COLORS[0]  = "\033[1;31m"  # 亮紅色
+        COLORS[1]  = "\033[1;32m"  # 亮綠色
+        COLORS[2]  = "\033[1;33m"  # 亮黃色
+        COLORS[3]  = "\033[1;35m"  # 亮紫色
+        COLORS[4]  = "\033[1;36m"  # 亮青色
+
+        COLORS[5]  = "\033[30;41m"  # 黑字紅底
+        COLORS[6]  = "\033[30;42m"  # 黑字綠底
+        COLORS[7]  = "\033[30;43m"  # 黑字黃底
+        COLORS[8]  = "\033[30;45m"  # 黑字紫底
+        COLORS[9]  = "\033[30;46m"  # 黑字青底
+        COLORS[10] = "\033[30;47m"  # 黑字白底
+
+        RESET = "\033[0m"
+
+        num_terms = ENVIRON["COLOR_NUM_TERMS"] + 0
+        for (i = 0; i < num_terms; i++)
+            terms[i] = ENVIRON["COLOR_TERM_" i]
+    }
+    {
+        line = $0
+        n = length(line)
+        delete color_map
+
+        # 建立每個字元的顏色對照表, 後面的關鍵字會覆蓋前面的
+        for (t = 0; t < num_terms; t++) {
+            term      = terms[t]
+            term_len  = length(term)
+            if (term_len == 0) continue
+
+            line_lower = tolower(line)
+            term_lower = tolower(term)
+
+            pos = 1
+            while (pos <= n) {
+                idx = index(substr(line_lower, pos), term_lower)
+                if (idx == 0) break
+                start = pos + idx - 1
+                for (j = start; j < start + term_len; j++)
+                    color_map[j] = COLORS[t]
+                pos = start + 1
+            }
+        }
+
+        # 依顏色對照表重新組合字串, 在顏色切換處插入 ANSI 色碼
+        result    = ""
+        cur_color = ""
+        for (i = 1; i <= n; i++) {
+            c = (i in color_map) ? color_map[i] : ""
+            if (c != cur_color) {
+                result    = result (c != "" ? c : RESET)
+                cur_color = c
+            }
+            result = result substr(line, i, 1)
+        }
+        if (cur_color != "") result = result RESET
+
+        print result
+    }
+'
+}
+
 
 
 # --------------------------------------------------------------------------------
