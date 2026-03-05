@@ -1,29 +1,29 @@
 ---
 name: domain name 創意集思廣益
-description: Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io, .dev, .ai, etc.). Saves hours of brainstorming and manual checking.
+description: 為你的專案產生具創意的網域名稱構想, 並檢查多種 TLD (.com, .io, .dev, .ai 等) 的可用性, 節省數小時的腦力激盪與人工查詢時間
 ---
 
 # Domain Name Brainstormer
 
-This skill helps you find the perfect domain name for your project by generating creative options and checking what's actually available to register.
+This skill 協助你為專案找到理想的 domain name, 透過產生創意選項並檢查實際可註冊的可用性。
 
-## When to Use This Skill
+## When to Use This Skill (何時使用此技能)
 
-- Starting a new project or company
-- Launching a product or service
-- Creating a personal brand or portfolio site
-- Rebranding an existing project
-- Registering a domain for a side project
-- Finding available alternatives when your first choice is taken
+- 開始新的專案或公司
+- 發佈產品或服務
+- 建立個人品牌或作品集網站
+- 為既有專案重新品牌化 (rebranding)
+- 為 side project 註冊 domain
+- 當首選網域已被註冊時, 尋找可用替代方案
 
-## What This Skill Does
+## What This Skill Does (此技能的功能)
 
-1. **Understands Your Project**: Analyzes what you're building and who it's for
-2. **Generates Creative Names**: Creates relevant, memorable domain options
-3. **Checks Availability**: Verifies which domains are actually available across multiple TLDs
-4. **Multiple Extensions**: Suggests .com, .io, .dev, .ai, .app, and more
-5. **Provides Alternatives**: Offers variations if top choices are taken
-6. **Branding Insights**: Explains why certain names work well
+1. **理解你的專案**: 分析你正在打造的產品與目標受眾
+2. **產生創意名稱**: 建立相關且容易記憶的網域選項
+3. **檢查可用性**: 驗證多種 TLD 下哪些網域實際可註冊
+4. **多種副檔名**: 建議 .com, .io, .dev, .ai, .app 等
+5. **提供替代方案**: 若熱門選項已被註冊, 提供變體
+6. **品牌洞察**: 說明為何某些名稱特別適合
 
 ## How to Use
 

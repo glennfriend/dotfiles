@@ -122,18 +122,11 @@ docker_status() {
 }
 
 project_directories() {
-    echo "> ls -la /var/www/"
-            ls -la /var/www/ 2>/dev/null || echo "/var/www/ 不存在"
-    echo
-    echo "> ls -la /opt/www/"
-            ls -la /opt/www/ 2>/dev/null || echo "/opt/www/ 不存在"
-    echo
-    echo "> ls -la /home/"
-            ls -la /home/ 2>/dev/null
+    tree -L 1 /var/www  /opt/www  /home  
 }
 
 env_file_content() {
-    echo "=== find .env files ==="
+    # echo "=== find .env files ==="
     local all_env_files=$(find /var/www /opt/www /home -maxdepth 3 -name ".env" -type f 2>/dev/null)
 
     if [ -z "$all_env_files" ]; then
@@ -153,6 +146,14 @@ env_file_content() {
     #     echo "[$env_file]"
     #     cat "$env_file" 2>/dev/null | grep -E "^(APP_|DB_|REDIS_|QUEUE_|PORT|URL|ELASTICSEARCH)" | grep -v "PASSWORD\|SECRET\|KEY" || echo "無權限讀取"
     # done
+}
+
+logs_folder_list() {
+    find /var/www /opt/www /home -maxdepth 8 -type d -name "logs" 2>/dev/null | while read -r dir; do
+        if ls "$dir"/*.log > /dev/null 2>&1; then
+            echo "$dir"
+        fi
+    done
 }
 
 pm2_status() {
@@ -180,5 +181,6 @@ run systemd_services
 run project_directories "專案目錄結構"
 run nginx
 run env_file_content    "env files list"
+run logs_folder_list    "logs folder list"
 run pm2_status
 run docker_status
