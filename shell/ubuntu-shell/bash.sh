@@ -105,8 +105,9 @@ pwdcp() {
 }
 
 # get ip
-alias getip="curl icanhazip.com"
-alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+alias getip="echo '> curl icanhazip.com' ; curl icanhazip.com"
+alias getlocalip="ifconfig | grep -E 'inet '"
+#alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # copy files
 #   >f        傳輸文件
@@ -369,10 +370,7 @@ jrm() {
     local left="\033[1;33m"
     local right="\033[0m"
     local absolute_path=$(readlink -m "$1")
-    echo ">"
-    echo "> rm -rf ${left}${absolute_path}${right}"
-    echo ">"
-
+    echo "## remove ${left}${absolute_path}${right}"
 
     if [ -z "$1" ] ; then
         echo "Input delete folder or files"
@@ -392,12 +390,11 @@ jrm() {
     local delete_folder="/tmp/delete/$now/"
     mkdir -p "$delete_folder"
 
-    rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && gio trash "$1"
-    echo ""
-    echo "rsync -avv --human-readable --itemize-changes --partial $1 $delete_folder && gio trash $1"
-    echo "ls -la $delete_folder"
-    echo "ls -la $delete_folder" | xclip -selection clipboard
-    echo "----"
+    # rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && gio trash "$1"
+    rsync -aq --partial "$1" "$delete_folder" && gio trash "$1"
+    # echo "## backup to $delete_folder"
+    tree -ah $delete_folder
+    echo
 }
 
 #
@@ -434,7 +431,7 @@ jlist() {
         --bind 'page-up:preview-half-page-up' \
         --bind 'page-down:preview-half-page-down' \
         --preview "$preview_cmd" | copy
-    echo -n "copy to Clipboard"
+    echo -n "copy Filename to Clipboard"
 }
 
 
