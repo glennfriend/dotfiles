@@ -17,7 +17,7 @@ if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
 # bash < <(curl -sS     https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 # sh <(curl -L          https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
-shcopy() {
+shcp() {
     local cmd=" source <( curl -sS    https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )"
     echo "[copy] ${cmd}"
     echo "${cmd}" | xclip -selection clipboard
@@ -425,15 +425,19 @@ jlist() {
 
     # 改變窗口寬度 left, right
     # 卷動上下內容 page-up, page-down (半頁)
-    fzf --preview-window=right:70%:wrap \
+    local selected
+    selected=$(fzf --preview-window=right:70%:wrap \
         --bind 'left:change-preview-window(right:96%)' \
         --bind 'right:change-preview-window(right:70%)' \
         --bind 'page-up:preview-half-page-up' \
         --bind 'page-down:preview-half-page-down' \
-        --preview "$preview_cmd" | copy
-    echo -n "copy Filename to Clipboard"
-}
+        --preview "$preview_cmd")
 
+    if [[ -n "$selected" ]]; then
+        echo "$selected" | copy
+        echo -n "filename copy to Clipboard"
+    fi
+}
 
 #閱讀器 自動判斷
 jcat() {
@@ -1088,6 +1092,7 @@ function dtinker()
 # --------------------------------------------------------------------------------
 
 #
+# docker container vi
 # 編輯 container 裡面的檔案
 # 注意! 有風險的指令!
 # e.g.
@@ -1303,6 +1308,33 @@ function jurl() {
 
 }
 
+#
+# 計算取得 url 的時間
+# curltime https://api.messenger.contactloop.com/api/health_status_check
+#
+curltime() {
+    local fmt
+    fmt+="namelookup=%{time_namelookup}\n"
+    fmt+="connect=%{time_connect}\n"
+    fmt+="appconnect=%{time_appconnect}\n"
+    fmt+="pretransfer=%{time_pretransfer}\n"
+    fmt+="starttransfer=%{time_starttransfer}\n"
+    fmt+="total=%{time_total}\n"
+
+    curl -o /dev/null -s -w "$fmt" "$@" | awk -F= '
+        { ms = int($2 * 1000 + 0.5) }
+        $1 == "namelookup"    { printf "time_namelookup    (DNS 查詢)       %4d ms\n", ms }
+        $1 == "connect"       { printf "time_connect       (TCP 連線)       %4d ms\n", ms }
+        $1 == "appconnect"    { printf "time_appconnect    (TLS Handshake)  %4d ms\n", ms }
+        $1 == "pretransfer"   { printf "time_pretransfer   (送出請求)       %4d ms\n", ms; pretransfer_ms = ms }
+        $1 == "starttransfer" { printf "time_starttransfer (收到回應)       %4d ms\n", ms; starttransfer_ms = ms }
+        $1 == "total"         { printf "time_total                          %4d ms\n", ms }
+        END                   { print "---"
+                                printf "server processing  (API 處理時間)   %4d ms  (%d - %d)\n", starttransfer_ms - pretransfer_ms, starttransfer_ms, pretransfer_ms }
+    '
+}
+
+
 
 # --------------------------------------------------------------------------------
 #   jq
@@ -1511,6 +1543,20 @@ se() {
         eval "$command"
     fi
 }
+
+# --------------------------------------------------------------------------------
+#   screenshot
+#   shot file
+# --------------------------------------------------------------------------------
+
+# 將指定目錄最新 圖片檔案 的名稱跟路徑複製到 剪貼薄
+shotfile() {
+    mypath="/fs/data/get"
+    filepath=$(ls -lth "$mypath" | grep -E '\.(png|jpg|jpeg)$' | head -n1 | awk -v path="$mypath" '{print path "/" $NF}')
+    echo -e "$filepath \033[90m(Clipboard)\033[0m"
+    echo -n "$filepath" | xclip -selection clipboard
+}
+
 
 # --------------------------------------------------------------------------------
 #   快速進入 temp 目錄

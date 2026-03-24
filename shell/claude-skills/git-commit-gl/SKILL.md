@@ -62,4 +62,4 @@ description: 將現在已進到 git stage 的檔案 commit 到 git repository
 ### fix phpstan
 - fix phpstan command line: `composer phpstan:docker` or `docker compose exec 'php' composer phpstan:docker`
 - 如果有 phpstan 的錯誤, 並且是這次 commit 的檔案, 請修正
-
+- 如果 phpstan 在第一次嘗試的時候就失敗, 請放棄執行, 跳過此 Step 
