@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------------
 
 #set -o errexit      # 發生錯誤時, 包含 Ctrl + c , 程式終止
+set -u              # 測試中 ...  <-- 將引用未設定的變數視為錯誤
 set -o nounset      # 使用沒有設定的變數, 程式終止
 set -o pipefail     # 這將確保 pipeline 命令被視為失敗，即使 pipeline 中的一個命令失敗
 if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
@@ -91,6 +92,7 @@ alias emo='tip emoji-1'
 alias folder='nautilus'
 alias myip='curl wtfismyip.com/json'
 alias sanbox='firejail --dns=8.8.8.8 --private --nonewprivs '
+alias claude='claude --verbose '
 
 # 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
 alias sudo='sudo '
@@ -1334,6 +1336,29 @@ curltime() {
     '
 }
 
+#
+# 追蹤短網址/轉址的完整跳轉路徑
+# curl-link-trace https://staging.r.quotewizard.io/link/WkptgRQ
+#
+curl-link-trace() {
+    if [[ -z "${1:-}" ]]; then
+        echo "Usage: curl-link-trace <url>"
+        return 1
+    fi
+    local step=0
+    curl -sIL "$1" 2>&1 | grep -iE "^(HTTP/|location:)" | while IFS= read -r line; do
+        if [[ "$line" =~ ^HTTP/ ]]; then
+            step=$((step + 1))
+            if [[ $step -gt 1 ]]; then
+                echo ""
+            fi
+            echo "---"
+            echo "$line"
+        else
+            echo "$line"
+        fi
+    done
+}
 
 
 # --------------------------------------------------------------------------------

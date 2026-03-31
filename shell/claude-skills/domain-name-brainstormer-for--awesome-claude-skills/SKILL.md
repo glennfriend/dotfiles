@@ -1,6 +1,5 @@
 ---
-name: domain name 創意集思廣益
-description: 為你的專案產生具創意的網域名稱構想, 並檢查多種 TLD (.com, .io, .dev, .ai 等) 的可用性, 節省數小時的腦力激盪與人工查詢時間
+description: domain name 創意集思廣益 - 為你的專案產生具創意的網域名稱構想, 並檢查多種 TLD (.com, .io, .dev, .ai 等) 的可用性, 節省數小時的腦力激盪與人工查詢時間
 ---
 
 # Domain Name Brainstormer

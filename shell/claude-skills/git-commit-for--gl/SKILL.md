@@ -1,6 +1,6 @@
 ---
-name: git commit flow
-description: 將現在已進到 git stage 的檔案 commit 到 git repository
+description: git commit flow - 將現在已進到 git stage 的檔案 commit 到 git repository
+allowed-tools: Read, Bash
 ---
 
 ## Step 1
@@ -32,7 +32,7 @@ description: 將現在已進到 git stage 的檔案 commit 到 git repository
     - chore
     - feat
     - fix
-    - doc
+    - docs
     - refactor
   - unit types (格式小寫)
     - entity
@@ -53,7 +53,7 @@ description: 將現在已進到 git stage 的檔案 commit 到 git repository
   - commit message examples
     - chore(assistant/entity): check if greeting is empty
     - feat(assistant/api): [POST /assistants] added name validation, should be a-zA-Z
-    - doc(assistant/api): added response status code.
+    - docs(assistant/api): added response status code.
     - fix(assistant/api): [PUT /ai-tools/:id] respond http 500 error if name is duplicated.
 
 
@@ -62,4 +62,4 @@ description: 將現在已進到 git stage 的檔案 commit 到 git repository
 ### fix phpstan
 - fix phpstan command line: `composer phpstan:docker` or `docker compose exec 'php' composer phpstan:docker`
 - 如果有 phpstan 的錯誤, 並且是這次 commit 的檔案, 請修正
-- 如果 phpstan 在第一次嘗試的時候就失敗, 請放棄執行, 跳過此 Step 
+- 如果開發環境不支援 phpstan, 請放棄執行, 跳過此 Step 
