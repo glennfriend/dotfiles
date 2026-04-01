@@ -19,7 +19,7 @@ if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
 # sh <(curl -L          https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
 shcp() {
-    local cmd=" source <( curl -sS    https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )"
+    local cmd=" source <( curl -sS 'https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh?$(date +%s)' )"
     echo "[copy] ${cmd}"
     echo "${cmd}" | xclip -selection clipboard
 }
@@ -27,7 +27,7 @@ shcp() {
 # --------------------------------------------------------------------------------
 #   ZSH security
 # --------------------------------------------------------------------------------
-if [ -n "$ZSH_VERSION" ]; then
+if [ -n "${ZSH_VERSION:-}" ]; then
     setopt NO_EQUALS          # 停用 =command 展開
     setopt NO_GLOB_SUBST
 fi
