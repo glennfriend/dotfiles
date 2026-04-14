@@ -22,6 +22,21 @@ return [
         'to'        => '.claude/skills',
     ],
     [
+        'desc'      => 'claude CLAUDE.md',
+        'origin'    => 'shell/claude-files/CLAUDE.md',
+        'to'        => '.claude/CLAUDE.md',
+    ],
+    [
+        'desc'      => 'claude settings.json',
+        'origin'    => 'shell/claude-files/settings.json',
+        'to'        => '.claude/settings.json',
+    ],
+    [
+        'desc'      => 'claude scripts',
+        'origin'    => 'shell/claude-scripts',
+        'to'        => '.claude/scripts',
+    ],
+    [
         'desc'      => 'gitconfig',
         'origin'    => 'shell/git/gitconfig.txt',
         'to'        => '.gitconfig',

@@ -19,7 +19,7 @@ if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
 # sh <(curl -L          https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh )
 #
 shcp() {
-    local cmd=" source <( curl -sS 'https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh?$(date +%s)' )"
+    local cmd=' source <( curl -sS "https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh?$(date +%s)" )'
     echo "[copy] ${cmd}"
     echo "${cmd}" | xclip -selection clipboard
 }
@@ -98,10 +98,11 @@ alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=stora
 #alias diff='diff --color -ruB'
 alias diff='function _ddelta(){ git diff --no-index --color=always "$1" "$2" | delta; }; _ddelta'
 alias emo='tip emoji-1'
-alias folder='nautilus'
 alias myip='curl wtfismyip.com/json'
 alias sanbox='firejail --dns=8.8.8.8 --private --nonewprivs '
 alias claude='claude --verbose '
+alias y='yazi'
+
 
 # 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
 alias sudo='sudo '
@@ -490,6 +491,17 @@ jcd() {
   dir=$(find ${1:-.} -path '*/\.*' -prune \
                   -o -type d -print 2> /dev/null | fzf +m) &&
   cd "$dir"
+}
+
+
+
+
+#
+# 打開資料夾
+#
+folder() {
+    local target="${@:-.}"
+    nohup nautilus "$target" > /dev/null 2>&1 &
 }
 
 #
