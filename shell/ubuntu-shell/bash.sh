@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
 # --------------------------------------------------------------------------------
-#   在 local, remote ssh 會用到不複雜的功能, 適合放在這裡
+#   在 local, remote ssh 會用到, 而且不複雜的功能, 適合放在這裡
 #   其它建議可以獨立一個 bash file 在個人的 bash library folder
 # --------------------------------------------------------------------------------
 
-#set -o errexit      # 發生錯誤時, 包含 Ctrl + c , 程式終止
-set -u              # 測試中 ...  <-- 將引用未設定的變數視為錯誤
-set -o nounset      # 使用沒有設定的變數, 程式終止
+# set -o errexit    # 發生錯誤時, 包含 Ctrl + c , 程式終止
+set -o nounset      # 將引用未設定的變數視為錯誤
 set -o pipefail     # 這將確保 pipeline 命令被視為失敗，即使 pipeline 中的一個命令失敗
 if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
+
+
+# --------------------------------------------------------------------------------
+#   因為環境所影響的 auto switch
+# --------------------------------------------------------------------------------
+# Wayland 用 wl-copy, X11 用 xclip
+if [ "${XDG_SESSION_TYPE:-}" = "wayland" ] && command -v wl-copy > /dev/null 2>&1; then
+    _clipboard_copy() { wl-copy; }
+else
+    _clipboard_copy() { xclip -selection clipboard; }
+fi
+
 
 # --------------------------------------------------------------------------------
 # Using wget or curl command
@@ -21,7 +32,7 @@ if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi    # TRACE=1 ./bash.sh
 shcp() {
     local cmd=' source <( curl -sS "https://raw.githubusercontent.com/glennfriend/dotfiles/master/shell/ubuntu-shell/bash.sh?$(date +%s)" )'
     echo "[copy] ${cmd}"
-    echo "${cmd}" | xclip -selection clipboard
+    echo "${cmd}" | _clipboard_copy
 }
 
 # --------------------------------------------------------------------------------
@@ -102,6 +113,7 @@ alias myip='curl wtfismyip.com/json'
 alias sanbox='firejail --dns=8.8.8.8 --private --nonewprivs '
 alias claude='claude --verbose '
 alias y='yazi'
+# alias mux="tmuxinator"
 
 
 # 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
@@ -109,17 +121,21 @@ alias sudo='sudo '
 
 # command line helper
 alias head='head -n 40'
-# alias tail='tail -n 40 -f'
-# date | copy
-alias copy='head -c -1 | xclip -selection clipboard'
+alias tail='tail -n 20'
+
+# e.g.
+#   date | copy
+alias copy='head -c -1 | _clipboard_copy'
+
 pwdcp() {
     pwd | copy
 }
 
+
 # get ip
 alias getip="echo '> curl icanhazip.com' ; curl icanhazip.com"
 alias getlocalip="ifconfig | grep -E 'inet '"
-#alias getlocalip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+alias getlocaliponly="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # copy files
 #   >f        傳輸文件
@@ -133,8 +149,6 @@ alias jcp="rsync -avv --human-readable --itemize-changes --partial "
 alias jbigcp="rsync -avv --partial --progress "
 
 
-# other
-# alias mux="tmuxinator"
 
 # --------------------------------------------------------------------------------
 #   取代原有的功能
@@ -186,72 +200,6 @@ beep() {
   return "$last"
 }
 
-#
-# echo 'hello, 你好' | speak
-# cat README.md | speak
-#
-speak () {
-    if ! hash php 2>/dev/null; then
-        >&2 echo "-> sudo apt install php"
-        return
-    fi
-    if ! hash pandoc 2>/dev/null; then
-        >&2 echo "-> sudo apt install pandoc"
-        return
-    fi
-    if ! hash mpv 2>/dev/null; then
-        >&2 echo "-> sudo apt install mpv"
-        return
-    fi
-
-    # 將 Markdown 轉成純文字
-    local text=$(pandoc -f commonmark -t plain --wrap=preserve)
-    
-    # 限制為整篇文字的前 n 個字符
-    text=$(echo "$text" | head -c 200)
-    
-    # 如果文字為空，則返回
-    if [ -z "$text" ]; then
-        >&2 echo "No text to speak"
-        return
-    fi
-    
-    # 設定語言
-    # local lang="${SPEAK_LANG:-zh-TW}"
-    local lang="${SPEAK_LANG:-en-US}"
-    
-    # 建立 /tmp/speak/ 目錄
-    mkdir -p /tmp/speak
-    
-    # 計算文字的 hash 值作為檔案名稱
-    local text_hash=$(echo "$text" | sha256sum | cut -d' ' -f1)
-    local audio_file="/tmp/speak/${text_hash}.mp3"
-    
-    # 檢查音訊檔案是否已存在
-    if [ -f "$audio_file" ]; then
-        echo "cache hit: $audio_file"
-        # 播放已存在的音訊檔案
-        mpv --no-video --really-quiet "$audio_file"
-    else
-        echo "cache miss: $audio_file"
-
-        # URL 編碼文字（使用 PHP 正確處理中文字符）
-        local encoded_text=$(echo "$text" | php -r "echo urlencode(file_get_contents('php://stdin'));")
-
-        # 使用 Google Translate TTS API
-        local tts_url="https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded_text}&tl=${lang}&client=tw-ob"
-        
-        # 下載音訊檔案到指定位置
-        if curl -s -A "Mozilla/5.0" "$tts_url" -o "$audio_file"; then
-            # 播放音訊檔案
-            mpv --no-video --really-quiet "$audio_file"
-        else
-            >&2 echo "無法從 Google Translate 獲取音訊"
-        fi
-    fi
-
-    # ls -la /tmp/speak/
-}
 
 
 # --------------------------------------------------------------------------------
@@ -546,7 +494,7 @@ copysearch() {
         if [[ "$line" == *"$search_text"* ]]; then
             # 去除前後空白
             trimmed_line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-            echo "$trimmed_line" | xclip -selection clipboard
+            echo "$trimmed_line" | _clipboard_copy
             echo "Copied to Clipboard: $trimmed_line"
             return 0
         fi
@@ -964,13 +912,13 @@ ggpush() {
         fi
     fi
 
-    git push origin "$(git_current_branch)" --force-with-lease $1 $2 $3
+    git push origin "$(git_current_branch)" --force-with-lease "$@"
 }
 
 
 # git diff for cached
 gdc() {
-    git -c core.quotepath=false diff --cached $1 $2 $3 $4 $5 $6 $7 $8 $9
+    git -c core.quotepath=false diff --cached "$@"
 }
 # gdc() {
 #     TMP_FILE="$(mktemp)"
@@ -993,7 +941,7 @@ gdc() {
 # git diff
 unalias gd  2>/dev/null
 gd() {
-    git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9
+    git diff --color "$@"
 }
 # gd-old() {
 #     TMP_FILE=$(mktemp)
@@ -1568,7 +1516,7 @@ se() {
                 ;;
             *)
                 # 未知格式
-                echo "==== file info ===="se
+                echo "==== file info ===="
                 echo "權限: $(ls -l "$selected_file" | awk '{print $1}')"
                 echo "大小: $(ls -lh "$selected_file" | awk '{print $5}')"
                 echo "類型: $(file "$selected_file")"
@@ -1600,7 +1548,7 @@ shotfile() {
     mypath="/fs/data/get"
     filepath=$(ls -lth "$mypath" | grep -E '\.(png|jpg|jpeg)$' | head -n1 | awk -v path="$mypath" '{print path "/" $NF}')
     echo -e "$filepath \033[90m(Clipboard)\033[0m"
-    echo -n "$filepath" | xclip -selection clipboard
+    echo -n "$filepath" | _clipboard_copy
 }
 
 
