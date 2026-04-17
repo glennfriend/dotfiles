@@ -101,4 +101,9 @@ return [
         'origin'    => 'shell/ghostty/config',
         'to'        => '.config/ghostty/config',
     ],
+    [
+        'desc'      => 'yazi',
+        'origin'    => 'shell/yazi',
+        'to'        => '.config/yazi',
+    ],
 ];

@@ -805,8 +805,8 @@ unalias gl  2>/dev/null
 # git ls
 gls() {
     clear; 
-    echo "---------- branch -v"; 
-    git branch -v; 
+    echo "---------- branch -vv";
+    git branch -vv; 
     echo "---------- status"; 
 
     # 設定 git config core.quotepath false -> 正確顯示 UTF-8
