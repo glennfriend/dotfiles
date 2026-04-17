@@ -1,0 +1,11 @@
+[[opener.edit]]
+run  = '$EDITOR "$@"'
+desc = "Open with $EDITOR"
+block = true
+
+[[opener.edit]]
+run  = 'code "$@"'
+desc = "Open with VS Code"
+
+[mgr]
+ratio = [1, 3, 4]
