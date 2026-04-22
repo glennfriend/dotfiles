@@ -8,8 +8,12 @@
       "Bash(composer show:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(git --no-pager diff --cached)"
+      "Bash(git --no-pager diff --cached)",
+      "Read(~/.claude)"
     ]
+  },
+  "env": {
+    "EDITOR": "vim"
   },
   "model": "opus[1m]",
   "skipDangerousModePermissionPrompt": true,
