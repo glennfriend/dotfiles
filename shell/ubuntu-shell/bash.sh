@@ -115,6 +115,7 @@ alias y='yazi'
 # alias mux="tmuxinator"
 
 
+
 # 在使用 sudo 的情況下, 可以使用到 user bash 裡面的指令
 alias sudo='sudo '
 
@@ -242,6 +243,18 @@ jmkdir() {
 
     # cd $_
 }
+
+# date format: CST [+0800] 2026-04-22 23:59:59
+date() {
+    if [ $# -eq 0 ]; then
+        TZ=Asia/Taipei command date "+%Z [%z] %Y-%m-%d %T"
+    else
+        TZ=Asia/Taipei command date "$@"
+    fi
+}
+
+# format: 2026-04-22-235959+0800
+alias datelog="TZ=Asia/Taipei date +%Y-%m-%d-%H%M%S+0800"
 
 # now time
 jdate() {
