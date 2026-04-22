@@ -103,7 +103,6 @@ alias gossh='cd ~/.ssh      && l'
 alias fs=' cd /fs           && l'
 alias fsw='cd /fs/var/www   && l'
 alias ch755='chmod -R 755 '
-alias ch777='chmod -R 777 '
 alias chwww='chown -R www-data:www-data '
 alias ack2='ack --ignore-dir=node_modules --ignore-dir=vendor --ignore-dir=storage/framework --ignore-dir=storage --ignore-dir=.next  --ignore-file=ext:cache  --type-set=DUMB=.log,.xml,.csv,.sql,.lock,.phar --noDUMB'
 #alias diff='diff --color -ruB'
@@ -804,11 +803,21 @@ unalias gl  2>/dev/null
 
 # git ls
 gls() {
-    clear; 
+    clear;
+
     echo "---------- branch -vv";
     git branch -vv; 
-    echo "---------- status"; 
 
+    # echo "---------- branch -vv";
+    # 拿掉 local branch name 欄位 (跟 [origin/xxx] 裡的名字重覆)
+    # %(HEAD)            -> '*' (當前 branch) 或 ' ' (其他)
+    # %(objectname:short)-> commit hash
+    # %(upstream:short)  -> origin/xxx
+    # %(upstream:track)  -> [ahead N, behind M] / [gone] (沒差異時為空)
+    # %(contents:subject)-> commit message 第一行
+    # git for-each-ref --format='%(HEAD) %(objectname:short) [%(upstream:short)]%(upstream:track) %(contents:subject)' refs/heads/
+
+    echo "---------- status";
     # 設定 git config core.quotepath false -> 正確顯示 UTF-8
     # 設定 git config core.quotepath true  -> "中" 會顯示為 "\344\270\255"
     git -c core.quotepath=false status -sb
@@ -859,7 +868,7 @@ gpr() {
     # git for-each-ref --sort=-committerdate --format='%(committerdate:iso8601) %(refname:short)' refs/remotes/origin | head -n 10
 
     git for-each-ref --sort=-committerdate --format='%(authorname) | %(committerdate:iso8601) | %(refname:short)' refs/remotes/origin \
-        | awk -F'|' '{ printf "%-10.10s | %s | %s\n", $1, $2, $3 }' | head -n 10
+        | awk -F'|' '{ printf "%-10.10s | %s | %s\n", $1, $2, $3 }' | head -n 20
 
 }
 
@@ -1201,6 +1210,34 @@ log() {
         echo
         tail -f $LOG_FILE
     fi
+}
+
+#
+# 將 tmux 裡面的內容寫入 log
+#
+tmuxlog() {
+    if ! command -v tmux >/dev/null 2>&1; then
+        echo "tmux not found. Please install tmux"
+        return 1
+    fi
+
+    if [ $# -eq 0 ]; then
+        tmux list-sessions -F '#{session_name}' | nl -w2 -s') '
+        return
+    fi
+
+    local idx="$1"
+    local session
+    session=$(tmux list-sessions -F '#{session_name}' | sed -n "${idx}p")
+
+    if [ -z "$session" ]; then
+        echo "No session at index $idx"
+        return 1
+    fi
+
+    local log="log-$(TZ=Asia/Taipei date +%Y-%m-%d-%H%M%S)+0800-${session}.log"
+    echo "Writing session [${session}] to: ${log}"
+    tmux capture-pane -pS - -J -t "$session" >> "$log"
 }
 
 
