@@ -1225,32 +1225,78 @@ log() {
     fi
 }
 
+
 #
-# 將 tmux 裡面的內容寫入 log
+# 建立 tmux session 並從第一個字元開始即時寫入 log 到當前目錄
 #
-tmuxlog() {
+tmuxnew() {
     if ! command -v tmux >/dev/null 2>&1; then
         echo "tmux not found. Please install tmux"
         return 1
     fi
 
     if [ $# -eq 0 ]; then
-        tmux list-sessions -F '#{session_name}' | nl -w2 -s') '
-        return
-    fi
-
-    local idx="$1"
-    local session
-    session=$(tmux list-sessions -F '#{session_name}' | sed -n "${idx}p")
-
-    if [ -z "$session" ]; then
-        echo "No session at index $idx"
+        echo "Please provide a session name"
+        if tmux list-sessions >/dev/null 2>&1; then
+            echo
+            tmux list-sessions -F '#{session_name}' | nl -w1 -s') '
+        fi
         return 1
     fi
 
-    local log="log-$(TZ=Asia/Taipei date +%Y-%m-%d-%H%M%S)+0800-${session}.log"
-    echo "Writing session [${session}] to: ${log}"
-    tmux capture-pane -pS - -J -t "$session" >> "$log"
+    # 將輸入中的空白換成 hyphen，避免 session 名 / 檔名有空白
+    local prefix="${1// /-}"
+    local ts
+    ts="$(TZ=Asia/Taipei date +%Y-%m-%d-%H%M%S)+0800"
+    local session="${prefix}-${ts}"
+    local log="$(pwd)/${prefix}-${ts}.log"
+
+    echo "new session ${session}"
+    echo "continuously writing to ${log}"
+    echo "只有第一個 pane 會被記錄, split new window 不會記錄任何資料"
+    echo
+    echo "sleep 3 ..."
+    sleep 3
+
+    # log 檔 100MB 上限 (可用環境變數覆蓋, 單位 bytes)
+    local max_size="${TMUXNEW_MAX_SIZE:-104857600}"
+
+    tmux new-session -d -s "$session"
+
+    # 預先建檔並設為只有自己可讀寫，避免敏感資訊外洩
+    touch "$log" && chmod 600 "$log"
+
+    # 用 sed 過濾掉 ANSI escape code，避免 log 內出現像 "[0m38;5;242m" 的亂碼
+    tmux pipe-pane -t "$session" -o "sed -u 's/\x1b\[[0-9;?]*[a-zA-Z]//g' >> '$log'"
+
+    # 背景 watchdog: log 超過 max_size 就關閉 pipe-pane，避免撐爆磁碟
+    # 每 60 秒檢查一次; 超過 24 小時 watchdog 自己結束 (session 仍照常運作)
+    # 用 exec -a 改 process name, 方便用 pgrep -af 'tmuxnew-watchdog' 找到
+    (
+        exec -a "tmuxnew-watchdog:${session}" bash -c '
+            trap "" HUP
+            session="$1"
+            log="$2"
+            max_size="$3"
+            start=$(date +%s)
+            max_runtime=86400
+            while tmux has-session -t "=$session" 2>/dev/null; do
+                sleep 60
+                if [ $(( $(date +%s) - start )) -ge $max_runtime ]; then
+                    break
+                fi
+                size=$(stat -c%s "$log" 2>/dev/null || echo 0)
+                if [ "$size" -ge "$max_size" ]; then
+                    tmux pipe-pane -t "$session" 2>/dev/null
+                    printf "\n--- log stopped at %d bytes (limit %d) ---\n" "$size" "$max_size" >> "$log"
+                    break
+                fi
+            done
+        ' _ "$session" "$log" "$max_size"
+    ) &
+    disown 2>/dev/null || true
+
+    tmux attach -t "$session"
 }
 
 
