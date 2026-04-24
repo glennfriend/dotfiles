@@ -1236,13 +1236,13 @@ tmuxnew() {
     fi
 
     if [ $# -eq 0 ]; then
-        echo "Please provide a session name"
         if tmux list-sessions >/dev/null 2>&1; then
-            echo '> tmuxnew {new-name}'
-            echo
             echo '[sessions list]'
             tmux list-sessions -F '#{session_name}' | nl -w1 -s') '
+            echo
         fi
+        echo "Please provide a session name"
+        echo '> tmuxnew {new-name}'
         return 1
     fi
 
@@ -1253,12 +1253,17 @@ tmuxnew() {
     local session="${prefix}-${ts}"
     local log="$(pwd)/${prefix}-${ts}.log"
 
-    echo "new session ${session}"
-    echo "continuously writing to ${log}"
-    echo "只有第一個 pane 會被記錄, split new window 不會記錄任何資料"
+    echo "- new session ${session}"
+    echo "- continuously writing to ${log}"
+    echo "- 只有第一個 pane 會被記錄, split new window 不會記錄任何資料"
     echo
-    echo "sleep 5 ..."
-    sleep 5
+    printf "create session? (yes to continue): "
+    local confirm
+    read -r confirm
+    if [ "$confirm" != "yes" ]; then
+        echo "aborted"
+        return 1
+    fi
 
     # log 檔 100MB 上限 (可用環境變數覆蓋, 單位 bytes)
     local max_size="${TMUXNEW_MAX_SIZE:-104857600}"
