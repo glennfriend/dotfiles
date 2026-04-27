@@ -168,7 +168,7 @@ alias jbigcp="rsync -avv --partial --progress "
 # https://gist.github.com/premek/6e70446cfc913d3c929d7cdbfe896fef
 # mv 如果後面只有輸入一個參數, 可以進入交互模式
 # for zsh version
-function mv() {
+mv() {
   if [ "$#" -ne 1 ] || [ ! -f "$1" ]; then
     command mv "$@"
     return
@@ -1057,8 +1057,7 @@ alias art="php artisan"
 
 
 # tinker 'User::first()'
-function tinker()
-{
+tinker() {
     if [ -z "$1" ]
         then
             php artisan tinker
@@ -1066,13 +1065,13 @@ function tinker()
             php artisan tinker --execute="dd($1);"
     fi
 }
-function dtinker()
-{
+# docker tinker
+dtinker() {
     if [ -z "$1" ]
         then
-            docker-compose exec 'php7' php artisan tinker
+            docker-compose exec 'php' php artisan tinker
         else
-            docker-compose exec 'php7' php artisan tinker --execute="dd($1);"
+            docker-compose exec 'php' php artisan tinker --execute="dd($1);"
     fi
 }
 
@@ -1345,7 +1344,7 @@ jphpbrew_todo() {
 # jurl -I
 # jurl | jq .
 #
-function jurl() {
+jurl() {
 
     if [ -z "$(command -v pygmentize)" ]
     then
@@ -1440,8 +1439,7 @@ curl-link-trace() {
 #     "reason": "contact is opt out",
 #     "error_message": "contact phone_number not found"
 # }
-function jqjsonlog()
-{
+jqjsonlog() {
     if [ -z "$1" ]
         then
             echo "No arguments supplied"
