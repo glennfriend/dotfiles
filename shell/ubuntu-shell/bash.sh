@@ -1668,6 +1668,140 @@ jtemp () {
 }
 
 # --------------------------------------------------------------------------------
+#   傳送訊息到 Microsoft Teams
+# --------------------------------------------------------------------------------
+webhook-teams() {
+    # Teams Adaptive Card 整個 payload 上限約 28KB，留 buffer 給 JSON 結構
+    local MAX_BYTES=20000
+
+    local WEBHOOK_VAR="TEAMS_WEBHOOK_URL"
+    local MSG_ARG=""
+    local got_msg=0
+    local VERBOSE=0
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -v|--verbose)
+                VERBOSE=1
+                ;;
+            --webhook=*)
+                WEBHOOK_VAR="${1#--webhook=}"
+                ;;
+            --webhook)
+                if [ -z "${2:-}" ]; then
+                    echo "Error: --webhook requires a value" >&2
+                    return 1
+                fi
+                WEBHOOK_VAR="$2"
+                shift
+                ;;
+            *)
+                if [ "$got_msg" -eq 0 ]; then
+                    MSG_ARG="$1"
+                    got_msg=1
+                fi
+                ;;
+        esac
+        shift
+    done
+
+    if [ "$got_msg" -eq 0 ]; then
+        cat <<'EOF' >&2
+example
+  webhook-teams "hello world"
+  webhook-teams "hello world" --webhook=MY_HOOK -v
+  webhook-teams "$(cat /path/to/file.txt)"
+  webhook-teams "$(jq . config.json)"
+EOF
+        return 1
+    fi
+
+    if ! [[ "$WEBHOOK_VAR" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+        echo "Error: invalid env var name: $WEBHOOK_VAR" >&2
+        return 1
+    fi
+
+    local MESSAGE="\\- [$(hostname)] $(date '+%Y-%m-%d %H:%M:%S %z')"
+    if [ "$VERBOSE" -eq 1 ]; then
+        local distro="unknown"
+        if [ -r /etc/os-release ]; then
+            distro=$(. /etc/os-release; echo "${ID:-unknown}")
+        fi
+        local shell_name
+        if [ -n "${ZSH_VERSION:-}" ]; then
+            shell_name="zsh"
+        elif [ -n "${BASH_VERSION:-}" ]; then
+            shell_name="bash"
+        else
+            shell_name="$(basename "${SHELL:-sh}")"
+        fi
+        MESSAGE="${MESSAGE}
+\\- ${distro} | ${shell_name} | ${PWD}"
+    fi
+    MESSAGE="${MESSAGE}
+${MSG_ARG}"
+
+    local TEAMS_WEBHOOK
+    eval "TEAMS_WEBHOOK=\${${WEBHOOK_VAR}:-}"
+    if [ -z "$TEAMS_WEBHOOK" ]; then
+        echo "Error: $WEBHOOK_VAR is not set" >&2
+        return 1
+    fi
+
+    if ! command -v jq >/dev/null 2>&1; then
+        echo "Error: jq is required (apt install jq)" >&2
+        return 1
+    fi
+
+    local size=${#MESSAGE}
+    if [ "$size" -gt "$MAX_BYTES" ]; then
+        echo "Warning: message is ${size} bytes, truncating to ${MAX_BYTES}" >&2
+        MESSAGE="${MESSAGE:0:$MAX_BYTES}
+
+…(truncated, original ${size} bytes)"
+    fi
+
+    local payload
+    payload=$(jq -n --arg text "$MESSAGE" '{
+        type: "message",
+        attachments: [{
+            contentType: "application/vnd.microsoft.card.adaptive",
+            content: {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                type: "AdaptiveCard",
+                version: "1.4",
+                body: [
+                    {type: "TextBlock", text: $text, wrap: true}
+                ]
+            }
+        }]
+    }')
+
+    local response
+    response=$(curl -s -w "\n%{http_code}" \
+        -H "Content-Type: application/json" \
+        -d "$payload" \
+        "$TEAMS_WEBHOOK")
+    local curl_exit=$?
+
+    local http_code
+    http_code=$(echo "$response" | tail -n1)
+
+    if [ "$curl_exit" -ne 0 ] || [ "$http_code" = "000" ]; then
+        echo "Failed: network error" >&2
+        return 1
+    fi
+
+    if [ "$http_code" = "200" ] || [ "$http_code" = "202" ]; then
+        echo "Success: $http_code"
+        return 0
+    else
+        echo "Failed: HTTP $http_code" >&2
+        return 1
+    fi
+}
+
+# --------------------------------------------------------------------------------
 #   test only
 # --------------------------------------------------------------------------------
 
