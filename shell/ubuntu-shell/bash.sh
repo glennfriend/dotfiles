@@ -335,37 +335,15 @@ jloop() {
 }
 
 #
-# 先備份, 後刪除
+# 安全刪除 (搬到 /tmp/delete/<timestamp>/)
 #
 jrm() {
+    [ $# -eq 0 ] && { echo "Input delete folder or files"; return; }
 
-    local left="\033[1;33m"
-    local right="\033[0m"
-    local absolute_path=$(readlink -m "$1")
-    echo "## remove ${left}${absolute_path}${right}"
-
-    if [ -z "$1" ] ; then
-        echo "Input delete folder or files"
-        return
-    elif [ "$1" = "/" ] ; then
-        echo "You can not delete root"
-        return
-    elif [ "$1" = "." ] ; then
-        echo "You must describe a directory"
-        return
-    elif [ "$1" = ".." ] || [ "$1" = "../" ]; then
-        echo "You can not delete up floor directory"
-        return
-    fi
-
-    local now=$(date "+%m%d-%H%M%S")
-    local delete_folder="/tmp/delete/$now/"
+    local delete_folder="/tmp/delete/$(date "+%m%d-%H%M%S")/"
     mkdir -p "$delete_folder"
 
-    # rsync -avv --human-readable --itemize-changes --partial "$1" "$delete_folder" && gio trash "$1"
-    rsync -aq --partial "$1" "$delete_folder" && gio trash "$1"
-    # echo "## backup to $delete_folder"
-    tree -ah $delete_folder
+    mv "$@" "$delete_folder" && tree -ah "$delete_folder"
     echo
 }
 
@@ -881,8 +859,27 @@ gpr() {
     # git for-each-ref --sort=-committerdate --format='%(committerdate:iso8601) %(refname:short)' refs/remotes/origin | head -n 10
 
     git for-each-ref --sort=-committerdate --format='%(authorname) | %(committerdate:iso8601) | %(refname:short)' refs/remotes/origin \
-        | awk -F'|' '{ printf "%-10.10s | %s | %s\n", $1, $2, $3 }' | head -n 20
+        | awk -F'|' '{ printf "%-10.10s |%s|%s\n", $1, $2, $3 }' | head -n 20
+}
 
+# 顯示 branch and tag
+# only origin/release-*
+# 對應的 tag 依 semver 由舊到新排（左舊右新，rc 視為 prerelease）
+# 日期欄是該 branch 最後一個 commit 的 committer date
+gpr2() {
+    git for-each-ref --sort=-version:refname 'refs/remotes/origin/release-*' \
+        --format='%(committerdate:format:%Y-%m-%d %H:%M:%S)|%(refname:short)' \
+        | head -n 15 \
+        | while IFS='|' read -r date branch; do
+            ver="${branch#origin/release-}"
+            tags=$(git -c versionsort.suffix=-rc tag --list "${ver}.*" --sort=v:refname \
+                   | paste -sd '|' - | sed 's/|/ | /g')
+            if [ -n "$tags" ]; then
+                echo "$date | $branch -> $tags"
+            else
+                echo "$date | $branch"
+            fi
+        done
 }
 
 gci() {
