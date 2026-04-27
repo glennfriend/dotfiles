@@ -442,26 +442,6 @@ folder() {
     nohup nautilus "$target" > /dev/null 2>&1 &
 }
 
-#
-# ls guess
-#
-lg() {
-    local current_folder="${PWD##*/}"
-
-    if [ -d "current" ] && [ -d "releases" ] && [ -d "repo" ] ; then
-        # deploy folder
-        l && l releases/
-        return
-    elif [ "${current_folder}" = "storage" ] && [ -d "app" ] && [ -d "framework" ] && [ -d "logs" ] ; then
-        # laravel storage folder
-        ls -lhA --color --time-style=long-iso
-        ls -lhA --color --time-style=long-iso logs
-        return
-    else
-        ls -lhA --color --time-style=long-iso
-        return
-    fi
-}
 
 #
 # ls -la | copysearch ".env"
@@ -581,7 +561,6 @@ gawk '
 }
 
 
-
 # --------------------------------------------------------------------------------
 #   解壓縮
 # --------------------------------------------------------------------------------
@@ -625,7 +604,6 @@ unfile() {
 # --------------------------------------------------------------------------------
 #   desktop editor
 # --------------------------------------------------------------------------------
-
 ed() {
     # EXEC="vi"
     # EXEC="gedit"
@@ -652,7 +630,6 @@ ed() {
 # --------------------------------------------------------------------------------
 #   system information
 # --------------------------------------------------------------------------------
-
 jsys() {
     clear
     echo 'last'
@@ -814,42 +791,6 @@ gls() {
     git -c core.quotepath=false status -sb
 }
 
-# git log
-unalias glg 2>/dev/null
-glg() {
-    if git show-ref --verify --quiet refs/heads/master; then
-        git log --oneline --graph @ ^master
-        echo
-        git log --oneline master -1
-    elif git show-ref --verify --quiet refs/heads/main; then
-        git log --oneline --graph @ ^main
-        echo
-        git log --oneline main -1
-    else
-        git log --oneline --graph @
-    fi
-}
-
-# glg2() {
-#     if git show-ref --verify --quiet refs/heads/master; then
-#         ref=master
-#     elif git show-ref --verify --quiet refs/heads/main; then
-#         ref=main
-#     else
-#         ref=""
-#     fi
-# 
-#     if [ -n "$ref" ]; then
-#         echo "Diff from $ref"
-#         git log --graph --pretty=format:'%an %-20s | %h | %s' @ ^$ref
-#         echo
-#         echo "Latest commit on $ref"
-#         git log -1 --pretty=format:'%an %-20s | %h | %s' $ref
-#     else
-#         git log --graph --pretty=format:'%an %-20s | %h | %s' @
-#     fi
-# }
-
 
 unalias gpr 2>/dev/null
 gpr() {
@@ -882,12 +823,52 @@ gpr2() {
         done
 }
 
+# 查看最近的 git commit message
+# 把當前 branch 領先 master 的部分跟 master 分開顯示
+# gci      日期附上「距今天幾天」(以日曆天計算, 最多 -99)
+# gci -v   加上 commit hash 與完整時間
 gci() {
-    # git commit message
-    # 查看最近的 commit message
-    git log -n 20 --pretty=format:"%an|%ad|%s" --date=iso \
-        | awk -F'|' '{ printf "%-10.10s | %-25s | %s\n", $1, $2, $3 }'
+    local base=master
+    git show-ref --verify --quiet refs/heads/main && base=main
+
+    local fmt date_fmt awk_fmt
+    if [ "${1:-}" = "-v" ]; then
+        fmt='%h|%an|%ad|%s'
+        date_fmt=iso
+        awk_fmt='{ printf "%-9s | %-10.10s | %-25s | %s\n", $1, $2, $3, $4 }'
+    else
+        fmt='%an|%ad|%s'
+        date_fmt=short
+        awk_fmt='
+            BEGIN {
+                t = strftime("%Y %m %d 00 00 00")
+                today_mid = mktime(t)
+            }
+            {
+                d = $2; gsub("-", " ", d)
+                diff = int((mktime(d " 00 00 00") - today_mid) / 86400)
+                if (diff < -99) diff = -99
+                if (diff == 0) date_col = sprintf("%-14s", $2)
+                else           date_col = sprintf("%s %3d", $2, diff)
+                printf "%-10.10s | %s | %s\n", $1, date_col, $3
+            }
+        '
+    fi
+
+    local current=$(git rev-parse --abbrev-ref HEAD)
+    local n=0
+    if [ "$current" != "$base" ]; then
+        n=$(git rev-list --count @ "^$base")
+        (( n > 20 )) && n=20
+        echo "-> $current"
+        git log -n "$n" @ "^$base" --pretty=format:"$fmt" --date="$date_fmt" | gawk -F'|' "$awk_fmt"
+        echo
+    fi
+
+    echo "-> $base"
+    git log -n $((20 - n)) "$base" --pretty=format:"$fmt" --date="$date_fmt" | gawk -F'|' "$awk_fmt"
 }
+
 
 # 測試中的功能
 alias    gdw=' GIT_EXTERNAL_DIFF=difft gd '
@@ -899,10 +880,21 @@ batdiff() {
 }
 
 
-
-
-
-
+# git log
+unalias glg 2>/dev/null
+glg() {
+    if git show-ref --verify --quiet refs/heads/master; then
+        git log --oneline --graph @ ^master
+        echo
+        git log --oneline master -1
+    elif git show-ref --verify --quiet refs/heads/main; then
+        git log --oneline --graph @ ^main
+        echo
+        git log --oneline main -1
+    else
+        git log --oneline --graph @
+    fi
+}
 
 
 
@@ -939,45 +931,12 @@ ggpush() {
 gdc() {
     git -c core.quotepath=false diff --cached "$@"
 }
-# gdc() {
-#     TMP_FILE="$(mktemp)"
-#     git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 > "${TMP_FILE}"
-#     TMP_LINE=$(cat "${TMP_FILE}" | wc -l)
-# 
-#     if [[ TMP_LINE -ge 30 ]] ; then
-#         git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
-#     elif [[ TMP_LINE -ge 1 ]] ; then
-#         git diff --color --cached $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy
-#     else
-#         # file is empty
-#         echo
-#     fi
-# 
-#     rm ${TMP_FILE}
-# }
-
 
 # git diff
 unalias gd  2>/dev/null
 gd() {
     git diff --color "$@"
 }
-# gd-old() {
-#     TMP_FILE=$(mktemp)
-#     git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 > "${TMP_FILE}"
-#     TMP_LINE=$(cat "${TMP_FILE}" | wc -l)
-# 
-#     if [[ TMP_LINE -ge 30 ]] ; then
-#         git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy | less
-#     elif [[ TMP_LINE -ge 1 ]] ; then
-#         git diff --color $1 $2 $3 $4 $5 $6 $7 $8 $9 | diff-so-fancy
-#     else
-#         # file is empty
-#         echo
-#     fi
-# 
-#     rm ${TMP_FILE}
-# }
 
 # 現在目錄有 git 異動的檔案, 顯示最後一次 commit 時的 message
 # list Git Last Commit message
@@ -1004,21 +963,9 @@ glsc() {
         " "echo") }'
 }
 
-
-git_branch() {
+git-branch() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
     echo "("${ref#refs/heads/}") ";
-}
-
-git_since_last_commit() {
-    now=`date +%s`;
-    last_commit=$(git log --pretty=format:%at -1 2> /dev/null) || return;
-    seconds_since_last_commit=$((now-last_commit));
-    minutes_since_last_commit=$((seconds_since_last_commit/60));
-    hours_since_last_commit=$((minutes_since_last_commit/60));
-    minutes_since_last_commit=$((minutes_since_last_commit%60));
-
-    echo "${hours_since_last_commit}h${minutes_since_last_commit}m ";
 }
 
 # go to git root path
@@ -1051,8 +998,6 @@ branch() {
 alias testdox="php vendor/bin/phpunit --testdox"
 
 alias art="php artisan"
-#alias migrate="php artisan migrate"
-#alias serve="artisan serve"
 #alias routelist="php artisan route:list"
 
 
