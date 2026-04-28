@@ -422,13 +422,75 @@ jcat() {
 }
 
 #
-# fzf cd
+# fzf 互動式 cd, 像 yazi 一樣可以左右切換目錄
+#   →    進入光標所在的目錄
+#   ←    回到上一層
+#   Enter  選定當前所在目錄, cd 過去
+#   Esc  取消
 #
 jcd() {
-  local dir
-  dir=$(find ${1:-.} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
-  cd "$dir"
+    local current
+    current=$(realpath "${1:-.}")
+
+    while true; do
+        local choice key sel cur_name path_wrap left_w header
+        cur_name=$(basename "$current")
+
+        # 把路徑按左半 pane 寬度換行, 太長時可以多行顯示
+        left_w=$(( $(tput cols 2>/dev/null || echo 80) / 2 - 3 ))
+        [ $left_w -lt 30 ] && left_w=30
+        path_wrap=$(printf '%s/' "$current" | fold -w "$left_w")
+
+        # 組 header 內容 (parent 列表移到右側 preview, 避免擠在左邊)
+        header=$(printf '%s\n' \
+            "$path_wrap" \
+            '←, →, enter (選擇目錄), esc (取消)' \
+            ' ')
+
+        # 透過環境變數把當前狀態傳給 preview shell, 避免 inline 字串拼接的 quoting 地獄
+        export _JCD_PARENT _JCD_CUR_NAME _JCD_CURRENT
+        _JCD_PARENT=$(dirname "$current")
+        _JCD_CUR_NAME="$cur_name"
+        _JCD_CURRENT="$current"
+
+        choice=$( \
+            ls -1p "$current" 2>/dev/null | grep '/$' | sed 's|/$||' | LC_ALL=C sort \
+            | fzf \
+                --height=100% \
+                --layout=reverse \
+                --prompt="${cur_name}/ > " \
+                --header="$header" \
+                --expect=right,left \
+                --preview-window=right:50% \
+                --preview='
+                    sel={}
+                    echo "[parent] $_JCD_PARENT/"
+                    ls -1p "$_JCD_PARENT" 2>/dev/null | grep "/$" | sed "s|/$||" | LC_ALL=C sort \
+                        | awk -v cur="$_JCD_CUR_NAME" "{ print (\$0 == cur ? \"> \" : \"  \") \$0 }" \
+                        | command head -n 10
+                    echo
+                    echo "[child] $sel/"
+                    ls -1p --color=always -- "$_JCD_CURRENT/$sel" 2>/dev/null | command head -n 40
+                '
+        )
+        [ -z "$choice" ] && return
+
+        key=$(echo "$choice" | command head -n 1)
+        sel=$(echo "$choice" | sed -n '2p')
+
+        case "$key" in
+            right)
+                [ -d "$current/$sel" ] && current="$current/$sel"
+                ;;
+            left)
+                current=$(dirname "$current")
+                ;;
+            *)
+                cd "$current"
+                return
+                ;;
+        esac
+    done
 }
 
 
