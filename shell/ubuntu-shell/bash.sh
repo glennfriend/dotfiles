@@ -245,16 +245,24 @@ jmkdir() {
 }
 
 # date format: CST [+0800] 2026-04-22 23:59:59
-date() {
-    if [ $# -eq 0 ]; then
-        TZ=Asia/Taipei command date "+%Z [%z] %Y-%m-%d %T"
-    else
-        TZ=Asia/Taipei command date "$@"
-    fi
+cdate() {
+    TZ=Asia/Taipei command date "+%Z [%z] %Y-%m-%d %T"
 }
 
 # format: 2026-04-22-235959+0800
 alias datelog="TZ=Asia/Taipei date +%Y-%m-%d-%H%M%S+0800"
+
+# now time
+dates() {
+    echo "PST -8 太平洋標準時間 Pacific Standard Time"
+    echo "PDT -7 太平洋夏令時間 Pacific Daylight Time 日光節約時間"
+    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
+    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
+    echo "  "`TZ=America/New_York    date "+%Z [%z] %Y-%m-%d %T"`"  NY     "
+    echo "  "`TZ=America/Chicago     date "+%Z [%z] %Y-%m-%d %T"`"  Chicago"
+    echo "  "`TZ=America/Denver      date "+%Z [%z] %Y-%m-%d %T"`"  Denver"
+    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
+}
 
 # now time
 jdate() {
@@ -269,17 +277,6 @@ jdate() {
     #
     # 本來是使用上面的指令, 但不確定是不是 zsh 版本的關系, 現在 "[]" 這兩個符號前方要加上 backslash "\"
     while [ 1 ] ; do echo -en "\r  $(date +%Z\ \[%z\]\ %Y-%m-%d\ %T)  " ; sleep 1; done
-}
-
-jdate2() {
-    echo "PST -8 太平洋標準時間 Pacific Standard Time"
-    echo "PDT -7 太平洋夏令時間 Pacific Daylight Time 日光節約時間"
-    echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
-    echo "  "`TZ=UTC                 date "+%Z [%z] %Y-%m-%d %T"`"  UTC    "
-    echo "  "`TZ=America/New_York    date "+%Z [%z] %Y-%m-%d %T"`"  NY     "
-    echo "  "`TZ=America/Chicago     date "+%Z [%z] %Y-%m-%d %T"`"  Chicago"
-    echo "  "`TZ=America/Denver      date "+%Z [%z] %Y-%m-%d %T"`"  Denver"
-    echo "  "`TZ=America/Los_Angeles date "+%Z [%z] %Y-%m-%d %T"`"  LA     "
 }
 
 # 到數計時器
@@ -986,6 +983,15 @@ ggpush() {
     fi
 
     git push origin "$(git_current_branch)" --force-with-lease "$@"
+
+    # sub-module init
+    # > git submodule update --init --recursive
+
+    # 更新現在 repo 指定的 submodule 的版本 -> git submodule status
+    # > git submodule update --recursive
+
+    # pull remote 最新 submodule 的版本 (主 repo 的 gitlink 會變動, 需 git add + commit)
+    # > git submodule update --remote onr-document
 }
 
 
