@@ -696,7 +696,8 @@ jsys() {
 
     echo
     echo 'ps'
-    jps | awk '{print $2}' | sort | uniq -c | sort -nr | head -n 15
+    # jps 欄位: PID  MM-DD  HH:MM:SS  COMMAND, 所以 command 在 $4
+    jps | awk 'NR>1 {print $4}' | sort | uniq -c | sort -nr | head -n 15
 
     # | awk '$1 >= 6'
 }
@@ -799,21 +800,40 @@ jsys3() {
 
 #
 # like `ps -aux`
+# 欄位: PID  TIME (MM-DD HH:MM:SS, 啟動時間)  COMMAND
 #
 jps() {
-    ps -eo pid,command \
+    ps -eo pid,lstart,command \
         | grep -v "/google/chrome/chrome" \
         | grep -v "/usr/lib/firefox/firefox" \
         | grep -v "/usr/share/code" \
         | grep -v "/usr/bin/zsh" \
+        | grep -v "/bin/zsh" \
+        | grep -v " zsh" \
+        | grep -v " -zsh" \
         | grep -v "/.cache/JetBrains/" \
         | grep -v "/.nvm/versions/node/" \
         | grep -v "/proc/self/exe " \
-        | grep -v " zsh" \
-        | grep -v " -zsh" \
         | grep -v " cat" \
         | grep -v "\[kworker/" \
-        | grep -v "ps -eo pid,command"
+        | grep -v "ps -eo pid,lstart,command" \
+        | awk '
+            BEGIN {
+                m["Jan"]="01"; m["Feb"]="02"; m["Mar"]="03"; m["Apr"]="04";
+                m["May"]="05"; m["Jun"]="06"; m["Jul"]="07"; m["Aug"]="08";
+                m["Sep"]="09"; m["Oct"]="10"; m["Nov"]="11"; m["Dec"]="12";
+            }
+            NR==1 {
+                printf "%6s  %-14s  %s\n", "PID", "TIME", "COMMAND";
+                next;
+            }
+            {
+                # ps lstart 格式: Mon Apr 29 14:30:25 2026
+                # $1=pid $2=週幾 $3=月 $4=日 $5=時:分:秒 $6=年 $7+=command
+                cmd = "";
+                for (i=7; i<=NF; i++) cmd = cmd (i==7 ? "" : " ") $i;
+                printf "%6s  %s-%02d %s  %s\n", $1, m[$3], $4, $5, cmd;
+            }'
 
     # "\[sh] <defunct>"
 }
