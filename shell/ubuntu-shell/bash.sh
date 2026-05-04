@@ -948,6 +948,126 @@ gci() {
     git log -n $((20 - n)) "$base" --pretty=format:"$fmt" --date="$date_fmt" | gawk -F'|' "$awk_fmt"
 }
 
+# github pull commits
+# 查看 code review 的內容
+gpc () {
+    local pr_number="${1:-}"
+    local repo_input="${2:-}"
+    local owner="OnrampLab"
+    local repo_name=""
+    local pr_url=""
+    local detected_full_name=""
+    local detected_owner=""
+    local detected_repo=""
+    local remote_url=""
+    local confirm=""
+
+    if [ -z "$pr_number" ]; then
+        echo 'Usage: gpc <pull_request_number> [repo_name]'
+        return 1
+    fi
+
+    if ! command -v gh >/dev/null 2>&1; then
+        echo 'Error: gh command not found'
+        return 1
+    fi
+
+    if [ -n "$repo_input" ]; then
+        if [[ "$repo_input" == */* ]]; then
+            owner="${repo_input%%/*}"
+            repo_name="${repo_input##*/}"
+        else
+            repo_name="$repo_input"
+        fi
+    else
+        if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            remote_url=$(git config --get remote.origin.url 2>/dev/null || git remote get-url origin 2>/dev/null || true)
+
+            if [ -n "$remote_url" ]; then
+                detected_full_name="$remote_url"
+                detected_full_name="${detected_full_name#git@github.com:}"
+                detected_full_name="${detected_full_name#ssh://git@github.com/}"
+                detected_full_name="${detected_full_name#https://github.com/}"
+                detected_full_name="${detected_full_name#http://github.com/}"
+                detected_full_name="${detected_full_name%.git}"
+            fi
+
+            if [ -z "$detected_full_name" ]; then
+                detected_full_name=$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null || true)
+            fi
+        fi
+
+        if [ -n "$detected_full_name" ] && [[ "$detected_full_name" == */* ]]; then
+            detected_owner="${detected_full_name%%/*}"
+            detected_repo="${detected_full_name##*/}"
+        fi
+
+        if [ -z "$detected_repo" ]; then
+            echo 'Error: repo_name not provided, and current directory is not a detectable GitHub repository'
+            return 1
+        fi
+
+        owner="$detected_owner"
+        repo_name="$detected_repo"
+        pr_url="https://github.com/$owner/$repo_name/pull/$pr_number"
+
+        echo "-> \"$repo_name\""
+        echo "-> $pr_url"
+        echo '請輸入 yes'
+        read -r confirm
+        if [ "$confirm" != 'yes' ]; then
+            echo 'Cancelled'
+            return 1
+        fi
+    fi
+
+    if [ -z "$pr_url" ]; then
+        pr_url="https://github.com/$owner/$repo_name/pull/$pr_number"
+    fi
+
+    gh api graphql -f query="
+query {
+    repository(owner: \"$owner\", name: \"$repo_name\") {
+        pullRequest(number: $pr_number) {
+            reviewThreads(first: 100) {
+                nodes {
+                    isResolved
+                    isOutdated
+                    path
+                    diffSide
+                    line
+                    originalLine
+                    comments(first: 20) {
+                        nodes {
+                            author { login }
+                            body
+                            diffHunk
+                            createdAt
+                            url
+                        }
+                    }
+                }
+            }
+        }
+    }
+}" --jq '
+    .data.repository.pullRequest.reviewThreads.nodes[]
+    | {
+            file: .path,
+            line: (.line // .originalLine),
+            resolved: .isResolved,
+            outdated: .isOutdated,
+            comments: [
+                .comments.nodes[]
+                | {
+                        reviewer: .author.login,
+                        body: .body,
+                        diff: .diffHunk,
+                        url: .url
+                    }
+            ]
+        }'
+}
 
 # 測試中的功能
 alias    gdw=' GIT_EXTERNAL_DIFF=difft gd '

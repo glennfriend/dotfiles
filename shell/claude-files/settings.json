@@ -5,10 +5,12 @@
       "Bash(git diff:*)",
       "Bash(git status:*)",
       "Bash(git show:*)",
+      "Bash(git --no-pager log origin/master..HEAD --oneline)",
+      "Bash(git --no-pager diff origin/master...HEAD --stat)",
+      "Bash(git --no-pager diff --cached)",
       "Bash(composer show:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(git --no-pager diff --cached)",
       "Read(~/.claude)"
     ]
   },
