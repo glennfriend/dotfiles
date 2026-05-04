@@ -1,4 +1,7 @@
 {
+  "env": {
+    "EDITOR": "vim"
+  },
   "permissions": {
     "allow": [
       "Bash(git log:*)",
@@ -12,15 +15,30 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Read(~/.claude)"
+    ],
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(rm -rf *)",
+      "Bash(rm -rf /*)",
+      "Read(.env)",
+      "Read(**/.env)"
     ]
   },
-  "env": {
-    "EDITOR": "vim"
-  },
   "model": "opus[1m]",
-  "skipDangerousModePermissionPrompt": true,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/scripts/status-line.sh"
+  },
+  "extraKnownMarketplaces": {
+    "thedotmack": {
+      "source": {
+        "source": "github",
+        "repo": "thedotmack/claude-mem"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": false,
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true
   }
 }
