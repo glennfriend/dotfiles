@@ -173,10 +173,51 @@ else
     ctx="${bar} ${C_GRAY}~${pct}% of ${max_display} tokens"
 fi
 
-# Build output: Model | Dir | Branch (uncommitted) | Context
+# Cost and rate-limit segments (Claude Code 2.1.80+)
+now=$(date +%s)
+session_cost=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+util_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+reset_5h_epoch=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+util_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+reset_7d_epoch=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
+
+cost_seg=""
+if [[ -n "$session_cost" && "$session_cost" != "0" && "$session_cost" != "null" ]]; then
+    cost_formatted=$(printf '%.2f' "$session_cost" 2>/dev/null || echo "$session_cost")
+    cost_seg=" | 💰\$${cost_formatted}"
+fi
+
+limit_5h_seg=""
+if [[ -n "$util_5h" && "$util_5h" != "null" ]]; then
+    util_5h_int=${util_5h%.*}
+    reset_5h_text=""
+    if [[ -n "$reset_5h_epoch" && "$reset_5h_epoch" != "null" ]] && [[ "$reset_5h_epoch" -gt "$now" ]] 2>/dev/null; then
+        remain=$((reset_5h_epoch - now))
+        rh=$((remain / 3600))
+        rmin=$(((remain % 3600) / 60))
+        reset_5h_text=" ⏳${rh}h${rmin}m"
+    fi
+    limit_5h_seg=" | ⚡5h ${util_5h_int}%${reset_5h_text}"
+fi
+
+limit_7d_seg=""
+if [[ -n "$util_7d" && "$util_7d" != "null" && "$util_7d" != "0" ]]; then
+    util_7d_int=${util_7d%.*}
+    reset_7d_text=""
+    if [[ -n "$reset_7d_epoch" && "$reset_7d_epoch" != "null" ]] && [[ "$reset_7d_epoch" -gt "$now" ]] 2>/dev/null; then
+        remain_sec=$((reset_7d_epoch - now))
+        r7d=$((remain_sec / 86400))
+        r7h=$(((remain_sec % 86400) / 3600))
+        reset_7d_text=" ${r7d}d${r7h}h"
+    fi
+    limit_7d_seg=" | 📅7d ${util_7d_int}%${reset_7d_text}"
+fi
+
+# Build output: Model | Dir | Branch (uncommitted) | Context | Cost | 5h | 7d
 output="${C_ACCENT}${model}${C_GRAY} | 📁${dir}"
 [[ -n "$branch" ]] && output+=" | 🔀${branch} ${git_status}"
-output+=" | ${ctx}${C_RESET}"
+output+=" | ${ctx}"
+output+="${cost_seg}${limit_5h_seg}${limit_7d_seg}${C_RESET}"
 
 printf '%b\n' "$output"
 

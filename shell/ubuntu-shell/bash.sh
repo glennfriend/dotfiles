@@ -86,6 +86,7 @@ alias     ld='l | grep "^-" ; l | grep "^l"; ls -d */; echo "> "`pwd`;'
 alias     l.='ls -dlhA .??* --time-style=long-iso'
 alias     df='df -h'
 alias     du='du -h'
+alias    cdr='cd "$(pwd -P)"'   # 從 symlink 跳轉到實際的路徑
 alias        ..='cd ..'
 alias       ...='cd ../..'
 alias      ....='cd ../../..'
@@ -692,7 +693,7 @@ ed() {
 jsys() {
     clear
     echo 'last'
-    last -i | awk '{print $3}' | sort | uniq -c | sort -nr
+    last -i | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' | sort | uniq -c | sort -nr
 
     echo
     echo 'ps'
@@ -1797,6 +1798,10 @@ se() {
 # 將指定目錄最新 圖片檔案 的名稱跟路徑複製到 剪貼薄
 shotfile() {
     mypath="/fs/data/get"
+    if [ ! -d "$mypath" ]; then
+        echo "Directory does not exist"
+        return 1
+    fi
     filepath=$(ls -lth "$mypath" | grep -E '\.(png|jpg|jpeg)$' | head -n1 | awk -v path="$mypath" '{print path "/" $NF}')
     echo -e "$filepath \033[90m(Clipboard)\033[0m"
     echo -n "$filepath" | _clipboard_copy
@@ -1872,7 +1877,13 @@ EOF
         return 1
     fi
 
-    local MESSAGE="\\- [$(hostname)] $(date '+%Y-%m-%d %H:%M:%S %z')"
+    local DATE_FMT
+    if [ "$VERBOSE" -eq 1 ]; then
+        DATE_FMT='+%Y-%m-%d %H:%M:%S %z %A'
+    else
+        DATE_FMT='+%m-%d %H:%M:%S %A'
+    fi
+    local MESSAGE="\\- [$(hostname)] $(date "$DATE_FMT")"
     if [ "$VERBOSE" -eq 1 ]; then
         local distro="unknown"
         if [ -r /etc/os-release ]; then
