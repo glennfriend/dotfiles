@@ -11,6 +11,20 @@
       "Bash(git --no-pager log origin/master..HEAD --oneline)",
       "Bash(git --no-pager diff origin/master...HEAD --stat)",
       "Bash(git --no-pager diff --cached)",
+      "Bash(git -C /var/www/cl/ava:*)",
+      "Bash(git -C /var/www/cl/ava-client:*)",
+      "Bash(git -C /var/www/cl/samurai-world-backend:*)",
+      "Bash(git -C /var/www/cl/samurai-world-client:*)",
+      "Bash(yarn eslint:*)",
+      "Bash(yarn lint:*)",
+      "Bash(yarn tsc:*)",
+      "Bash(yarn test:*)",
+      "Bash(yarn type-check:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx prettier --check:*)",
+      "Bash(source ~/.nvm/nvm.sh:*)",
+      "Bash(nvm use:*)",
       "Bash(composer show:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
@@ -19,9 +33,7 @@
     "deny": [
       "Bash(sudo *)",
       "Bash(rm -rf *)",
-      "Bash(rm -rf /*)",
-      "Read(.env)",
-      "Read(**/.env)"
+      "Bash(rm -rf /*)"
     ]
   },
   "model": "opus[1m]",

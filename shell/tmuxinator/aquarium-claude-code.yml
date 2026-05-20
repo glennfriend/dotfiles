@@ -1,0 +1,16 @@
+# ~/.tmuxinator/aquarium-claude-code.yml
+name: aquarium-claude-code
+root: /var/www/aquarium
+
+windows:
+  - claude:
+      layout: even-horizontal
+      panes:
+        - cc-commander:
+          - cd /var/www/aquarium/cc-commander
+          - tmux select-pane -T cc-commander
+          - claude --verbose --model opus
+        - cc-programmer:
+          - cd /var/www/aquarium/cc-programmer
+          - tmux select-pane -T cc-programmer
+          - claude --verbose --model sonnet

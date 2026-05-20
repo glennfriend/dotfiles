@@ -254,7 +254,7 @@ cdate() {
 alias datelog="TZ=Asia/Taipei date +%Y-%m-%d-%H%M%S+0800"
 
 # now time
-dates() {
+jdates() {
     echo "PST -8 太平洋標準時間 Pacific Standard Time"
     echo "PDT -7 太平洋夏令時間 Pacific Daylight Time 日光節約時間"
     echo "  "`TZ=Asia/Taipei         date "+%Z [%z] %Y-%m-%d %T"`"  Taipei "
@@ -799,13 +799,23 @@ jsys3() {
     done
 }
 
+jdisk() {
+    echo '                            FSTYPE        SIZE TYPE  ROTA TRAN   MOUNTPOIN MODEL'
+    echo '(TYPE)                                         crypt -> 解密後的虛擬裝置'
+    echo '(TRAN)                                                    nvme -> M.2 SSD'
+    echo '(TRAN)                                                    sata -> 傳統 HDD/SSD'
+    echo '(ROTA)                                                  0 -> SSD'
+    echo '(ROTA)                                                  1 -> HDD'
+    echo '----'
+    lsblk -e 7 -o NAME,FSTYPE,SIZE,TYPE,ROTA,TRAN,MOUNTPOINT,MODEL
+}
+
 #
 # like `ps -aux`
 # 欄位: PID  TIME (MM-DD HH:MM:SS, 啟動時間)  COMMAND
 #
 jps() {
     ps -eo pid,lstart,command \
-        | grep -v "/google/chrome/chrome" \
         | grep -v "/usr/lib/firefox/firefox" \
         | grep -v "/usr/share/code" \
         | grep -v "/usr/bin/zsh" \
@@ -836,6 +846,7 @@ jps() {
                 printf "%6s  %s-%02d %s  %s\n", $1, m[$3], $4, $5, cmd;
             }'
 
+    # | grep -v "/google/chrome/chrome" \
     # "\[sh] <defunct>"
 }
 
