@@ -23,6 +23,11 @@
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
       "Bash(npx prettier --check:*)",
+      "Bash(yarn prettier --write:*)",
+      "Bash(./node_modules/.bin/prettier --write:*)",
+      "Bash(./node_modules/.bin/prettier --check:*)",
+      "Bash(./node_modules/.bin/eslint:*)",
+      "Bash(./node_modules/.bin/tsc:*)",
       "Bash(source ~/.nvm/nvm.sh:*)",
       "Bash(nvm use:*)",
       "Bash(composer show:*)",
@@ -41,6 +46,7 @@
     "type": "command",
     "command": "~/.claude/scripts/status-line.sh"
   },
+  "enabledPlugins": {},
   "extraKnownMarketplaces": {
     "thedotmack": {
       "source": {
@@ -49,8 +55,5 @@
       }
     }
   },
-  "skipDangerousModePermissionPrompt": false,
-  "enabledPlugins": {
-    "claude-mem@thedotmack": true
-  }
+  "skipDangerousModePermissionPrompt": false
 }
