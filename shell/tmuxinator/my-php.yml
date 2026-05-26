@@ -28,7 +28,7 @@ windows:
           - # cd /fs/var/www/phpmyadmin-self-v2
           - # phpbrew use php-8.1.32
           - # echo "php -S 127.0.0.1:8008 -t ./" | xclip -selection clipboard
-          - dates
+          - jdates
         - app:
           - clear
           - nohup /fs/arch/run_it/dropbox/dropboxd              > /dev/null 2>&1 &
