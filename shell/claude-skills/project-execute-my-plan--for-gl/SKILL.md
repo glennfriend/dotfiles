@@ -16,6 +16,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 ## 一開始要跟開發者確認
 - 每完成一個大項目, 是要直接 commit, 還是要每次都等開發者確認之後再 commit
+- 計劃文件是否已全部了解, 沒有任何疑問
 
 ## 必須要遵守的規則
 - follow Clean Architecture & Domain & DDD (Domain-Driven Design)
@@ -23,19 +24,14 @@ allowed-tools: Read, Write, Edit, Bash
   - 請遵守 template: onr-document/wisdom/code-template/**/*
 - 如果是產生 react 程式碼
   - 請使用 react + ant-design
-- local 開發環境會用到的指令
-  - docker compose exec 'php' php artisan tinker
-- NO over-design ! NO over-engineer !
-
-### 產生程式的過程如果不順利
-- 如果修改後讓程式產生意外的嚴重錯誤      -> 請跟我討論, 恢復程式碼, 重新修改
-- 如果進入持續修復錯誤的輪迴, 一直修改不好 -> 請跟我討論, 恢復程式碼, 重新修改
-- 如果你修改到太多不相關這次的範圍        -> 請跟我討論, 恢復程式碼, 重新修改
+- NO over-design !
+- NO over-engineer !
 
 ## 讀取計畫並且執行
-- 讀取 storage/temp/my-plan.md
-- 請依照計畫執行, 除非有改變計畫, 否則 my-plan.md 應該只會回寫 check list, 其它內容不應該被更改
+- 讀取 `my-plan.md`
+- 請依照計畫執行, 除非有改變計畫, 否則 `my-plan.md` 應該只會勾選 check list
 - 如果在執行計畫的時候, 改變的檔案有超出計畫表, 請等我允許才能做出變更
+- 如果要補充計畫, 應該放在計劃追加區, 不應該修改原始的計劃內容
 - step by step 依順序完成
 
 ## 依照先後順序執行 子計劃
@@ -48,6 +44,11 @@ allowed-tools: Read, Write, Edit, Bash
 - 完成子計劃之後
   - 打勾 `my-plan.md` 的 check list, 不要額外加上無關的資訊
   - 等開發者確認, 才會繼續進行下一個子計劃
+
+### 過程如果不順利
+- 修改後讓程式產生意外的嚴重錯誤        -> 跟我討論後, 恢復程式碼, 重新修改
+- 進入持續修復錯誤的輪迴, 一直修改不好  -> 跟我討論後, 恢復程式碼, 重新修改
+- 修改到太多不相關這次的範圍            -> 跟我討論後, 恢復程式碼, 重新修改
 
 ## 全部完成後
 - 執行指令檢查 test case 是否正常

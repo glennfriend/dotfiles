@@ -46,12 +46,21 @@
     "type": "command",
     "command": "~/.claude/scripts/status-line.sh"
   },
-  "enabledPlugins": {},
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true,
+    "superpowers@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "thedotmack": {
       "source": {
         "source": "github",
         "repo": "thedotmack/claude-mem"
+      }
+    },
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
       }
     }
   },
