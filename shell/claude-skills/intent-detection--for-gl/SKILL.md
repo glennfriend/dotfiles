@@ -30,6 +30,9 @@ cat /var/www/cl/onr-document/wisdom/knowledge/README.md
 ## `mysql query` `ElasticSearch query` `datadog query` `aws query` 資料查詢
 cat /var/www/tool/onr-support/PROMPT.md
 
+## `aws research` 我們使用的 aws 服務
+/000/Dropbox/rice/rice/prompt/1-work.prompt/work-aws-research.prompt.md
+
 
 ---
 以上是所有可能的意圖
